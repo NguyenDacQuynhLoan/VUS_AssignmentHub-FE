@@ -1,8 +1,10 @@
-import { Link, Routes, Route } from "react-router-dom";
-import { styled, useTheme } from "@mui/material/styles";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Routes, Route } from "react-router-dom";
+import { styled } from "@mui/material/styles";
 import { adminMenu } from "../../routes/admin-menu";
 import { sideBarWidth, useDefaultLayoutContext } from "../provider/layout-provider";
-
+import LoginPage from '../../pages/Login';
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
@@ -31,15 +33,25 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export function DefaultMain() {
-    const {openSidebar} = useDefaultLayoutContext();
+  const {openSidebar} = useDefaultLayoutContext();
+  // const [token, setToken] = useState();
+
+  // // get token
+  // React.useEffect = () =>{
+  //   var url = "";
+  //   axios.get(url).then((res)=>{
+  //     setToken(res.data);
+  //   });
+  // }
 
   return (
     <>
       <Main open={openSidebar}>
         <DrawerHeader />
         <Routes>
+
           {adminMenu.map((item, index) => (
-            <Route key={index} path={item.url} element={item.page}></Route>
+            <Route key={index} path={item.url} element={item.page}/>
           ))}
         </Routes>
       </Main>

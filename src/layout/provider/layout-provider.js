@@ -17,11 +17,11 @@ export function DefaultLayoutProvider({...props}) {
     <DefaultLayoutContext.Provider 
         value={
             {
-                openSidebar,
-                onToggleSidebar,
-                router,
-                onChangeRouter,
-                sideBarWidth
+              openSidebar,
+              onToggleSidebar,
+              router,
+              onChangeRouter,
+              sideBarWidth
             }
         }>
       {props.children}

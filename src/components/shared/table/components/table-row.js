@@ -58,7 +58,7 @@ export default function DataTableRow(props) {
         <TableCell component="th" scope="row">
           {row.code}
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="left">
           <Button size="small" variant="outlined" 
             onClick={()=>onOpenTab(`http://localhost:3000/assignments/detail?code=${row.code}&name=${row.studentName}`)}>
               {row.studentName}

@@ -1,3 +1,8 @@
-/* .date-field ::deep .MuiInputBase-root .MuiOutlinedInput-root input {
-    border: red solid 1px;
-} */
+.MuiInputBase-root input{
+    padding: 8px 0 8px 10px;
+    font-size: 14px;
+}
+.MuiInputBase-root{
+    margin:8px;
+    width: 190px;
+}

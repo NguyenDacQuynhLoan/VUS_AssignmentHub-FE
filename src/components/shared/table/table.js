@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import DataTableRow from "./components/table-row";
 import { DataTablePagination } from "./components/table-pagination";
-
+import { DataTableHead } from "./components/table-head-sort";
 
 //data
 const rows = [
-  createData(1, "001", "Math", "loan", "Assignment Submit", "2023-03-31", true, [
+  createData(1, "001", "Math", "Loan", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -40,7 +40,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(3, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(3, "003", "English", "Cuong", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -52,7 +52,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(4, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(4, "004", "English", "Thanh", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -64,7 +64,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(5, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(5, "005", "English", "Ho", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -88,7 +88,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(7, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(7, "002", "English", "Truc", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -100,7 +100,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(8, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(8, "002", "English", "Thuy", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -112,7 +112,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(9, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(9, "002", "English", "Minh", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -124,7 +124,7 @@ const rows = [
       amount: 1,
     },
   ]),
-  createData(10, "002", "English", "An", "Assignment Submit", "2023-03-31", true, [
+  createData(10, "002", "English", "Tu", "Assignment Submit", "2023-03-31", true, [
     {
       date: "2020-01-05",
       customerId: "11091700",
@@ -189,12 +189,49 @@ function createData(id, code, subject, studentName, title, submitDate, isGrade, 
   return { id, code, subject, studentName, title, submitDate, isGrade, detail };
 }
 
+
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
 /**
  *  Table with detail row
  */
 export function DataTable() {
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(10);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
   const emptyRows =
     pageIndex > 0 ? Math.max(0, (1 + pageIndex) * pageSize - rows.length) : 0;
@@ -211,21 +248,19 @@ export function DataTable() {
   return (
     <>
       <TableContainer component={Paper} sx={{ height: 515 }}>
-        <Table stickyHeader aria-label="sticky table" size="small" >
+        <Table stickyHeader aria-label="sticky table" size="small" variant="solid">
           <TableHead>
             <TableRow>
-              <TableCell align="left"></TableCell>
-              <TableCell>Code</TableCell>
-              <TableCell>Subject</TableCell>
-              <TableCell align="left">Student Name</TableCell>
-              <TableCell align="left">Title</TableCell>
-              <TableCell align="center">Submit Date</TableCell>
-              <TableCell align="right">Status</TableCell>
+              <DataTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              />
             </TableRow>
           </TableHead>
           <TableBody>
             {pageSize > 0
-              ? rows
+              ? stableSort(rows,getComparator(order, orderBy))
                 .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
                 .map((e) => (
                   <>
