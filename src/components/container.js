@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Routes, Route } from "react-router-dom";
 import { styled } from "@mui/material/styles";
-import { adminMenu } from "../../routes/admin-menu";
-import { sideBarWidth, useDefaultLayoutContext } from "../provider/layout-provider";
-import LoginPage from '../../pages/Login';
+
+import { adminMenu } from "../routes/admin-menu";
+import { sideBarWidth, useDefaultLayoutContext } from '../layout/provider/layout-provider';
+
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(1),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -32,24 +32,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export function DefaultMain() {
+export function ContainerComponent() {
   const {openSidebar} = useDefaultLayoutContext();
-  // const [token, setToken] = useState();
-
-  // // get token
-  // React.useEffect = () =>{
-  //   var url = "";
-  //   axios.get(url).then((res)=>{
-  //     setToken(res.data);
-  //   });
-  // }
-
+  
   return (
     <>
       <Main open={openSidebar}>
         <DrawerHeader />
         <Routes>
-
           {adminMenu.map((item, index) => (
             <Route key={index} path={item.url} element={item.page}/>
           ))}

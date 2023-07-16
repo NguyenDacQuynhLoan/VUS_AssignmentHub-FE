@@ -1,4 +1,4 @@
-import Home from "../pages/Home";
+import Overview from "../pages";
 
 /**
  *  User Menu on Sidebar
@@ -7,7 +7,7 @@ export const userMenu = [
     {
         title:"Home",
         url:"",
-        page : <Home/>
+        page : <Overview/>
     },
     {
         "title":"Submit Assignment",

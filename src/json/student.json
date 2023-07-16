@@ -1,0 +1,19 @@
+[
+    {
+        "url":"/",
+        "label": "Home"
+    },
+    {
+        "url":"/submit-assignment",
+        "title": "Submit Assignment"
+    }
+    ,
+    {
+        "url":"/account",
+        "title": "Account"
+    },
+    {
+        "url":"/setting",
+        "title": "Setting"
+    }
+]

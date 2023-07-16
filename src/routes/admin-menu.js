@@ -1,31 +1,46 @@
-import Home from '../pages/Home';
-import Assignment from '../pages/Assignment';
-
-import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { Setting } from '../pages/Setting';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ChatIcon from '@mui/icons-material/Chat';
+
+import Dashboard from '../pages/dashboard';
+import Overview from '../pages';
+import AccountPage from '../pages/account';
+import ChatAppPage from '../pages/chat-app';
 
 /**
  * Admin Menu On Sidebar
  */
 export const adminMenu = [
     {
-        title: "Home",
+        title: "Overview",
         url: "/",
-        icon: <HomeIcon />,
-        page: <Home />
+        icon: <DashboardIcon />,
+        page: <Overview />
     },
     {
-        title: "Assignment Board",
-        url: "/assignments",
+        title: "Grade Board",
+        url: "/grade-board",
         icon: <AssignmentIcon />,
-        page: <Assignment />
+        page: <Dashboard />
     },
     {
-        title: "Setting",
-        url: "/setting",
-        icon: <SettingsIcon />,
-        page:<Setting/>
+        title: "Account",
+        url: "/account",
+        icon: <PersonIcon />,
+        page:<AccountPage/>
+    },
+    {
+        title: "Chat",
+        url: "/chat",
+        icon: <ChatIcon />,
+        page:<ChatAppPage/>
+    },
+    {
+        title: "Log Out",
+        // url: "/account",
+        icon: <LogoutIcon />,
+        // page:<AccountPage/>
     }
 ]

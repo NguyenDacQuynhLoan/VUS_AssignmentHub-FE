@@ -3,27 +3,23 @@ import { createContext, useContext, useState } from "react";
 const DefaultLayoutContext = createContext({})
 export const sideBarWidth = 240;
 
-export function DefaultLayoutProvider({...props}) {
+export function LayoutProvider({...props}) {
     const [openSidebar, setOpenSidebar] = useState(true);
     const [router, setRouter] = useState();
 
     const onToggleSidebar = () =>{
-        setOpenSidebar(!openSidebar);        
+      setOpenSidebar(!openSidebar);        
     }
     const onChangeRouter = (url) =>{
-        setRouter(url ?? "/");
+      setRouter(url ?? "/");
     }
   return (
     <DefaultLayoutContext.Provider 
-        value={
-            {
-              openSidebar,
-              onToggleSidebar,
-              router,
-              onChangeRouter,
-              sideBarWidth
-            }
-        }>
+      value={{
+        router, onChangeRouter,
+        openSidebar, onToggleSidebar,
+        sideBarWidth
+      }}>
       {props.children}
     </DefaultLayoutContext.Provider>
   );

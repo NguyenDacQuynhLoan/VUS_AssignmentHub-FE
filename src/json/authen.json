@@ -1,0 +1,10 @@
+[
+    {
+        "url":"/authen/login",
+        "label": "Login"
+    },
+    {
+        "url":"/authen/register",
+        "title": "Register"
+    }
+]

@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
-import { assignmentColumns } from "./columns/admin-assignment-header";
+import { assignmentColumns } from "./data/admin-assignment-header";
 
 // function createData(name, calories, fat, carbs, protein) {
 //   return {

@@ -10,14 +10,14 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import LastPageIcon from "@mui/icons-material/LastPage";
 
-DataTablePagination.propTypes = {
+TableDataPagination.propTypes = {
   count: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export function DataTablePagination(props) {
+export function TableDataPagination(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -38,7 +38,7 @@ export function DataTablePagination(props) {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+    <Box sx={{ flexShrink: 0, ml: 2.5 ,textAlign:"right"}}>
       <IconButton
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}

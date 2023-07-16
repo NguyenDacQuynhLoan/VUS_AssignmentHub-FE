@@ -1,10 +1,11 @@
 import { useState } from "react";
 
+import { purple } from '@mui/material/colors';
 import { styled } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import {
@@ -16,8 +17,8 @@ import {
   Badge,
   Toolbar,
 } from "@mui/material";
-import { sideBarWidth, useDefaultLayoutContext } from "../provider/layout-provider";
-
+import { sideBarWidth, useDefaultLayoutContext } from "../layout/provider/layout-provider";
+;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -33,13 +34,10 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
+  backgroundColor: theme.palette.default.light,
 }));
 
-/**
- *  Header of layout
- * @returns
- */
-export function DefaultHeader() {
+export function HeaderComponent() {
   const { openSidebar, onToggleSidebar } = useDefaultLayoutContext();
   
   const [anchorEl, setAnchorEl] = useState(null);
@@ -69,6 +67,8 @@ export function DefaultHeader() {
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
+      anchorReference="anchorPosition"
+      anchorPosition={{ top: 50, left: 1895 }}
       anchorOrigin={{
         vertical: "top",
         horizontal: "right",
@@ -107,7 +107,7 @@ export function DefaultHeader() {
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
-            <MailIcon />
+            <ChatBubbleIcon />
           </Badge>
         </IconButton>
         <p>Messages</p>
@@ -159,7 +159,7 @@ export function DefaultHeader() {
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                   <Badge badgeContent={4} color="error">
-                    <MailIcon />
+                    <ChatBubbleIcon />
                   </Badge>
                 </IconButton>
                 <IconButton size="large" aria-label="show 17 new notifications" color="inherit"
