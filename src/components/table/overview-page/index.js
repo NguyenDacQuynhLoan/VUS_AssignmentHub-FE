@@ -11,13 +11,8 @@ import {
   TableRow,
   TablePagination,
   Box,
-  CardContent,
   SvgIcon,
   Button,
-  CardHeader,
-  Card,
-  Stack,
-  Grid,
   Typography,
 } from "@mui/material";
 import DataTableRow from "./components/table-row";
@@ -365,11 +360,11 @@ function stableSort(array, comparator) {
 /**
  *  Table with detail row
  */
-export function DataTable({ isOverviewPage }) {
+export function DataTable() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [pageIndex, setPageIndex] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(isOverviewPage ? 10 : 13);
+  const [pageSize, setPageSize] = React.useState(12);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -391,27 +386,24 @@ export function DataTable({ isOverviewPage }) {
 
   return (
     <>
-      {isOverviewPage === true ? (
-          <Box sx={{  display: 'flex',justifyContent: 'space-between',paddingTop:1,paddingBottom:1 }}>
-            <Typography sx={{fontSize:20 }}>
-              NEW UPDATE
-            </Typography>
-              <Button
-                color="inherit"
-                size="large"
-                startIcon={
-                  <SvgIcon fontSize="small">
-                    <CachedIcon />
-                  </SvgIcon>
-                }
-              >
-                Sync
-              </Button>
-          </Box>
-      ) : (
-        ""
-      )}
-      <TableContainer component={Paper} sx={{ height: "auto" }}>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', paddingTop: 1, paddingBottom: 1 }}>
+        <Typography sx={{ fontSize: 20 }}>
+          NEW UPDATE
+        </Typography>
+        <Button
+          color="inherit"
+          size="large"
+          startIcon={
+            <SvgIcon fontSize="small">
+              <CachedIcon />
+            </SvgIcon>
+          }
+        >
+          Sync
+        </Button>
+      </Box>
+      <TableContainer component={Paper} sx={{ height: "66.1vh" }}>
         <Table
           stickyHeader
           aria-label="sticky table"
@@ -430,36 +422,20 @@ export function DataTable({ isOverviewPage }) {
           <TableBody>
             {pageSize > 0
               ? stableSort(rows, getComparator(order, orderBy))
-                  .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
-                  .map((e) => (
-                    <>
-                      <DataTableRow key={e.id} row={e} />
-                    </>
-                  ))
+                .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
+                .map((e) => (
+                  <>
+                    <DataTableRow key={e.id} row={e} />
+                  </>
+                ))
               : emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
           </TableBody>
         </Table>
       </TableContainer>
-      {isOverviewPage === true ? (
-        ""
-      ) : (
-        <TableDataPagination
-          sx={{ bottom: "0" }}
-          component="div"
-          rowsPerPageOptions={[10, 25, 100]}
-          colSpan={3}
-          count={rows.length}
-          rowsPerPage={pageSize}
-          page={pageIndex}
-          onPageChange={handleChangePageIndex}
-          onRowsPerPageChange={handleChangePageSize}
-          ActionsComponent={TablePagination}
-        />
-      )}
     </>
   );
 }

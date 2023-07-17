@@ -16,7 +16,7 @@ export default function PieChart({ ...props }) {
     console.log(`${JSON.stringify(props.data)}`);
   return (
     <>
-      <Box sx={{ width: "auto", height: "50vh" }}>
+      <Box sx={{ width: "auto", height: "32.2vh" ,marginLeft:3}}>
         <ResponsivePie
           data={props.data}
           sortByValue={props.data.value}
@@ -135,7 +135,7 @@ export default function PieChart({ ...props }) {
           //     },
           //   ]}
         ></ResponsivePie>
-        <TableContainer component={Paper}></TableContainer>
+        <TableContainer component={Paper}>
         <Table sx={{ minWidth: "auto" }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -163,6 +163,8 @@ export default function PieChart({ ...props }) {
             ))}
           </TableBody>
         </Table>
+        </TableContainer>
+
       </Box>
     </>
   );

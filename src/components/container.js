@@ -3,17 +3,17 @@ import { Routes, Route } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 
 import { adminMenu } from "../routes/admin-menu";
-import { sideBarWidth, useDefaultLayoutContext } from '../layout/provider/layout-provider';
+import { SIDEBAR_WIDTH, useDefaultLayoutContext } from '../layout/provider/layout-provider';
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
-    padding: theme.spacing(1),
+    // padding: theme.spacing(1),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-${sideBarWidth}px`,
+    marginLeft: `-${SIDEBAR_WIDTH}px`,
     ...(open && {
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.easeOut,

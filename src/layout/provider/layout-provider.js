@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from "react";
 
 const DefaultLayoutContext = createContext({})
-export const sideBarWidth = 240;
+
+export const SIDEBAR_WIDTH = 220;
 
 export function LayoutProvider({...props}) {
     const [openSidebar, setOpenSidebar] = useState(true);
@@ -18,7 +19,7 @@ export function LayoutProvider({...props}) {
       value={{
         router, onChangeRouter,
         openSidebar, onToggleSidebar,
-        sideBarWidth
+        SIDEBAR_WIDTH
       }}>
       {props.children}
     </DefaultLayoutContext.Provider>

@@ -18,14 +18,23 @@ import {
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
+import DialogForm from "../../../dialogs/dialog-form";
 
 export default function TableFilterComponent() {
+  const [isOpen, setDialogOpen] = React.useState(false);
+
+  const OnOpenNewDialogForm = () =>{
+    setDialogOpen(true)
+  }
+  const OnCloseDiaglogForm = (e) =>{
+    setDialogOpen(e);
+  }
   return (
-    <Box sx={{ paddingBottom: 2 }}>
+    <Box  sx={{ paddingBottom: 1 }}>
       <Grid
         container
         spacing={4}
-        sx={{ paddingBottom: 2 }}
+        sx={{ paddingBottom: 1 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
         <Grid item xs={2} sm={4} md={7}>
@@ -48,6 +57,7 @@ export default function TableFilterComponent() {
         </Grid>
         <Grid item xs={2} sm={4} md={5} sx={{display:"flex", justifyContent: 'flex-end' }}>
           <Button
+          onClick={()=>OnOpenNewDialogForm()}
             variant="contained"
             sx={{
               marginRight: 2, 
@@ -98,6 +108,7 @@ export default function TableFilterComponent() {
           </Typography>
         </AccordionDetails>
       </Accordion>
+      <DialogForm isOpen={isOpen} OnCloseDiaglogForm={OnCloseDiaglogForm}/>
     </Box>
   );
 }

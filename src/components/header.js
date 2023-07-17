@@ -17,7 +17,7 @@ import {
   Badge,
   Toolbar,
 } from "@mui/material";
-import { sideBarWidth, useDefaultLayoutContext } from "../layout/provider/layout-provider";
+import { SIDEBAR_WIDTH, useDefaultLayoutContext } from "../layout/provider/layout-provider";
 ;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -27,8 +27,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    width: `calc(100% - ${sideBarWidth}px)`,
-    marginLeft: `${sideBarWidth}px`,
+    width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
+    marginLeft: `${SIDEBAR_WIDTH}px`,
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -151,7 +151,7 @@ export function HeaderComponent() {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap component="div">
-                Education System
+                Assignment Hub
               </Typography>
 
               <Box sx={{ flexGrow: 1 }} />

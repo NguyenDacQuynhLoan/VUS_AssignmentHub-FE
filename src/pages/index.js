@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import React from "react";
 import PieChart from "../components/pie-chart";
 import { TotalContainerComponent } from "../components/overview-totals";
-import { DataTable } from "../components/table";
+import { DataTable } from "../components/table/overview-page";
 
 // sample chart data
 const Data = [
@@ -53,10 +53,10 @@ export default function Overview() {
         <TotalContainerComponent />
         </Box>
         <Grid container columns={{ xs: 4, sm: 12, md: 12 }}>
-          <Grid item xs={2} sm={7} md={8}>
-            <DataTable isOverviewPage={true} />
+          <Grid item xs={2} sm={9} md={9}>
+            <DataTable />
           </Grid>
-          <Grid item xs={2} sm={5} md={4}>
+          <Grid item xs={2} sm={3} md={3}>
             <PieChart data={Data} />
           </Grid>
         </Grid>

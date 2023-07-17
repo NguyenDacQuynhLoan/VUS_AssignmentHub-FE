@@ -1,24 +1,11 @@
 import { Link } from "react-router-dom";
+
 import { styled, useTheme } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { Drawer, ListItem, ListItemIcon, ListItemText, ListItemButton, Typography, Divider, IconButton, List, Box, } from "@mui/material";
 
-import {
-  Drawer,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  Typography,
-  Divider,
-  IconButton,
-  List,
-  Box,
-} from "@mui/material";
-import {
-  sideBarWidth,
-  useDefaultLayoutContext,
-} from "../layout/provider/layout-provider";
+import { SIDEBAR_WIDTH, useDefaultLayoutContext, } from "../layout/provider/layout-provider";
 import { adminMenu } from "../routes/admin-menu";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -37,10 +24,10 @@ export function SidebarComponent() {
     <Box>
       <Drawer
         sx={{
-          width: sideBarWidth,
+          width: SIDEBAR_WIDTH,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: sideBarWidth,
+            width: SIDEBAR_WIDTH,
             boxSizing: "border-box",
           },
         }}
@@ -72,7 +59,14 @@ export function SidebarComponent() {
                   </ListItemIcon>
                   <ListItemText
                     sx={{ color: "textWhite" }}
-                    primary={<Typography>{item.title}</Typography>}
+                    // sx={{
+                    //   color:"textWhite", "&:hover": {
+                    //     color: item.title === "Log Out" ? "red" : '',
+                    //   },
+                    // }}
+                    primary={<Typography>
+                      {item.title}
+                    </Typography>}
                   />
                 </ListItemButton>
               </ListItem>
