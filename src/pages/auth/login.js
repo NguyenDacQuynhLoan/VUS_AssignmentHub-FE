@@ -4,6 +4,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Grid,
   Stack,
   Tab,
   Tabs,
@@ -51,30 +52,23 @@ export const LoginPage = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          backgroundColor: "background.paper",
-          border: "red solid 1px",
-          flex: "1 1 auto",
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Box sx={{ maxWidth: 550, px: 3, py: "100px", width: "100%" }}>
-          <div>
+      <Box display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100vh"
+          sx={{
+            width: "40%"
+          }}
+        >
+          <div >
             <Stack spacing={1} sx={{ mb: 3 }}>
               <Typography variant="h4">Login</Typography>
-
-              <Typography color="text.secondary" variant="body2">
-                Don&apos;t have an account? &nbsp;
-                <Link underline="hover" href="/auth/register">
-                  {/* component={NextLink} */}
-                  Register
-                </Link>
-              </Typography>
             </Stack>
-
             <Tabs sx={{ mb: 3 }} value={method} onChange={handleMethodChange}>
               <Tab label="Email" value="email" />
               <Tab label="register" value="register" />
@@ -103,31 +97,34 @@ export const LoginPage = () => {
             )}
 
             {method === "register" && (
-               <form noValidate onSubmit={onSubmitClicked}>
-               <FormControl>
-                 <FormLabel>Email</FormLabel>
-                 <Stack spacing={3}>
-                   <TextField name="email"
-                     value={formData.email}
-                     onChange={handleChange}
-                   />
-                 </Stack>
-                 <FormLabel>Full name</FormLabel>
-                 <Stack spacing={3}>
-                   <TextField name="email"
-                     value={formData.email}
-                     onChange={handleChange}
-                   />
-                 </Stack>
-                 <FormLabel>Password</FormLabel>
-                 <Stack spacing={3}>
+              <form noValidate onSubmit={onSubmitClicked}>
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Stack spacing={3}>
+                    <TextField name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </Stack>
+                  <FormLabel>Full name</FormLabel>
+                  <Stack spacing={3}>
+                    <TextField name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </Stack>
+                  <FormLabel>Password</FormLabel>
+                  <Stack spacing={3}>
                     <TextField name="password" value={formData.password} onChange={handleChange} />
-                 </Stack>
-                 <Button type="submit">Submit</Button>
-               </FormControl>
-             </form>
+                  </Stack>
+                  <Button type="submit">Submit</Button>
+                </FormControl>
+              </form>
             )}
           </div>
+        </Box>
+        <Box sx={{ width: "60%", float: "right" }}>
+          <img style={{objectFit:"cover",width:"90%"}} src={process.env.PUBLIC_URL + '/Login_img.jpg'} /> 
         </Box>
       </Box>
     </>

@@ -1,5 +1,4 @@
 import { Grid, Paper } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import {
   Avatar,
   Card,
@@ -8,21 +7,29 @@ import {
   SvgIcon,
   Typography,
 } from "@mui/material";
-
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 
 export function TotalContainerComponent() {
   let data = [
     {
-      title: "total 1",
-      value: "total value",
+      title: "Checked assignment total",
+      value: "124/ 423  -Q2",
+      icon: <DoneAllIcon/>,
+      iconColor :""
     },
     {
-      title: "total 2",
-      value: "total value",
+      title: "Unchecked assignment total",
+      value: "32/ 423  -Q2",
+      icon: <RemoveDoneIcon/>,
+      iconColor :""
     },
     {
-      title: "total 3",
-      value: "total value",
+      title: "Ranked grade total",
+      value: "54",
+      icon: <AttachEmailIcon/>,
+      iconColor :""
     },
   ];
   return (
@@ -35,7 +42,6 @@ export function TotalContainerComponent() {
 }
 
 const TotalItemsComponent = ({ totalData }) => {
-  // const { title, value} = data;
   console.log(totalData);
   return (
     <>
@@ -59,12 +65,12 @@ const TotalItemsComponent = ({ totalData }) => {
                 </Stack>
                 <Avatar
                   sx={{
-                    backgroundColor: "primary.main",
+                    // backgroundColor: "primary.main",
                     height: 56,
                     width: 56,
                   }}
                 >
-                  {/* <SvgIcon></SvgIcon> */}
+                  {e.icon}
                 </Avatar>
               </Stack>
             </CardContent>

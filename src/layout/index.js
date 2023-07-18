@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Box } from "@mui/system";
 
 import { HeaderComponent } from "../components/header";
 import { SidebarComponent } from "../components/sidebar";
 import { ContainerComponent } from "../components/container";
 import { LayoutProvider } from "./provider/layout-provider"
 import { LoginPage } from "../pages/auth/login";
+import { Box } from "@mui/material";
 
 /**
  * Authentication
@@ -18,15 +18,13 @@ export default function LayoutView() {
   return (
     <LayoutProvider>
       {login === true ? (
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex"}}>
           <HeaderComponent />
           <SidebarComponent />
           <ContainerComponent />
         </Box>
       ) : (
-        <>
-          <LoginPage />
-        </>
+        <LoginPage />
       )}
     </LayoutProvider>
   );
