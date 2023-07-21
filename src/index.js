@@ -6,6 +6,7 @@ import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import LayoutView from './layout';
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
 const theme = createTheme({
   palette: {
     default: {

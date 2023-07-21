@@ -8,6 +8,7 @@ import Dashboard from '../pages/dashboard';
 import Overview from '../pages';
 import AccountPage from '../pages/account';
 import ChatAppPage from '../pages/chat-app';
+import { LoginPage } from '../pages/auth/login';
 
 /**
  * Admin Menu On Sidebar
@@ -39,8 +40,8 @@ export const adminMenu = [
     },
     {
         title: "Log Out",
-        // url: "/account",
+        url: "/login",
         icon: <LogoutIcon />,
-        // page:<AccountPage/>
+        page:<LoginPage/>
     }
 ]

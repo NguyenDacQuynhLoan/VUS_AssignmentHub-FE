@@ -12,7 +12,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/use-context";
 import axios from "axios";
 

@@ -425,7 +425,7 @@ export function DataTable() {
                 .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
                 .map((e) => (
                   <>
-                    <DataTableRow key={e.id} row={e} />
+                    <DataTableRow key={e.id} row={e}/>
                   </>
                 ))
               : emptyRows > 0 && (

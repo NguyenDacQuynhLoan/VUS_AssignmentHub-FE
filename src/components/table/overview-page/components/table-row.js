@@ -40,7 +40,6 @@ export default function DataTableRow(props) {
 
   const onOpenTab = (url) =>{
     window.open(url);
-    console.log(url);
   }
 
   return (

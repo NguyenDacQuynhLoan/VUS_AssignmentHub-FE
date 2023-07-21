@@ -13,7 +13,7 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 
 export default function PieChart({ ...props }) {
-    console.log(`${JSON.stringify(props.data)}`);
+    // console.log(`${JSON.stringify(props.data)}`);
   return (
     <>
       <Box sx={{ width: "auto", height: "32.2vh" ,marginLeft:3}}>

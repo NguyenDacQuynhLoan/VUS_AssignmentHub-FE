@@ -42,7 +42,6 @@ export function TotalContainerComponent() {
 }
 
 const TotalItemsComponent = ({ totalData }) => {
-  console.log(totalData);
   return (
     <>
       {totalData.map((e,index) => (
