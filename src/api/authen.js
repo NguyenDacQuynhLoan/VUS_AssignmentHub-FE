@@ -10,18 +10,20 @@ export const AuthenticationService = async () => {
                 "Content-Type":"application/json"
             }
         };
+
         var data = 
         {
             "email":"admin@gmail",
             "password":"admin123"
         };
+        // const bearer_token = `Bearer ${localStorage.getItem('token')}`;
+
         var result =  await axios.post(url,data,config);
         return result.data;
     } catch (error) {
         console.error('Error:', error);
     }
 }
-
 
 const  HTTP_METHOD_ENUM ={
     HTTP_POST   : "post",
@@ -35,6 +37,7 @@ const ENTITY_ENUM = {
     ROLE:"/roles",
     USER:"/users"
 }
+
 export default async function APIServices  ({method,data,url,entityURL}) {
     try {
         // validate
@@ -59,32 +62,29 @@ export default async function APIServices  ({method,data,url,entityURL}) {
                     result =  await axios.get(`${url}${entityURL}`,config);
                 }
                 break;
-            case HTTP_METHOD_ENUM.HTTP_POST:
-                {
-                    if(data == null || data){
+            // case HTTP_METHOD_ENUM.HTTP_POST:
+            //     {
+            //         if(data == null || data){
 
-                    }
-                    result =  await axios.post(`${url}${entityURL}`,data,config);
-                }   
-                break;
-            case HTTP_METHOD_ENUM.HTTP_PUT:
-                {
+            //         }
+            //         result =  await axios.post(`${url}${entityURL}`,data,config);
+            //     }   
+            //     break;
+            // case HTTP_METHOD_ENUM.HTTP_PUT:
+            //     {
     
-                }
-                break;
-            case HTTP_METHOD_ENUM.HTTP_DELETE:
-                {
-                    if(data != null){
+            //     }
+            //     break;
+            // case HTTP_METHOD_ENUM.HTTP_DELETE:
+            //     {
+            //         if(data != null){
                         
-                    }else{
-                        throw new Error("Missing input value or param")
-                    }
-                }
-                break;
+            //         }else{
+            //             throw new Error("Missing input value or param")
+            //         }
+            //     }
+            //     break;
             default:
-                {
-
-                }
                 break;
         }
         return result.data;

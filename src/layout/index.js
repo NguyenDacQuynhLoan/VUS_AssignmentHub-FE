@@ -7,6 +7,7 @@ import { LayoutProvider } from "./provider/layout-provider"
 import { LoginPage } from "../pages/auth/login";
 import { Box, Button } from "@mui/material";
 import { AuthenticationService } from "../api/authen";
+import axios from "axios";
 
 /**
  * Authentication
@@ -21,17 +22,17 @@ export default function LayoutView() {
         // console.log(token);
       }
     }
-    testAPI();
-  },[])
-  
+    // testAPI();
 
+  },[])
+
+  
   return (
     <LayoutProvider>
       {login === true ? (
         <Box sx={{ display: "flex"}}>
           <HeaderComponent />
           <SidebarComponent />
-          {/* onClick={testAPI} */}
           <ContainerComponent />
         </Box>
       ) : (
