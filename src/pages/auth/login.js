@@ -12,33 +12,42 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState, useCallback } from "react";
-import { useAuth } from "../../hooks/use-context";
-import axios from "axios";
+import APIServices, { ENTITY_ENUM, HTTP_METHOD_ENUM } from "../../api";
+import SnackbarMessage, { SNACKBAR_TYPE } from "../../components/snackbar";
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [method, setMethod] = useState("email");
-  const [token, setToken] = useState("");
-
-  const auth = useAuth();
 
   const onSubmitClicked = (e) => {
     e.preventDefault();
-    var url = "http://localhost:8080/EduSystem/auth/login";
-    var login = {
-      email: formData.email,
-      password: formData.password,
-    };
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+    SnackbarMessage({
+      snackbarType:SNACKBAR_TYPE.ERROR,
+      message:"LOGGIN FAIL",
+      isOpen:true})
+    // get login data
+    // var data = {
+    //   email: formData.email,
+    //   password: formData.password,
+    // };
 
-    axios.post(url, login, config).then((res) => setToken(res.data));
+    // // get token
+    // async function getToken() {
+    //   var tokenLogged =  await APIServices({
+    //     method:HTTP_METHOD_ENUM.HTTP_POST,
+    //     data:data,
+    //     entityUrl:ENTITY_ENUM.USER,
+    //     paramUrl:null
+    //   })
 
-    // Save into local storage
-    localStorage.setItem("Token", JSON.stringify(token));
+    //   if(tokenLogged !== "" && tokenLogged !== undefined){
+    //     // Save into local storage
+    //     localStorage.setItem("Token", JSON.stringify(tokenLogged));
+    //   }else{
+    //     // SnackbarMessage({snackbarType:SNACKBAR_TYPE.ERROR,message:"LOGGIN FAIL"})
+    //   }
+    // }
+    // getToken();
   };
 
   const handleChange = (e) => {
