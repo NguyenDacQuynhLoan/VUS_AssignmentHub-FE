@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { DateConvert } from './shared';
 
 function AssignmentModelFunc(object) {
     if(object != null){
@@ -10,7 +9,7 @@ function AssignmentModelFunc(object) {
             status: object.status,
             grade: object.grade,
             file: object.file,
-            createdDate: DateConvert(object.createdDate)
+            // createdDate: DateConvert(object.createdDate)
         }
     }
 }
@@ -21,5 +20,5 @@ AssignmentModelFunc.PropTypes={
     status: PropTypes.string.isRequired,
     grade: PropTypes.string.isRequired,
     file: PropTypes.string.isRequired,
-    createdDate: PropTypes.instanceOf(Date).isRequired
+    // createdDate: PropTypes.instanceOf(Date).isRequired
 }

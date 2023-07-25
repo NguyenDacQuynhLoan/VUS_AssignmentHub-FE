@@ -1,62 +1,72 @@
-import {
-  Alert,
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Grid,
-  Stack,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from "@mui/material";
 import React, { useState, useCallback } from "react";
+
+import { Box, Button, FilledInput, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
+
 import APIServices, { ENTITY_ENUM, HTTP_METHOD_ENUM } from "../../api";
-import SnackbarMessage, { SNACKBAR_TYPE } from "../../components/snackbar";
-
+import SnackbarStatutes, { SNACKBAR_TYPE, SnackbarStatus } from "../../components/snackbar";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+/**
+ * Login page
+ * @returns Token allow access pages
+ */
 export const LoginPage = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [method, setMethod] = useState("email");
+  const [formDataLogin, setFormDataLogin] = useState({ email: "", password: "" });
+  const [formDataRegister, setFormDataRegister] = useState({ email: "", password: "" });
+  const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+  const [showPasswordRegister, setShowPasswordRegister] = useState(false);
 
+  const [method, setMethod] = useState("email");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  
+  //  Submit login 
   const onSubmitClicked = (e) => {
     e.preventDefault();
-    SnackbarMessage({
-      snackbarType:SNACKBAR_TYPE.ERROR,
-      message:"LOGGIN FAIL",
-      isOpen:true})
-    // get login data
-    // var data = {
-    //   email: formData.email,
-    //   password: formData.password,
-    // };
 
-    // // get token
-    // async function getToken() {
-    //   var tokenLogged =  await APIServices({
-    //     method:HTTP_METHOD_ENUM.HTTP_POST,
-    //     data:data,
-    //     entityUrl:ENTITY_ENUM.USER,
-    //     paramUrl:null
-    //   })
+    // login data
+    var data = {
+      email: formDataLogin.email,
+      password: formDataLogin.password,
+    };
 
-    //   if(tokenLogged !== "" && tokenLogged !== undefined){
-    //     // Save into local storage
-    //     localStorage.setItem("Token", JSON.stringify(tokenLogged));
-    //   }else{
-    //     // SnackbarMessage({snackbarType:SNACKBAR_TYPE.ERROR,message:"LOGGIN FAIL"})
-    //   }
-    // }
-    // getToken();
+    // get token
+    async function getToken() {
+      var tokenLogged = await APIServices({
+        method: HTTP_METHOD_ENUM.HTTP_POST,
+        data: data,
+        entityUrl: ENTITY_ENUM.USER,
+        paramUrl: null
+      })
+
+      if (tokenLogged !== "" && tokenLogged !== undefined) {
+        // Save into local storage
+        localStorage.setItem("Token", JSON.stringify(tokenLogged));
+      } else {
+        setOpenSnackbar(true);
+      }
+    }
+    getToken();
   };
 
+  const handleSnackbar = (e) => {
+    setOpenSnackbar(e)
+  }
+
+  // get form data value
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormDataLogin({ ...formDataLogin, [e.target.name]: e.target.value });
   };
 
+  // switch login or register
   const handleMethodChange = useCallback((event, value) => {
     setMethod(value);
   }, []);
+
+  const handleClickShowPassword = () => setShowPasswordLogin((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   return (
     <>
@@ -87,19 +97,33 @@ export const LoginPage = () => {
                   <FormLabel>Email or account name</FormLabel>
                   <Stack spacing={3}>
                     <TextField name="email"
-                      value={formData.email}
+                      value={formDataLogin.email}
                       onChange={handleChange}
                     />
                   </Stack>
                   <FormLabel>Password</FormLabel>
                   <Stack spacing={3}>
                     <TextField
+                    type={showPasswordLogin? "text" :"password" }
                       name="password"
-                      value={formData.password}
+                      value={formDataLogin.password}
                       onChange={handleChange}
+                      InputProps={{
+                        endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPasswordLogin ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                        )}}
                     />
                   </Stack>
-                  <Button type="submit">Submit</Button>
+                  <Button variant="contained" sx={{marginTop:3}} type="submit">Submit</Button>
                 </FormControl>
               </form>
             )}
@@ -110,30 +134,69 @@ export const LoginPage = () => {
                   <FormLabel>Email</FormLabel>
                   <Stack spacing={3}>
                     <TextField name="email"
-                      value={formData.email}
+                      value={formDataRegister.email}
                       onChange={handleChange}
                     />
                   </Stack>
                   <FormLabel>Full name</FormLabel>
                   <Stack spacing={3}>
-                    <TextField name="email"
-                      value={formData.email}
+                     <TextField
+                    type={showPasswordRegister? "text" :"password" }
+                      name="password"
+                      value={formDataRegister.email}
                       onChange={handleChange}
+                      InputProps={{
+                        endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPasswordRegister ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                        )}}
                     />
                   </Stack>
                   <FormLabel>Password</FormLabel>
                   <Stack spacing={3}>
-                    <TextField name="password" value={formData.password} onChange={handleChange} />
+                  <TextField
+                      type={showPasswordRegister? "text" :"password" }
+                      name="confirmPassword"
+                      value={formDataRegister.email}
+                      onChange={handleChange}
+                      InputProps={{
+                        endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPasswordRegister ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                        )}}
+                    />
+                    {/* <TextField name="password" value={formDataRegister.password} onChange={handleChange} /> */}
                   </Stack>
-                  <Button type="submit">Submit</Button>
+                  <Button variant="contained" sx={{marginTop:3}} type="submit">Submit</Button>
                 </FormControl>
               </form>
             )}
           </div>
         </Box>
         <Box sx={{ width: "60%", float: "right" }}>
-          <img style={{objectFit:"cover",width:"90%"}} src={process.env.PUBLIC_URL + '/Login_img.jpg'} /> 
+          <img style={{ objectFit: "cover", width: "90%" }} src={process.env.PUBLIC_URL + '/Login_img.jpg'} />
         </Box>
+        <SnackbarStatutes
+          isOpen={openSnackbar}
+          message={"Incorrect username or password"}
+          snackbarType={"error"}
+          handleSnackbar={handleSnackbar} />
       </Box>
     </>
   );

@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from "react-router-dom";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import LayoutView from './layout';
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LayoutView } from './layout';
 
 const theme = createTheme({
   palette: {

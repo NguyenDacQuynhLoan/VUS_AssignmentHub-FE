@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { HeaderComponent } from "../components/header";
-import { SidebarComponent } from "../components/sidebar";
-import { ContainerComponent } from "../components/container";
-import { LayoutProvider } from "./provider/layout-provider";
-import { LoginPage } from "../pages/auth/login";
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
-import { AuthenticationService } from "../api/authen";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+import { LayoutProvider } from "./provider/layout-provider";
+import { ContainerComponent } from "../components/container";
+import { SidebarComponent } from "../components/sidebar";
+import { HeaderComponent } from "../components/header";
+import { LoginPage } from "../pages/auth/login";
+import SimpleSnackbar, { SnackbarStatus } from "../components/snackbar";
+import SnackbarStatutes from "../components/snackbar";
 
 /**
  * Authentication
  * @returns layout access by token
  */
-export default function LayoutView() {
+export const LayoutView = () => {
   const [login, setLogin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // loading waiting checking token
   useEffect(() => {
     var token = localStorage.getItem("Token");
+
     setTimeout(() => {
-      if (token !== "" && token != null) {
+      // token is existed
+      console.log(token);
+      if (token !== "" && token != null && token!= undefined) {
         setLogin(true);
       }
+
+      // turn off loading
       setLoading(false);
-    },2000);
+    },1000);
   }, [login]);
 
   return (

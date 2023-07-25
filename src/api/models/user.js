@@ -1,4 +1,3 @@
-import { DateConvert } from "./shared";
 import PropTypes from 'prop-types';
 
 export function UserModelFunc(object) {
@@ -13,7 +12,7 @@ export function UserModelFunc(object) {
             major: (object.major != null && Number(object.major)) ? object.major : null,
             email: object.email,
             password: object.password,
-            // assignments: Array.isArray(object.assignments) ? object.assignments : [],//
+            assignments: Array.isArray(object.assignments) ? object.assignments : [],//
             subjects: Array.isArray(object.assignments) ? object.subjects : [] //
         }
     }
@@ -29,18 +28,18 @@ UserModelFunc.PropTypes = {
     dateOfBirth: PropTypes.instanceOf(Date).isRequired,
     phone: PropTypes.string,
     major: PropTypes.number,
-    // assignments: PropTypes.arrayOf(PropTypes.shape({
-    //     id: PropTypes.number,
-    //     code: PropTypes.string.isRequired,
-    //     title: PropTypes.string.isRequired,
-    //     status: PropTypes.string.isRequired,
-    //     grade: PropTypes.string.isRequired,
-    //     file: PropTypes.string.isRequired,
-    //     createdDate: PropTypes.instanceOf(Date).isRequired
-    // })),
-    // subjects: PropTypes.arrayOf(PropTypes.shape({
-    //     id: PropTypes.number,
-    //     code: PropTypes.string.isRequired,
-    //     name:PropTypes.string.isRequired
-    // })) 
+    assignments: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        code: PropTypes.string,
+        title: PropTypes.string,
+        status: PropTypes.string,
+        grade: PropTypes.string,
+        file: PropTypes.string,
+        createdDate: PropTypes.instanceOf(Date)
+    })),
+    subjects: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        code: PropTypes.string,
+        name:PropTypes.string
+    })) 
 }
