@@ -1,19 +1,20 @@
 import PropTypes from 'prop-types';
+import { ConvertDate } from './shared';
 
 export function UserModelFunc(object) {
     if (object != null) {
         return  {
-            id: object == null ? 0 : Number(object.id),
+            id: 0,
             userCode: object.userCode,
             userName: object.userName,
             gender: object.gender,
-            dateOfBirth: object.dateOfBirth,
+            dateOfBirth: ConvertDate(object.dateOfBirth),
             phone: (object.phone != null) ? object.phone : "",
-            major: (object.major != null && Number(object.major)) ? object.major : null,
+            major: object.major,
             email: object.email,
             password: object.password,
-            assignments: Array.isArray(object.assignments) ? object.assignments : [],//
-            subjects: Array.isArray(object.assignments) ? object.subjects : [] //
+            assignments: Array.isArray(object.assignments) ? object.assignments : [],
+            subjects: Array.isArray(object.assignments) ? object.subjects : []
         }
     }
 }
@@ -26,8 +27,8 @@ UserModelFunc.PropTypes = {
     email: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     dateOfBirth: PropTypes.instanceOf(Date).isRequired,
+    major: PropTypes.any.isRequired,
     phone: PropTypes.string,
-    major: PropTypes.number,
     assignments: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number,
         code: PropTypes.string,

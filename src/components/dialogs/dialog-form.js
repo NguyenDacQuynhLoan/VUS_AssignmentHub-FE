@@ -54,7 +54,7 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
 
   return (
     <>
-      <Dialog scroll="paper" open={isOpen} onClose={() => OnCloseDiaglogForm(false)}>
+      <Dialog scroll="paper" open={isOpen} onClose={() => OnCloseDiaglogForm(false)} maxWidth="md">
         {/* onClose={handleClose} */}
         <DialogTitle>Create</DialogTitle>
         <DialogContent>

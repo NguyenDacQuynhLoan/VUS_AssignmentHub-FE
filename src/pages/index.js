@@ -48,15 +48,15 @@ const Data = [
 export default function Overview() {
   return (
     <>
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1 ,alignItems:"stretch",padding:"0"}}>
         <Box sx={{paddingBottom:2}}>
-        <TotalContainerComponent />
+          <TotalContainerComponent />
         </Box>
-        <Grid container columns={{ xs: 4, sm: 12, md: 12 }}>
-          <Grid item xs={2} sm={9} md={9}>
+        <Grid container columns={{ xs: 4, sm: 12, md: 12 }} >
+          <Grid item xs={2} sm={9} md={8.5}>
             <DataTable />
           </Grid>
-          <Grid item xs={2} sm={3} md={3}>
+          <Grid item xs={2} sm={3} md={3.5}>
             <PieChart data={Data} />
           </Grid>
         </Grid>

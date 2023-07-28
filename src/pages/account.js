@@ -2,19 +2,47 @@ import {
     Avatar,
     Box,
     Button,
-    Card, 
+    Card,
     CardActions,
     CardContent,
-    CardHeader, 
-    Container, 
-    Divider, 
-    Grid, 
-    Stack, 
-    TextField, 
+    CardHeader,
+    Container,
+    Divider,
+    Grid,
+    MenuItem,
+    Select,
+    Stack,
+    TextField,
+    Tooltip,
     Typography
 } from "@mui/material";
+import { UserModelFunc } from "../api/models/user";
+import { useState } from "react";
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function AccountPage() {
+    const [isReadOnly, setReadOnly] = useState(true);
+
+    let data = {
+        userCode: "Code001",
+        userName: "admin",
+        gender: "1",
+        dateOfBirth: "2012-12-11T17:00:00.000+00:00",
+        phone: "1",
+        major: "Finance",
+        email: "admin@gmail",
+        password: "$2a$12$C5XEeARWvjsUgb6mPwx8duGfxD4JzfLGyh2lzi0tJ/4lKFk7kWCJO",
+        subjects: [],
+        assignments: []
+    }
+
+    let convertedDate = UserModelFunc(data);
+    console.log(convertedDate);
+
+    const EditAccount = () => {
+        setReadOnly(true);
+    }
+
     return (
         <>
             <Box
@@ -76,7 +104,7 @@ export default function AccountPage() {
                                     </CardContent>
                                     <Divider />
                                     <CardActions>
-                                        <Button
+                                        <Button onClick={() => EditAccount()}
                                             fullWidth
                                             variant="text"
                                         >
@@ -93,108 +121,125 @@ export default function AccountPage() {
                                 // onSubmit={handleSubmit}
                                 >
                                     <Card >
-                                        <CardHeader
-                                            subheader="The information can be edited"
-                                            title="Profile"
-                                        />
+                                        <Box sx={{ display: "flex", justifyContent: 'space-between' }}>
+                                            <CardHeader
+                                                subheader="The information can be edited"
+                                                title="Profile"
+                                            >
+                                            </CardHeader>
+                                            <Button>
+                                                <Tooltip title="Edit">
+                                                    <EditIcon />
+                                                </Tooltip>
+                                            </Button>
+                                        </Box>
                                         <CardContent >
-                                            {/* sx={{ pt: 0 }} */}
-                                            <Box sx={{ height: "53vh" }}>
-                                                <Grid container spacing={3} paddingLeft={3}>
-                                                    <Grid xs={12} md={6}>
+                                            <Box sx={{ height: "53vh", flexGrow: 1 }} paddingLeft={3}>
+                                                <Grid container spacing={4} >
+                                                    <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
                                                             fullWidth
-                                                            helperText="Please specify the first name"
-                                                            label="First name"
-                                                            name="firstName"
+                                                            label="User Name"
+                                                            name="userName"
                                                             required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={convertedDate.userName}
                                                         // onChange={handleChange}
                                                         // value={values.firstName}
                                                         />
                                                     </Grid>
-                                                    <Grid
-                                                        xs={12}
-                                                        md={6}
-                                                    >
+                                                    <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
                                                             fullWidth
-                                                            label="Last name"
-                                                            name="lastName"
+                                                            label="User Code"
+                                                            name="userCode"
                                                             required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={convertedDate.userCode}
                                                         // onChange={handleChange}
-                                                        // value={values.lastName}
+                                                        // value={values.userCode}
                                                         />
                                                     </Grid>
-                                                    <Grid
-                                                        xs={12}
-                                                        md={6}
-                                                    >
+
+
+                                                    <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
                                                             fullWidth
-                                                            label="Email Address"
+                                                            label="E-mail / Account"
                                                             name="email"
                                                             required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={convertedDate.email}
                                                         // onChange={handleChange}
                                                         // value={values.email}
                                                         />
                                                     </Grid>
-                                                    <Grid
-                                                        xs={12}
-                                                        md={6}
-                                                    >
+                                                    <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
                                                             fullWidth
                                                             label="Phone Number"
                                                             name="phone"
-                                                            type="number"
-                                                        // onChange={handleChange}
-                                                        // value={values.phone}
-                                                        />
-                                                    </Grid>
-                                                    <Grid
-                                                        xs={12}
-                                                        md={6}
-                                                    >
-                                                        <TextField
-                                                            fullWidth
-                                                            label="Country"
-                                                            name="country"
                                                             required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={convertedDate.phone}
                                                         // onChange={handleChange}
-                                                        // value={values.country}
+                                                        // value={values.[phone]}
                                                         />
                                                     </Grid>
-                                                    <Grid
-                                                        xs={12}
-                                                        md={6}
-                                                    >
-                                                        <TextField
-                                                            fullWidth
-                                                            label="Select State"
-                                                            name="state"
+                                                    <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
+                                                        <Select
+                                                            labelId="demo-simple-select-label"
+                                                            id="demo-simple-select"
+                                                            readOnly={isReadOnly}
+                                                            label="Gender"
+                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
+                                                            defaultValue={convertedDate.gender}
+                                                            // value={age}
                                                             // onChange={handleChange}
-                                                            required
-                                                            select
-                                                            SelectProps={{ native: true }}
-                                                        // value={values.state}
                                                         >
-                                                            {/* {states.map((option) => (
-                                                                    <option
-                                                                        key={option.value}
-                                                                        value={option.value}
-                                                                    >
-                                                                        {option.label}
-                                                                    </option>
-                                                                ))} */}
-                                                        </TextField>
+                                                            <MenuItem value={"Female"}>Female</MenuItem>
+                                                            <MenuItem value={"Male"}>Male</MenuItem>
+                                                        </Select>
+
+                                                        {/* <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
+                                                            fullWidth
+                                                            label="Gender"
+                                                            name="gender"
+                                                            required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={convertedDate.gender}
+                                                        onChange={handleChange}
+                                                        value={values.gender}
+                                                        /> */}
                                                     </Grid>
+
                                                 </Grid>
                                             </Box>
                                         </CardContent>
                                         <Divider />
                                         <CardActions sx={{ justifyContent: 'flex-end' }}>
                                             <Button variant="contained">
-                                                Save details
+                                                Save
                                             </Button>
                                         </CardActions>
                                     </Card>

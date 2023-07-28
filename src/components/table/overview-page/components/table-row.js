@@ -38,10 +38,6 @@ export default function DataTableRow(props) {
   const { row } = props;
   const [open, setOpen] = useState(false);
 
-  const onOpenTab = (url) =>{
-    window.open(url);
-  }
-
   return (
     <React.Fragment>
       <TableRow hover={true} selected={open} sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -58,10 +54,7 @@ export default function DataTableRow(props) {
           {row.code}
         </TableCell>
         <TableCell align="left">
-          <Button size="small" variant="outlined" 
-            onClick={()=>onOpenTab(`http://localhost:3000/assignments/detail?code=${row.code}&name=${row.studentName}`)}>
-              {row.studentName}
-            </Button>
+          {row.studentName}
         </TableCell>
         <TableCell align="left">{row.subject}</TableCell>
         <TableCell align="left">{row.title}</TableCell>

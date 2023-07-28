@@ -365,6 +365,21 @@ export function DataTable() {
   const [orderBy, setOrderBy] = React.useState("calories");
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(12);
+  const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+
+  // change padding for title when screen is >= 24inch
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1920);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -385,9 +400,8 @@ export function DataTable() {
   };
 
   return (
-    <>
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', paddingTop: 1, paddingBottom: 1 }}>
+    <Box >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 1, paddingTop: isLargeScreen ? 2 : '0', }}>
         <Typography sx={{ fontSize: 20 }}>
           NEW UPDATE
         </Typography>
@@ -403,7 +417,7 @@ export function DataTable() {
           Sync
         </Button>
       </Box>
-      <TableContainer component={Paper} sx={{ height: "66.1vh" }}>
+      <TableContainer component={Paper} sx={{ height: "66vh" }}>
         <Table
           stickyHeader
           aria-label="sticky table"
@@ -425,7 +439,7 @@ export function DataTable() {
                 .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
                 .map((e) => (
                   <>
-                    <DataTableRow key={e.id} row={e}/>
+                    <DataTableRow key={e.id} row={e} />
                   </>
                 ))
               : emptyRows > 0 && (
@@ -436,6 +450,6 @@ export function DataTable() {
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Box>
   );
 }

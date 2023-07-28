@@ -12,30 +12,40 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 
 export function TotalContainerComponent() {
+  var today = new Date();
+  var currentYear = today.getFullYear();
+  var currentMonth = today.getMonth() + 1;
+
+  // 3 semester per a year
+  var quarter = Math.ceil(currentMonth / 4);
+
   let data = [
     {
       title: "Checked assignment total",
-      value: "124/ 423  -Q2",
-      icon: <DoneAllIcon/>,
-      iconColor :""
+      value: "124/ 423",
+      semester: quarter,
+      icon: <DoneAllIcon />,
+      iconColor: "#00e676"
     },
     {
       title: "Unchecked assignment total",
-      value: "32/ 423  -Q2",
-      icon: <RemoveDoneIcon/>,
-      iconColor :""
+      value: "32/ 423",
+      semester: quarter,
+      icon: <RemoveDoneIcon />,
+      iconColor: "#f44336"
     },
     {
       title: "Ranked grade total",
       value: "54",
-      icon: <AttachEmailIcon/>,
-      iconColor :""
+      icon: <AttachEmailIcon />,
+      iconColor: "#3f51b5"
     },
   ];
+
   return (
     <>
       <Grid container spacing={4} columns={{ xs: 4, sm: 8, md: 12 }}>
-          <TotalItemsComponent totalData={data} />
+        <TotalItemsComponent totalData={data} />
       </Grid>
     </>
   );
@@ -44,7 +54,7 @@ export function TotalContainerComponent() {
 const TotalItemsComponent = ({ totalData }) => {
   return (
     <>
-      {totalData.map((e,index) => (
+      {totalData.map((e, index) => (
         <Grid item xs={2} sm={4} md={4} key={index}>
           <Card>
             <CardContent>
@@ -59,12 +69,16 @@ const TotalItemsComponent = ({ totalData }) => {
                     {e.title}
                   </Typography>
                   <Typography variant="h4">
-                    {e.value}
-                    </Typography>
+                    {e.value} &nbsp;
+                    {
+                      e.title === "Ranked grade total" ? "" :
+                        <i style={{ color: "#f9a825" }}>Sem {e.semester}</i>
+                    }
+                  </Typography>
                 </Stack>
                 <Avatar
                   sx={{
-                    // backgroundColor: "primary.main",
+                    backgroundColor: e.iconColor,
                     height: 56,
                     width: 56,
                   }}

@@ -15,12 +15,12 @@ import { ResponsivePie } from "@nivo/pie";
 export default function PieChart({ ...props }) {
     // console.log(`${JSON.stringify(props.data)}`);
   return (
-    <>
-      <Box sx={{ width: "auto", height: "32.2vh" ,marginLeft:3}}>
+    <Box>
+      <Box sx={{ width: "auto", height: "32.2vh" ,marginLeft:3 }}>
         <ResponsivePie
           data={props.data}
           sortByValue={props.data.value}
-          margin={{ top: 20, right: 70, bottom: 0, left: 70 }}
+          margin={{ top: 20, right: 70, bottom: 30, left: 70 }}
           innerRadius={0.5}
           padAngle={0.7}
           cornerRadius={3}
@@ -135,7 +135,7 @@ export default function PieChart({ ...props }) {
           //     },
           //   ]}
         ></ResponsivePie>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{height:"41vh"}}>
         <Table sx={{ minWidth: "auto" }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -166,6 +166,6 @@ export default function PieChart({ ...props }) {
         </TableContainer>
 
       </Box>
-    </>
+    </Box>
   );
 }

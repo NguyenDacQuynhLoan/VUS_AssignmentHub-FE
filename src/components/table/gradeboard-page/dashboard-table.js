@@ -22,6 +22,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import DialogForm from '../../dialogs/dialog-form';
+import { Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 // #region sample data
 // function createData(name, calories, fat, carbs, protein) {
@@ -739,60 +741,70 @@ GradeBoardTableHead.propTypes = {
 };
 
 // #region toolbar
-// function GradeBoardTableToolbar(props) {
-//   const { numSelected } = props;
+function GradeBoardTableToolbar(props) {
+  const { numSelected } = props;
 
-//   return (
-//     <Toolbar
-//       sx={{
-//         pl: { sm: 2 },
-//         pr: { xs: 1, sm: 1 },
-//         ...(numSelected > 0 && {
-//           bgcolor: (theme) =>
-//             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-//         }),
-//       }}
-//     >
-//       {numSelected > 0 ? (
-//         <Typography
-//           sx={{ flex: '1 1 100%' }}
-//           color="inherit"
-//           variant="subtitle1"
-//           component="div"
-//         >
-//           {numSelected} selected
-//         </Typography>
-//       ) : (
-//         <Typography
-//           sx={{ flex: '1 1 100%' }}
-//           variant="h6"
-//           id="tableTitle"
-//           component="div"
-//         >
-//           Nutrition
-//         </Typography>
-//       )}
+  return (
+    <Toolbar
+      sx={{
+        pl: { sm: 2 },
+        pr: { xs: 1, sm: 1 },
+        ...(numSelected > 0 && {
+          bgcolor: (theme) =>
+            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+        }),
+      }}
+    >
+      {numSelected > 0 ? (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
+          {numSelected} selected
+        </Typography>
+      ) : (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Nutrition
+        </Typography>
+      )}
+      {numSelected == 1 ? (
+        <Button startIcon={
+          <EditIcon />
+        }>
+          <Tooltip title="Edit">
+            Edit
+          </Tooltip>
+        </Button>
+      ) : ""}
+      {numSelected >= 1 ? (
+        <Button sx={{marginLeft:4,marginRight:2}} startIcon={
+          <DeleteIcon />
+        }>
+          <Tooltip title="Delete">
+            Delete
+          </Tooltip>
+        </Button>
+      ) : (
+        <Tooltip title="Filter list">
+          <IconButton>
+            <FilterListIcon />
+          </IconButton>
+        </Tooltip>
+      )}
+    </Toolbar>
+  );
+}
 
-//       {numSelected > 0 ? (
-//         <Tooltip title="Delete">
-//           <IconButton>
-//             <DeleteIcon />
-//           </IconButton>
-//         </Tooltip>
-//       ) : (
-//         <Tooltip title="Filter list">
-//           <IconButton>
-//             <FilterListIcon />
-//           </IconButton>
-//         </Tooltip>
-//       )}
-//     </Toolbar>
-//   );
-// }
-
-// GradeBoardTableToolbar.propTypes = {
-//   numSelected: PropTypes.number.isRequired,
-// };
+GradeBoardTableToolbar.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+};
 // #endregion
 
 export default function GradeBoardTable() {
@@ -800,8 +812,12 @@ export default function GradeBoardTable() {
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(20);
-  
+  const [rowsPerPage, setRowsPerPage] = React.useState(50);
+
+  const onOpenTab = (url) => {
+    window.open(url);
+  }
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -864,7 +880,7 @@ export default function GradeBoardTable() {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        {/* <GradeBoardTableToolbar numSelected={selected.length} /> */}
+        <GradeBoardTableToolbar numSelected={selected.length} />
         <TableContainer sx={{ height: "72vh" }}>
           <Table sx={{ minWidth: 750 }}>
             <GradeBoardTableHead
@@ -912,8 +928,11 @@ export default function GradeBoardTable() {
                     <TableCell sx={{ padding: 0 }} align="left">
                       {row.code}
                     </TableCell>
-                    <TableCell sx={{ padding: 0 }} align="left">
-                      {row.studentName}
+                    <TableCell sx={{ padding: 0.2 }} align="left">
+                      <Button size="small" variant="outlined" sx={{ padding: 0 }}
+                        onClick={() => onOpenTab(`http://localhost:3000/assignments/detail?code=${row.code}&name=${row.studentName}`)}>
+                        {row.studentName}
+                      </Button>
                     </TableCell>
                     <TableCell sx={{ padding: 0 }} align="left">
                       {row.title}
@@ -942,7 +961,7 @@ export default function GradeBoardTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[15, 50, 100]}
+          rowsPerPageOptions={[50, 100, 500]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
