@@ -40,7 +40,6 @@ export const adminMenu = [
     },
     {
         title: "Log Out",
-        url: "/login",
         icon: <LogoutIcon />,
         page:<LoginPage/>
     }

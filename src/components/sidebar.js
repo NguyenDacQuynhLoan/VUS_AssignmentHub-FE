@@ -7,6 +7,8 @@ import { Drawer, ListItem, ListItemIcon, ListItemText, ListItemButton, Typograph
 
 import { SIDEBAR_WIDTH, useDefaultLayoutContext, } from "../layout/provider/layout-provider";
 import { adminMenu } from "../routes/admin-menu";
+import DialogConfirm from "./dialogs/dialog-confirm";
+import { useState } from "react";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -17,8 +19,25 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export function SidebarComponent() {
+  const [isOpen, setDialogOpen] = useState(false);
+
   const theme = useTheme();
   const { openSidebar, onToggleSidebar } = useDefaultLayoutContext();
+
+  let title = "Confirm";
+  let message = "Are you sure you want to log out ?";
+  const OnOpenDialogForm = () => {
+    setDialogOpen(true)
+  }
+
+  const OnCloseDialogForm = (e) => {
+      setDialogOpen(e);
+  }
+
+  const OnAcceptDialogForm = () =>{
+    localStorage.clear();
+    window.location.reload();
+  }
 
   return (
     <Box>
@@ -53,17 +72,17 @@ export function SidebarComponent() {
               style={{ textDecoration: "none", color: "textWhite" }}
             >
               <ListItem key={index} disablePadding>
-                <ListItemButton>
+                <ListItemButton 
+                  onClick={
+                    item.title === "Log Out"?
+                    OnOpenDialogForm
+                    :null}
+                >
                   <ListItemIcon sx={{ color: "textWhite" }}>
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
                     sx={{ color: "textWhite" }}
-                    // sx={{
-                    //   color:"textWhite", "&:hover": {
-                    //     color: item.title === "Log Out" ? "red" : '',
-                    //   },
-                    // }}
                     primary={<Typography>
                       {item.title}
                     </Typography>}
@@ -74,6 +93,11 @@ export function SidebarComponent() {
           ))}
         </List>
       </Drawer>
+      <DialogConfirm
+                isOpen={isOpen} title={title} message={message} 
+                OnCloseDialogForm={OnCloseDialogForm} 
+                OnAcceptDialogForm={OnAcceptDialogForm}
+            />
     </Box>
   );
 }

@@ -6,46 +6,44 @@ import { TotalContainerComponent } from "../components/overview-totals";
 import { DataTable } from "../components/table/overview-page";
 
 // sample chart data
-const Data = [
+export const MajorDefault = [
   {
-    id: "css1",
-    label: "6666",
-    value: 273,
-    color: "hsl(352, 70%, 50%)",
+    id: "Software",
+    label: "Software Engineering",
+    value: 1311,
+    color: "#E9C0A0"
   },
   {
-    id: "css3",
-    label: "css",
-    value: 23,
-    color: "hsl(352, 70%, 50%)",
+    id: "Finance",
+    label: "Finance",
+    value: 3224,
+    color: "#F47560"
   },
   {
-    id: "lisp",
-    label: "lisp",
-    value: 375,
-    color: "hsl(119, 70%, 50%)",
+    id: "Computer",
+    label: "Computer Science",
+    value: 1721,
+    color: "#F1E25B"
   },
   {
-    id: "java",
-    label: "java",
-    value: 151,
-    color: "hsl(165, 70%, 50%)",
+    id: "Accounting",
+    label: "Accounting",
+    value: 4218,
+    color: "#E7A937"
   },
   {
-    id: "stylus",
-    label: "stylus",
-    value: 66,
-    color: "hsl(153, 70%, 50%)",
-  },
-  {
-    id: "javascript",
-    label: "javascript",
-    value: 31,
-    color: "hsl(353, 70%, 50%)",
-  },
+    id: "Economics",
+    label: "Economics",
+    value: 2930,
+    color: "#60CEBA"
+  }
 ];
 
 export default function Overview() {
+  // assignment api -> table ,total container
+
+  // user -> pie chart
+
   return (
     <>
       <Box component="main" sx={{ flexGrow: 1 ,alignItems:"stretch",padding:"0"}}>
@@ -57,7 +55,7 @@ export default function Overview() {
             <DataTable />
           </Grid>
           <Grid item xs={2} sm={3} md={3.5}>
-            <PieChart data={Data} />
+            <PieChart data={MajorDefault} />
           </Grid>
         </Grid>
       </Box>

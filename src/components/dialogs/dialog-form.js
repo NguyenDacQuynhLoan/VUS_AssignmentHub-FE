@@ -36,14 +36,6 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
         }
     })    
     console.log(addUser.data);    
-    
-    // var addUser = await axios.post("http://localhost:8090/AssignmentHub/api/users",value,{
-    //     headers:{
-    //         "Content-Type":"application/json",
-    //         Authorization: token
-    //     }
-    // })
-    // console.log("this is user added");
 };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

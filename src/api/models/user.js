@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { ConvertDate } from './shared';
+import { ConvertDate } from './func';
+
 
 export function UserModelFunc(object) {
     if (object != null) {

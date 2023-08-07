@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import {
   TableCell,
@@ -11,10 +11,11 @@ import {
   Table,
   TableHead,
   TableRow,
-  Button
-} from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+  Button,
+  Tooltip,
+} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 DataTableRow.propTypes = {
   row: PropTypes.shape({
@@ -25,12 +26,13 @@ DataTableRow.propTypes = {
     title: PropTypes.string.isRequired,
     submitDate: PropTypes.string.isRequired,
     isGrade: PropTypes.bool.isRequired,
-    detail: PropTypes.arrayOf(PropTypes.shape({
-      amount: PropTypes.number.isRequired,
-      customerId: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
-    })).isRequired
-
+    detail: PropTypes.arrayOf(
+      PropTypes.shape({
+        amount: PropTypes.number.isRequired,
+        customerId: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired,
+      })
+    ).isRequired,
   }).isRequired,
 };
 
@@ -40,7 +42,11 @@ export default function DataTableRow(props) {
 
   return (
     <React.Fragment>
-      <TableRow hover={true} selected={open} sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow
+        hover={true}
+        selected={open}
+        sx={{ "& > *": { borderBottom: "unset" } }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -50,15 +56,13 @@ export default function DataTableRow(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell align="left" component="th" scope="row">
           {row.code}
         </TableCell>
-        <TableCell align="left">
-          {row.studentName}
-        </TableCell>
+        <TableCell align="left">{row.studentName}</TableCell>
         <TableCell align="left">{row.subject}</TableCell>
         <TableCell align="left">{row.title}</TableCell>
-        <TableCell align="center">{row.submitDate}</TableCell>
+        <TableCell align="right">{row.submitDate}</TableCell>
         <TableCell align="right">{row.isGrade.toString()}</TableCell>
       </TableRow>
 
@@ -72,22 +76,44 @@ export default function DataTableRow(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
+                    <TableCell>Student Code</TableCell>
+                    <TableCell>Student Name</TableCell>
+                    <TableCell align="right">Grade</TableCell>
+                    <TableCell align="center">File</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.detail.map((e) => (
-                    <TableRow sx={{ width: '100%;' }} key={e.date}>
+                    <TableRow sx={{ width: "100%;" }} key={e.date}>
                       <TableCell component="th" scope="row">
                         {e.date}
                       </TableCell>
                       <TableCell>{e.customerId}</TableCell>
                       <TableCell align="right">{e.amount}</TableCell>
                       <TableCell align="right">
-                        {Math.round(e.amount * row.price * 100) / 100}
+                        <Button
+                          sx={{
+                            padding: 0,
+                            maxWidth: "10em",
+                            textTransform:"none"
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontStyle:"italic",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <Tooltip 
+                            placement="bottom-start"
+                            title="View file">
+
+                            {"View Fileeddddddddddddddddddddđdddddddddddddddddddeeeeeeee"}
+                            </Tooltip>
+                          </Typography>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

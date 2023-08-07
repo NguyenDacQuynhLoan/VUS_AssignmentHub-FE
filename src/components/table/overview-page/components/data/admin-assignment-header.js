@@ -3,13 +3,13 @@ export const assignmentColumns = [
     field: "code",
     align: "left",
     disablePadding: true,
-    label: "Student Code",
+    label: "Code",
   },
   {
-    field: "studentName",
+    field: "major",
     align: "left",
     disablePadding: false,
-    label: "Student Name",
+    label: "Major",
   },
   {
     field: "subject",
@@ -24,15 +24,15 @@ export const assignmentColumns = [
     label: "Title",
   },
   {
-    field: "submitDate",
-    align: "center",
+    field: "createdDate",
+    align: "right",
     disablePadding: false,
     label: "Submit Date",
   },
   {
-    field: "isGrade",
+    field: "status",
     align: "right",
     disablePadding: false,
-    label: "View",
+    label: "Status",
   },
 ];

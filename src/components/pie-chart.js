@@ -1,7 +1,5 @@
 import {
-  Avatar,
   Box,
-  Button,
   Paper,
   Table,
   TableBody,
@@ -13,7 +11,32 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 
 export default function PieChart({ ...props }) {
-    // console.log(`${JSON.stringify(props.data)}`);
+  console.log(props.data); 
+    const pattern = [
+      {
+        id: 0,
+        type: "patternDots",
+        background: "inherit",
+        color: "rgba(255, 255, 255, 0.3)",
+        size: 4,
+        padding: 1,
+        stagger: true,
+      },
+      {
+        id: 1,
+        type: "patternLines",
+        background: "inherit",
+        color: "rgba(255, 255, 255, 0.3)",
+        rotation: -45,
+        lineWidth: 6,
+        spacing: 10,
+      },
+    ]
+
+    const getRandomPattern = () => {
+      return Math.floor(Math.random() * 2);
+    }
+
   return (
     <Box>
       <Box sx={{ width: "auto", height: "32.2vh" ,marginLeft:3 }}>
@@ -39,109 +62,24 @@ export default function PieChart({ ...props }) {
             from: "color",
             modifiers: [["darker", 2]],
           }}
-          defs={[
-            {
-              id: "dots",
-              type: "patternDots",
-              background: "inherit",
-              color: "rgba(255, 255, 255, 0.3)",
-              size: 4,
-              padding: 1,
-              stagger: true,
-            },
-            {
-              id: "lines",
-              type: "patternLines",
-              background: "inherit",
-              color: "rgba(255, 255, 255, 0.3)",
-              rotation: -45,
-              lineWidth: 6,
-              spacing: 10,
-            },
-          ]}
-          fill={[
-            {
-              match: {
-                id: "ruby",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "c",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "go",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "python",
-              },
-              id: "dots",
-            },
-            {
-              match: {
-                id: "scala",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "lisp",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "elixir",
-              },
-              id: "lines",
-            },
-            {
-              match: {
-                id: "javascript",
-              },
-              id: "lines",
-            },
-          ]}
-          //   legends={[
-          //     {
-          //       anchor: "bottom",
-          //       direction: "row",
-          //       justify: false,
-          //       translateX: 0,
-          //       translateY: 56,
-          //       itemsSpacing: 0,
-          //       itemWidth: 65,
-          //       itemHeight: 18,
-          //       itemTextColor: "#999",
-          //       itemDirection: "left-to-right",
-          //       itemOpacity: 1,
-          //       symbolSize: 18,
-          //       symbolShape: "circle",
-          //       effects: [
-          //         {
-          //           on: "hover",
-          //           style: {
-          //             itemTextColor: "#000",
-          //           },
-          //         },
-          //       ],
-          //     },
-          //   ]}
+          defs={pattern}
+          fill={
+            props.data.map((e)=>(
+              {
+                match: {
+                  id: e.id,
+                },
+                id: getRandomPattern(),    
+              }
+            ))}
         ></ResponsivePie>
         <TableContainer component={Paper} sx={{height:"41vh"}}>
         <Table sx={{ minWidth: "auto" }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="center">Calories</TableCell>
-              <TableCell align="center">Calories</TableCell>
-              <TableCell align="center">Fat&nbsp;(g)</TableCell>
+              <TableCell align="left"></TableCell>
+              <TableCell align="left">Subject</TableCell>
+              <TableCell align="left">Total</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -150,8 +88,14 @@ export default function PieChart({ ...props }) {
                 key={row.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  <Button variant="contained" sx={{ backgroundColor: `${row.color}` }}></Button>
+                <TableCell align="center" component="th" scope="row" >
+                  <Box sx={{
+                    backgroundColor:row.color,
+                    color:"transparent",
+                    width:"2em" ,
+                    height:"2em",
+                    borderRadius:"50%",
+                    }}/>
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {row.label}
@@ -164,7 +108,6 @@ export default function PieChart({ ...props }) {
           </TableBody>
         </Table>
         </TableContainer>
-
       </Box>
     </Box>
   );

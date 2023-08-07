@@ -6,9 +6,10 @@ import {
     CardActions,
     CardContent,
     CardHeader,
-    Container,
     Divider,
     Grid,
+    Input,
+    InputAdornment,
     MenuItem,
     Select,
     Stack,
@@ -16,33 +17,58 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
+
 import { UserModelFunc } from "../api/models/user";
 import { useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
+import { DatePicker } from "@mui/x-date-pickers";
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import HttpsIcon from '@mui/icons-material/Https';
+import dayjs from "dayjs";
+import DialogConfirm from "../components/dialogs/dialog-confirm";
 
 export default function AccountPage() {
+    const [isOpen, setDialogOpen] = useState(false);
     const [isReadOnly, setReadOnly] = useState(true);
-
+    const [birthDate, setBirthDate] = useState(dayjs("2022-04-17"));
+    let title = "Update information";
+    let message = "Do you want change your account information ?"
     let data = {
-        userCode: "Code001",
-        userName: "admin",
-        gender: "1",
-        dateOfBirth: "2012-12-11T17:00:00.000+00:00",
-        phone: "1",
+        userCode: "Code001",//
+        userName: "admin", //
+        gender: "Female",//
+        dateOfBirth: "2022-04-17", // translate to datepicker
+        phone: "0902625027", //
         major: "Finance",
-        email: "admin@gmail",
+        email: "admin@gmail",//
         password: "$2a$12$C5XEeARWvjsUgb6mPwx8duGfxD4JzfLGyh2lzi0tJ/4lKFk7kWCJO",
         subjects: [],
         assignments: []
     }
 
     let convertedDate = UserModelFunc(data);
-    console.log(convertedDate);
-
-    const EditAccount = () => {
-        setReadOnly(true);
+    
+    const OnEditProfileButton = () => {
+        setReadOnly(!isReadOnly);
+    }
+    
+    const OnUploadFileButton = () =>{
+        document.getElementById("get-file").click();
     }
 
+    const OnOpenDialogForm = () => {
+        setDialogOpen(true)
+    }
+
+    const OnCloseDialogForm = (e) => {
+        setDialogOpen(e);
+    }
+
+    const OnAcceptDialogForm = () =>{
+        // save 
+        
+        setDialogOpen(false);
+    }
     return (
         <>
             <Box
@@ -83,37 +109,35 @@ export default function AccountPage() {
                                                 gutterBottom
                                                 variant="h5"
                                             >
-                                                {/* {user.name} */}
-                                                name
+                                                {convertedDate.userName}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="body2"
                                             >
-                                                {/* {user.city} {user.country} */}
-                                                city
+                                                {convertedDate.userCode}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="body2"
                                             >
-                                                {/* {user.timezone} */}
-                                                timezone
+                                                {convertedDate.major}
                                             </Typography>
                                         </Box>
                                     </CardContent>
                                     <Divider />
                                     <CardActions>
-                                        <Button onClick={() => EditAccount()}
+                                        <Button 
+                                            onClick={OnUploadFileButton}
                                             fullWidth
                                             variant="text"
                                         >
                                             Upload picture
                                         </Button>
+                                        <Input id="get-file" sx={{display:"none"}} type="file"/>
                                     </CardActions>
                                 </Card>
                             </Grid>
-                            {/* content */}
                             <Grid item xs={12} md={6} lg={8}>
                                 <form
                                     autoComplete="off"
@@ -127,8 +151,8 @@ export default function AccountPage() {
                                                 title="Profile"
                                             >
                                             </CardHeader>
-                                            <Button>
-                                                <Tooltip title="Edit">
+                                            <Button onClick={OnEditProfileButton}>
+                                                <Tooltip title="Edit" >
                                                     <EditIcon />
                                                 </Tooltip>
                                             </Button>
@@ -168,22 +192,13 @@ export default function AccountPage() {
                                                         // value={values.userCode}
                                                         />
                                                     </Grid>
-
-
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
-                                                        <TextField
-                                                            InputProps={{
-                                                                readOnly: isReadOnly,
-                                                            }}
-                                                            sx={{ marginRight: 2 }}
-                                                            fullWidth
-                                                            label="E-mail / Account"
-                                                            name="email"
-                                                            required
-                                                            variant={isReadOnly ? "filled" : "outlined"}
-                                                            defaultValue={convertedDate.email}
-                                                        // onChange={handleChange}
-                                                        // value={values.email}
+                                                        <DatePicker 
+                                                        sx={{width:"100%"}}
+                                                        disabled={isReadOnly}
+                                                        label="Date of Birth"
+                                                        value={birthDate}
+                                                        onChange={(newDate) => setBirthDate(newDate)}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
@@ -203,11 +218,11 @@ export default function AccountPage() {
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
+                                                        <Box sx={{display:"flex",alignItems:"center"}}>
+                                                        <Typography>Gender:&nbsp;</Typography>
                                                         <Select
-                                                            labelId="demo-simple-select-label"
                                                             id="demo-simple-select"
                                                             readOnly={isReadOnly}
-                                                            label="Gender"
                                                             sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
                                                             defaultValue={convertedDate.gender}
                                                             // value={age}
@@ -216,6 +231,8 @@ export default function AccountPage() {
                                                             <MenuItem value={"Female"}>Female</MenuItem>
                                                             <MenuItem value={"Male"}>Male</MenuItem>
                                                         </Select>
+                                                        </Box>
+                                                       
 
                                                         {/* <TextField
                                                             InputProps={{
@@ -232,13 +249,61 @@ export default function AccountPage() {
                                                         value={values.gender}
                                                         /> */}
                                                     </Grid>
-
+                                                    <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
+                                                        <Box sx={{display:"flex",alignItems:"center"}}> 
+                                                            <TextField
+                                                                // InputProps={{
+                                                                //     readOnly: isReadOnly,
+                                                                // }}
+                                                                readOnly
+                                                                sx={{ marginRight: 2 }}
+                                                                fullWidth
+                                                                label="E-mail / Account"
+                                                                name="email"
+                                                                required
+                                                                variant="filled"
+                                                                defaultValue={convertedDate.email}
+                                                            // onChange={handleChange}
+                                                            // value={values.email}
+                                                            />
+                                                            <Button
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            disabled={isReadOnly}
+                                                             sx={{
+                                                                background: isReadOnly ? '#F0F0F0' : 'inherit'
+                                                             }} 
+                                                             startIcon={
+                                                                 <InputAdornment position="start">
+                                                                    {isReadOnly ? <HttpsIcon/>:
+                                                                    <LockOpenIcon/>
+                                                                     }
+                                                                 </InputAdornment>
+                                                            } >Change password</Button>
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={12} md={2} sx={{ paddingTop: "15px !important" }}>
+                                                    <Box sx={{display:"flex",alignItems:"center"}}>
+                                                        <Typography>Major:&nbsp;</Typography>
+                                                        <Select
+                                                            readOnly={isReadOnly}
+                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
+                                                            defaultValue={convertedDate.major}
+                                                            // value={age}
+                                                            // onChange={handleChange}
+                                                        >
+                                                            <MenuItem value={"Finance"}>Finance</MenuItem>
+                                                            <MenuItem value={"Dev"}>Dev</MenuItem>
+                                                        </Select>
+                                                        </Box>
+                                                    </Grid>
                                                 </Grid>
                                             </Box>
                                         </CardContent>
                                         <Divider />
                                         <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                            <Button variant="contained">
+                                            <Button variant="contained"
+                                            disabled={isReadOnly}
+                                                onClick={() => OnOpenDialogForm()}>
                                                 Save
                                             </Button>
                                         </CardActions>
@@ -249,6 +314,11 @@ export default function AccountPage() {
                     </div>
                 </Stack>
             </Box>
+            <DialogConfirm 
+                isOpen={isOpen} title={title} message={message} 
+                OnCloseDialogForm={OnCloseDialogForm} 
+                OnAcceptDialogForm={OnAcceptDialogForm}
+            />
         </>
     );
-}
+}     

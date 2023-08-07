@@ -18,6 +18,8 @@ import {
   Toolbar,
 } from "@mui/material";
 import { SIDEBAR_WIDTH, useDefaultLayoutContext } from "../layout/provider/layout-provider";
+import DialogConfirm from "./dialogs/dialog-confirm";
+import { useNavigate } from "react-router-dom";
 ;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -38,6 +40,25 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export function HeaderComponent() {
+  const navigate = useNavigate();
+  const [isOpen, setDialogOpen] = useState(false);
+
+  let title = "Confirm";
+  let message = "Are you sure you want to log out ?";
+  const OnOpenDialogForm = () => {
+    setDialogOpen(true)
+  }
+
+  const OnCloseDialogForm = (e) => {
+      setDialogOpen(e);
+  }
+
+  const OnAcceptDialogForm = () =>{
+    localStorage.clear();
+    window.location.reload();
+  }
+
+
   const { openSidebar, onToggleSidebar } = useDefaultLayoutContext();
   
   const [anchorEl, setAnchorEl] = useState(null);
@@ -82,8 +103,20 @@ export function HeaderComponent() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={()=>
+        {
+          handleMenuClose();
+          navigate("/account")
+        }
+      }>Profile</MenuItem>
+      <MenuItem 
+        sx={{color:"red"}}
+        onClick={()=> 
+        { 
+          handleMenuClose(); 
+          OnOpenDialogForm() 
+        }
+      } >Log Out</MenuItem>
     </Menu>
   );
 
@@ -188,6 +221,11 @@ export function HeaderComponent() {
           {renderMenu}
         </Box>
       </AppBar>
+      <DialogConfirm
+                isOpen={isOpen} title={title} message={message} 
+                OnCloseDialogForm={OnCloseDialogForm} 
+                OnAcceptDialogForm={OnAcceptDialogForm}
+            />
     </>
   );
 }

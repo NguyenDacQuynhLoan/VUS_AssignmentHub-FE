@@ -1,27 +1,16 @@
 import axios from "axios";
+import { HTTP_METHOD_ENUM } from "./enum/Http_method";
+import { ENTITY_ENUM } from "./enum/Entity";
 
 export const baseURL = "http://localhost:8090/AssignmentHub/api";
-
-export const HTTP_METHOD_ENUM = {
-  HTTP_POST: "post",
-  HTTP_GET: "get",
-  HTTP_PUT: "put",
-  HTTP_DELETE: "delete",
-};
-
-export const ENTITY_ENUM = {
-  SUBJECT: "/subjects",
-  ASSIGNMENT: "/assignments",
-  ROLE: "/roles",
-  USER: "/users",
-};
 
 export default async function APIServices({
   method,
   data,
   entityUrl,
   paramUrl,
-}) {
+}) 
+{
   try {
     // validate
     if (

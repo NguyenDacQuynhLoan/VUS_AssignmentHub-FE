@@ -24,8 +24,7 @@ export const LayoutView = () => {
 
     setTimeout(() => {
       // token is existed
-      console.log(token);
-      if (token !== "" && token != null && token!= undefined) {
+      if (token !== "" && token != null && token !== undefined) {
         setLogin(true);
       }
 
