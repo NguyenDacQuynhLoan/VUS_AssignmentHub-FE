@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-function AssignmentModelFunc(object) {
+export function AssignmentModelFunc(object) {
     if(object != null){
         return {
             id: object == null ? 0 : Number(object.id),
