@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -24,26 +24,30 @@ import SnackbarStatutes, {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { AuthenticationService } from "../../api/authen";
+import { useDefaultLayoutContext } from "../../layout/provider/layout-provider";
+import { useEffect } from "react";
+
 /**
  * Login page
  * @returns Token allow access pages
  */
-export const LoginPage = () => {
+export const LoginPage = ({onLoginSubmit, isError}) => {
   const [formDataLogin, setFormDataLogin] = useState({
     email: "",
     password: "",
   });
+
   const [formDataRegister, setFormDataRegister] = useState({
     email: "",
     password: "",
   });
+  
   const [showPasswordLogin, setShowPasswordLogin] = useState(false);
   const [showPasswordRegister, setShowPasswordRegister] = useState(false);
 
   const [method, setMethod] = useState("login");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const navigate = useNavigate();
 
   //  Submit login
   const onSubmitClicked = (e) => {
@@ -55,24 +59,13 @@ export const LoginPage = () => {
       password: formDataLogin.password,
     };
 
-    // get token
-    async function getToken() {
-      var tokenLogged = await AuthenticationService(data);
-      if (tokenLogged !== "" && tokenLogged !== undefined) 
-      {
-        // reload page
-        navigate("/");
-        window.location.reload();
-      } else {
-        // show toast error message
-        setOpenSnackbar(true);
-      }
-    }
-    getToken();
+    onLoginSubmit(data);
+    //isError => snackbar
+
   };
 
   const handleSnackbar = (e) => {
-    setOpenSnackbar(e);
+    setOpenSnackbar(isError);
   };
 
   // get form data value

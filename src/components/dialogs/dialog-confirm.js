@@ -32,7 +32,7 @@ export default function DialogConfirm({
           >
             Cancel
           </Button>
-          <Button onClick={() => OnAcceptDialogForm()} autoFocus>
+          <Button onClick={() => OnAcceptDialogForm(true)} autoFocus>
             OK
           </Button>
         </DialogActions>

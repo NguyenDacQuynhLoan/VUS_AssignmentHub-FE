@@ -1,20 +1,22 @@
 import PropTypes from 'prop-types';
-import { ConvertDate } from './func';
-
 
 export function UserModelFunc(object) {
-    if (object != null) {
-        return  {
-            userCode: object.userCode,
-            userName: object.userName,
-            gender: object.gender,
-            dateOfBirth: ConvertDate(object.dateOfBirth),
-            phone: (object.phone != null) ? object.phone : "",
-            major: object.major,
-            email: object.email,
-            assignments: Array.isArray(object.assignments) ? object.assignments : [],
-            subjects: Array.isArray(object.assignments) ? object.subjects : []
-        }
+    try {
+        if (object != null) {
+            return  {
+                userCode: object.userCode,
+                userName: object.userName,
+                gender: object.gender,
+                dateOfBirth: object.dateOfBirth,
+                phone: (object.phone != null) ? object.phone : "",
+                major: object.major,
+                email: object.email,
+                assignments: Array.isArray(object.assignments) ? object.assignments : [],
+                subjects: Array.isArray(object.assignments) ? object.subjects : []
+            }
+        }    
+    } catch (error) {
+        console.log(error);
     }
 }
 

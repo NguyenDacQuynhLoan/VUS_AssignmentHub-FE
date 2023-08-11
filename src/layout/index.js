@@ -2,22 +2,28 @@ import { useEffect, useState } from "react";
 
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 
-import { LayoutProvider } from "./provider/layout-provider";
+import { LayoutProvider, useDefaultLayoutContext } from "./provider/layout-provider";
 import { ContainerComponent } from "../components/container";
 import { SidebarComponent } from "../components/sidebar";
 import { HeaderComponent } from "../components/header";
 import { LoginPage } from "../pages/auth/login";
 import SimpleSnackbar, { SnackbarStatus } from "../components/snackbar";
 import SnackbarStatutes from "../components/snackbar";
+import { AuthenticationService } from "../api/authen";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Authentication
  * @returns layout access by token
  */
 export const LayoutView = () => {
-  const [login, setLogin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const {onStoreCurrentEmail} = useDefaultLayoutContext();
 
+  const [isLogin, setLogin] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [isError, setError] = useState(false);
+  
   // loading waiting checking token
   useEffect(() => {
     var token = localStorage.getItem("Token");
@@ -31,28 +37,54 @@ export const LayoutView = () => {
       // turn off loading
       setLoading(false);
     },1000);
-  }, [login]);
+  }, [isLogin]);
+
+  /**
+   * Login submitment
+   * @param {*} data 
+   */
+  const onLoginSubmit = (data) =>{
+    // get token
+    async function getToken() {
+      var tokenLogged = await AuthenticationService(data);
+      if (tokenLogged !== "" && tokenLogged !== undefined) 
+      {
+        localStorage.setItem("UserEmail", JSON.stringify(data.email));
+
+        // reload page
+        navigate("/");
+        window.location.reload();
+        
+        //onStoreCurrentEmail(data.email);
+      } else {
+        // show toast error message
+        setError(true);
+        // setOpenSnackbar(true);
+        }
+      }
+      getToken();
+  }
 
   return (
     <LayoutProvider>
       <Box sx={{ display: "flex" }}>
-        {loading ? (
+        {isLoading ? (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={loading}
+            open={isLoading}
           >
             <CircularProgress color="primary" />
           </Backdrop>
         ) : (
           <>
-            {login === true ? (
+            {isLogin === true ? (
               <>
                 <HeaderComponent />
                 <SidebarComponent />
                 <ContainerComponent />
               </>
             ) : (
-              <LoginPage />
+              <LoginPage onLoginSubmit={onLoginSubmit} isError={isError}/>
             )}
           </>
         )}

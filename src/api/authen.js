@@ -1,5 +1,4 @@
 import axios from "axios"
-
 export const AuthenticationService = async (loginData) => {
 
     const token_storage = localStorage.getItem('token');
@@ -21,13 +20,12 @@ export const AuthenticationService = async (loginData) => {
                     "Content-Type": "application/json"
                 }
             };
-
+            
             var data =
             {
                 "email": loginData.email,
                 "password": loginData.password
             };
-
 
             var result = await axios.post(url, data, config);
             // axios.defaults.headers.common["Authorization"] = `Bearer ${result.data}`;

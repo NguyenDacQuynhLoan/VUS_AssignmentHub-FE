@@ -18,36 +18,127 @@ import {
     Typography
 } from "@mui/material";
 
-import { UserModelFunc } from "../api/models/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import { DatePicker } from "@mui/x-date-pickers";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import DeleteIcon from '@mui/icons-material/Delete';
 import HttpsIcon from '@mui/icons-material/Https';
 import dayjs from "dayjs";
+
 import DialogConfirm from "../components/dialogs/dialog-confirm";
+import { UserModelFunc } from "../api/models/user";
+import { useDefaultLayoutContext } from "../layout/provider/layout-provider";
+import APIServices, { ENTITY_ENUM, HTTP_METHOD_ENUM } from "../api";
+import { ConvertDate } from "../api/func";
+
+const USER_ACTION = {
+    DELETE,
+    UPDATE
+}
 
 export default function AccountPage() {
+    // User Infomation
+    const [userInfo, setUserInfo] = useState();
+    const [userForm, setUserForm] = useState({
+        userCode: "",
+        userName: "",
+        gender: "",
+        dateOfBirth: "",
+        phone: "",
+        major: "",
+        email: "",
+    });
+    const [birthDate, setBirthDate] = useState(dayjs(""));
+
+    const [dialogContent, setDialogContent] = useState({
+        title:"",
+        message:""
+    });
+
     const [isOpen, setDialogOpen] = useState(false);
-    const [isReadOnly, setReadOnly] = useState(true);
-    const [birthDate, setBirthDate] = useState(dayjs("2022-04-17"));
-    let title = "Update information";
-    let message = "Do you want change your account information ?"
-    let data = {
-        userCode: "Code001",//
-        userName: "admin", //
-        gender: "Female",//
-        dateOfBirth: "2022-04-17", // translate to datepicker
-        phone: "0902625027", //
-        major: "Finance",
-        email: "admin@gmail",//
-        password: "$2a$12$C5XEeARWvjsUgb6mPwx8duGfxD4JzfLGyh2lzi0tJ/4lKFk7kWCJO",
-        subjects: [],
-        assignments: []
+    const [isReadOnly, setReadOnly] = useState(false);
+
+    
+    const updateUser = () =>{
+
     }
 
-    let convertedDate = UserModelFunc(data);
-    
+    const getUser = () =>{
+        
+    }
+
+    const deleteUser = () =>{
+
+    }
+
+    // get user information
+    useEffect(()=>{
+        const getUserData = async () => 
+        {    
+            var userEmail = (localStorage.getItem("UserEmail")).slice(1,-1);
+
+            var value  = await APIServices({
+                HttpMethod: HTTP_METHOD_ENUM.HTTP_GET,
+                Data:null,
+                Endpoint:`${ENTITY_ENUM.USER}/email/${userEmail}`
+            });
+
+            value.dateOfBirth = dayjs(value.dateOfBirth)
+            setUserInfo(UserModelFunc(value));
+        } 
+        getUserData();
+    },[])
+
+    // Reload user state
+    useEffect(()=>{
+    },[userInfo])
+
+    // get form data value
+    const handleChange = (e) => {
+        setUserForm({ ...userForm, [e.target.name]: e.target.value });
+    };
+
+    const onSaveButtonClicked = async () =>{
+        // console.log(ConvertDate(userInfo.dateOfBirth));
+        
+        if(Object.values(userForm).includes(""))
+        {
+            var newUserForm = 
+            {
+                userCode: userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
+                userName: userForm.userName === "" ? userInfo.userName : userForm.userName,
+                gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
+                dateOfBirth: userForm.dateOfBirth === ""? ConvertDate(userInfo.dateOfBirth): ConvertDate(birthDate),
+                phone: userForm.phone === "" ? userInfo.phone : userForm.phone,
+                major: userForm.major === "" ? userInfo.major : userForm.major,
+                email: userForm.email === "" ? userInfo.email : userForm.email,
+            }
+            console.log(UserModelFunc(newUserForm));
+        }
+    }
+  
+    const onSubmitClicked = (e) =>{
+        e.preventDefault();
+        setDialogContent({
+            title:"Update information",
+            message:"Do you want change your account information ?"
+        })
+    }
+
+    const OnDeleteProfileButton = () => {
+        setDialogContent({
+            title:"Delete account",
+            message:"Do you want to delete this account ?"
+        })
+        setDialogOpen(true)
+
+        if(OnAcceptDialogForm()){
+            console.log(1123);
+        }
+        // deleteUser();
+    }
+
     const OnEditProfileButton = () => {
         setReadOnly(!isReadOnly);
     }
@@ -64,14 +155,19 @@ export default function AccountPage() {
         setDialogOpen(e);
     }
 
-    const OnAcceptDialogForm = () =>{
-        // save 
-        
-        setDialogOpen(false);
+    const OnAcceptDialogForm = (e) =>{
+        // turn off 
+        // setDialogOpen(false);
+
+        // allow acction
+        return true ;
     }
     return (
-        <>
-            <Box
+        <>  
+            {userInfo != null ?
+            (
+                <>
+                            <Box
                 component="main"
                 sx={{
                     flexGrow: 1,
@@ -80,7 +176,8 @@ export default function AccountPage() {
                 <Stack spacing={3}>
                     <div>
                         <Typography variant="h4">
-                            Account
+                            Account 
+                            <Button onClick={onSaveButtonClicked} variant="contained">TEST</Button>
                         </Typography>
                     </div>
                     <div>
@@ -109,19 +206,19 @@ export default function AccountPage() {
                                                 gutterBottom
                                                 variant="h5"
                                             >
-                                                {convertedDate.userName}
+                                                {userInfo.userName}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="body2"
                                             >
-                                                {convertedDate.userCode}
+                                                {userInfo.userCode}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="body2"
                                             >
-                                                {convertedDate.major}
+                                                {userInfo.major}
                                             </Typography>
                                         </Box>
                                     </CardContent>
@@ -142,7 +239,7 @@ export default function AccountPage() {
                                 <form
                                     autoComplete="off"
                                     noValidate
-                                // onSubmit={handleSubmit}
+                                    onSubmit={onSubmitClicked}
                                 >
                                     <Card >
                                         <Box sx={{ display: "flex", justifyContent: 'space-between' }}>
@@ -151,11 +248,18 @@ export default function AccountPage() {
                                                 title="Profile"
                                             >
                                             </CardHeader>
+                                            <Box sx={{display:"flex", alignItems:"center"}}>
+                                            <Button onClick={OnDeleteProfileButton}>
+                                                <Tooltip title="Delete" >
+                                                    <DeleteIcon />
+                                                </Tooltip>
+                                            </Button>    
                                             <Button onClick={OnEditProfileButton}>
                                                 <Tooltip title="Edit" >
                                                     <EditIcon />
                                                 </Tooltip>
                                             </Button>
+                                            </Box>
                                         </Box>
                                         <CardContent >
                                             <Box sx={{ height: "53vh", flexGrow: 1 }} paddingLeft={3}>
@@ -171,9 +275,9 @@ export default function AccountPage() {
                                                             name="userName"
                                                             required
                                                             variant={isReadOnly ? "filled" : "outlined"}
-                                                            defaultValue={convertedDate.userName}
-                                                        // onChange={handleChange}
-                                                        // value={values.firstName}
+                                                            defaultValue={userInfo.userName}
+                                                            onChange={handleChange}
+                                                            value={userForm.userName}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
@@ -185,10 +289,10 @@ export default function AccountPage() {
                                                             fullWidth
                                                             label="User Code"
                                                             name="userCode"
-                                                            required
+                                                            requirede
                                                             variant={isReadOnly ? "filled" : "outlined"}
-                                                            defaultValue={convertedDate.userCode}
-                                                        // onChange={handleChange}
+                                                            defaultValue={userInfo.userCode}
+                                                            onChange={handleChange}
                                                         // value={values.userCode}
                                                         />
                                                     </Grid>
@@ -197,7 +301,12 @@ export default function AccountPage() {
                                                         sx={{width:"100%"}}
                                                         disabled={isReadOnly}
                                                         label="Date of Birth"
-                                                        value={birthDate}
+                                                        value={userInfo.dateOfBirth}
+                                                        slotProps={{
+                                                            actionBar: {
+                                                              actions: ["clear", "today"],
+                                                            },
+                                                          }}
                                                         onChange={(newDate) => setBirthDate(newDate)}
                                                         />
                                                     </Grid>
@@ -212,8 +321,8 @@ export default function AccountPage() {
                                                             name="phone"
                                                             required
                                                             variant={isReadOnly ? "filled" : "outlined"}
-                                                            defaultValue={convertedDate.phone}
-                                                        // onChange={handleChange}
+                                                            value={userInfo.phone}
+                                                            onChange={handleChange}
                                                         // value={values.[phone]}
                                                         />
                                                     </Grid>
@@ -224,30 +333,16 @@ export default function AccountPage() {
                                                             id="demo-simple-select"
                                                             readOnly={isReadOnly}
                                                             sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
-                                                            defaultValue={convertedDate.gender}
+                                                            defaultValue={userInfo.gender}
+                                                            value={userInfo.gender}
+                                                            name="gender"
                                                             // value={age}
-                                                            // onChange={handleChange}
+                                                            onChange={handleChange}
                                                         >
                                                             <MenuItem value={"Female"}>Female</MenuItem>
                                                             <MenuItem value={"Male"}>Male</MenuItem>
                                                         </Select>
-                                                        </Box>
-                                                       
-
-                                                        {/* <TextField
-                                                            InputProps={{
-                                                                readOnly: isReadOnly,
-                                                            }}
-                                                            sx={{ marginRight: 2 }}
-                                                            fullWidth
-                                                            label="Gender"
-                                                            name="gender"
-                                                            required
-                                                            variant={isReadOnly ? "filled" : "outlined"}
-                                                            defaultValue={convertedDate.gender}
-                                                        onChange={handleChange}
-                                                        value={values.gender}
-                                                        /> */}
+                                                        </Box>                                                       
                                                     </Grid>
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <Box sx={{display:"flex",alignItems:"center"}}> 
@@ -262,8 +357,8 @@ export default function AccountPage() {
                                                                 name="email"
                                                                 required
                                                                 variant="filled"
-                                                                defaultValue={convertedDate.email}
-                                                            // onChange={handleChange}
+                                                                defaultValue={userInfo.email}
+                                                                onChange={handleChange}
                                                             // value={values.email}
                                                             />
                                                             <Button
@@ -287,7 +382,7 @@ export default function AccountPage() {
                                                         <Select
                                                             readOnly={isReadOnly}
                                                             sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
-                                                            defaultValue={convertedDate.major}
+                                                            defaultValue={userInfo.major}
                                                             // value={age}
                                                             // onChange={handleChange}
                                                         >
@@ -303,6 +398,7 @@ export default function AccountPage() {
                                         <CardActions sx={{ justifyContent: 'flex-end' }}>
                                             <Button variant="contained"
                                             disabled={isReadOnly}
+                                            type="submit"
                                                 onClick={() => OnOpenDialogForm()}>
                                                 Save
                                             </Button>
@@ -315,10 +411,14 @@ export default function AccountPage() {
                 </Stack>
             </Box>
             <DialogConfirm 
-                isOpen={isOpen} title={title} message={message} 
+                isOpen={isOpen} title={dialogContent.title} message={dialogContent.message} 
                 OnCloseDialogForm={OnCloseDialogForm} 
-                OnAcceptDialogForm={OnAcceptDialogForm}
-            />
+                OnAcceptDialogForm={(e)=>OnAcceptDialogForm(e,USER_ACTION.DELETE)}
+            /></>
+            )
+            :
+            ("Loading...")}  
+
         </>
     );
 }     

@@ -36,9 +36,6 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
 
     var url = `${baseURL}${Endpoint}`;
 
-    // if (paramUrl === "" || paramUrl === null) {
-    //   url = `${url}/${paramUrl}`;
-    // }
 
     var config = {
       headers: {
@@ -74,6 +71,6 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
         break;
     }
   } catch (error) {
-    // console.log("Error : " + error);
+    console.log("Error : " + error);
   }
 }
