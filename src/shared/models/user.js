@@ -10,6 +10,7 @@ export function UserModelFunc(object) {
                 dateOfBirth: object.dateOfBirth,
                 phone: (object.phone != null) ? object.phone : "",
                 major: object.major,
+                location:object.location,
                 email: object.email,
                 assignments: Array.isArray(object.assignments) ? object.assignments : [],
                 subjects: Array.isArray(object.assignments) ? object.subjects : []
@@ -28,6 +29,7 @@ UserModelFunc.PropTypes = {
     dateOfBirth: PropTypes.instanceOf(Date).isRequired,
     major: PropTypes.any.isRequired,
     phone: PropTypes.string,
+    location: PropTypes.string,
     // assignments: PropTypes.arrayOf(PropTypes.shape({
     //     id: PropTypes.number,
     //     code: PropTypes.string,

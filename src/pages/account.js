@@ -27,15 +27,16 @@ import HttpsIcon from '@mui/icons-material/Https';
 import dayjs from "dayjs";
 
 import DialogConfirm from "../components/dialogs/dialog-confirm";
-import { UserModelFunc } from "../api/models/user";
 import { useDefaultLayoutContext } from "../layout/provider/layout-provider";
-import APIServices, { ENTITY_ENUM, HTTP_METHOD_ENUM } from "../api";
-import { ConvertDate } from "../api/func";
+import APIServices from "../api";
+import { ConvertDate } from "../shared/func";
+import { HTTP_METHOD } from "../shared/enums/http-methods";
+import { HTTP_ENTITY } from "../shared/enums/http-entity";
+import { UserModelFunc } from "../shared/models/user";
+import { DIALOG_ACTION } from "../shared/enums/dialog-action";
+import { MAJOR_ENUM } from "../shared/enums/major-enum";
 
-const USER_ACTION = {
-    DELETE,
-    UPDATE
-}
+
 
 export default function AccountPage() {
     // User Infomation
@@ -44,24 +45,47 @@ export default function AccountPage() {
         userCode: "",
         userName: "",
         gender: "",
+        location:"",
         dateOfBirth: "",
         phone: "",
         major: "",
         email: "",
     });
     const [birthDate, setBirthDate] = useState(dayjs(""));
+    const [majors, setMajors] = useState([{key:"",value:""}]);
 
-    const [dialogContent, setDialogContent] = useState({
-        title:"",
-        message:""
-    });
-
+    const [dialogContent, setDialogContent] = useState({title:"",message:"",action:0});
     const [isOpen, setDialogOpen] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
-
     
     const updateUser = () =>{
-
+        const updateAPI = async () =>{
+            try {
+                if(Object.values(userForm).includes(""))
+                {
+                    var newUserForm = 
+                    {
+                        userCode: userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
+                        userName: userForm.userName === "" ? userInfo.userName : userForm.userName,
+                        gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
+                        dateOfBirth: userForm.dateOfBirth === ""? ConvertDate(userInfo.dateOfBirth): ConvertDate(birthDate),
+                        phone: userForm.phone === "" ? userInfo.phone : userForm.phone,
+                        major: userForm.major === "" ? userInfo.major : userForm.major,
+                        email: userForm.email === "" ? userInfo.email : userForm.email,
+                        location:userForm.location === "" ? userInfo.location : userForm.location,
+                    }
+                    var userData  = await APIServices({
+                        HttpMethod: HTTP_METHOD.HTTP_POST,
+                        Data:newUserForm,
+                        Endpoint:`${HTTP_ENTITY.USER}`
+                    });
+                    console.log(userData);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        updateAPI();
     }
 
     const getUser = () =>{
@@ -69,7 +93,7 @@ export default function AccountPage() {
     }
 
     const deleteUser = () =>{
-
+        
     }
 
     // get user information
@@ -78,20 +102,22 @@ export default function AccountPage() {
         {    
             var userEmail = (localStorage.getItem("UserEmail")).slice(1,-1);
 
-            var value  = await APIServices({
-                HttpMethod: HTTP_METHOD_ENUM.HTTP_GET,
+            var userData  = await APIServices({
+                HttpMethod: HTTP_METHOD.HTTP_GET,
                 Data:null,
-                Endpoint:`${ENTITY_ENUM.USER}/email/${userEmail}`
+                Endpoint:`${HTTP_ENTITY.USER}/email/${userEmail}`
             });
 
-            value.dateOfBirth = dayjs(value.dateOfBirth)
-            setUserInfo(UserModelFunc(value));
+            userData.dateOfBirth = dayjs(userData.dateOfBirth)
+            setUserInfo(UserModelFunc(userData));
+            setMajors(MAJOR_ENUM)
         } 
         getUserData();
     },[])
 
     // Reload user state
     useEffect(()=>{
+        console.log(majors);
     },[userInfo])
 
     // get form data value
@@ -100,47 +126,43 @@ export default function AccountPage() {
     };
 
     const onSaveButtonClicked = async () =>{
-        // console.log(ConvertDate(userInfo.dateOfBirth));
         
-        if(Object.values(userForm).includes(""))
-        {
-            var newUserForm = 
-            {
-                userCode: userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
-                userName: userForm.userName === "" ? userInfo.userName : userForm.userName,
-                gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
-                dateOfBirth: userForm.dateOfBirth === ""? ConvertDate(userInfo.dateOfBirth): ConvertDate(birthDate),
-                phone: userForm.phone === "" ? userInfo.phone : userForm.phone,
-                major: userForm.major === "" ? userInfo.major : userForm.major,
-                email: userForm.email === "" ? userInfo.email : userForm.email,
-            }
-            console.log(UserModelFunc(newUserForm));
-        }
+       
     }
   
     const onSubmitClicked = (e) =>{
         e.preventDefault();
         setDialogContent({
             title:"Update information",
-            message:"Do you want change your account information ?"
+            message:"Do you want change your account information ?",
+            action:DIALOG_ACTION.UPDATE
         })
     }
 
     const OnDeleteProfileButton = () => {
         setDialogContent({
             title:"Delete account",
-            message:"Do you want to delete this account ?"
+            message:"Do you want to delete this account ?",
+            action:DIALOG_ACTION.DELETE
         })
-        setDialogOpen(true)
-
-        if(OnAcceptDialogForm()){
-            console.log(1123);
-        }
-        // deleteUser();
+        setDialogOpen(true);
     }
 
     const OnEditProfileButton = () => {
         setReadOnly(!isReadOnly);
+    }
+    
+    const OnAcceptDialogForm = (e,action) =>{
+        switch (action) {
+            case 1:
+                updateUser();
+                break;
+            case 2:
+                deleteUser();
+                break;
+        }
+        // turn off 
+        setDialogOpen(false);
     }
     
     const OnUploadFileButton = () =>{
@@ -155,13 +177,6 @@ export default function AccountPage() {
         setDialogOpen(e);
     }
 
-    const OnAcceptDialogForm = (e) =>{
-        // turn off 
-        // setDialogOpen(false);
-
-        // allow acction
-        return true ;
-    }
     return (
         <>  
             {userInfo != null ?
@@ -277,7 +292,6 @@ export default function AccountPage() {
                                                             variant={isReadOnly ? "filled" : "outlined"}
                                                             defaultValue={userInfo.userName}
                                                             onChange={handleChange}
-                                                            value={userForm.userName}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
@@ -293,7 +307,6 @@ export default function AccountPage() {
                                                             variant={isReadOnly ? "filled" : "outlined"}
                                                             defaultValue={userInfo.userCode}
                                                             onChange={handleChange}
-                                                        // value={values.userCode}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
@@ -382,14 +395,43 @@ export default function AccountPage() {
                                                         <Select
                                                             readOnly={isReadOnly}
                                                             sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
-                                                            defaultValue={userInfo.major}
+                                                            defaultValue={2}
                                                             // value={age}
-                                                            // onChange={handleChange}
-                                                        >
-                                                            <MenuItem value={"Finance"}>Finance</MenuItem>
-                                                            <MenuItem value={"Dev"}>Dev</MenuItem>
+                                                            name="major"
+                                                            onChange={handleChange}
+                                                        >   
+                                                            {
+                                                                Object.keys(MAJOR_ENUM).map((e)=>(
+                                                                    <MenuItem value={Object.keys(MAJOR_ENUM).indexOf(e)}>{e}</MenuItem>
+                                                                ))
+                                                            }
                                                         </Select>
                                                         </Box>
+                                                    </Grid>
+                                                    <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
+                                                        <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
+                                                            fullWidth
+                                                            label="Location"
+                                                            name="location"
+                                                            required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={userInfo.location}
+                                                            onChange={handleChange}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
+                                                        <Typography>
+                                                            total subject
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
+                                                        <Typography>
+                                                            total assignment
+                                                        </Typography>
                                                     </Grid>
                                                 </Grid>
                                             </Box>
@@ -412,8 +454,9 @@ export default function AccountPage() {
             </Box>
             <DialogConfirm 
                 isOpen={isOpen} title={dialogContent.title} message={dialogContent.message} 
+                action={dialogContent.action}
                 OnCloseDialogForm={OnCloseDialogForm} 
-                OnAcceptDialogForm={(e)=>OnAcceptDialogForm(e,USER_ACTION.DELETE)}
+                OnAcceptDialogForm={OnAcceptDialogForm}
             /></>
             )
             :

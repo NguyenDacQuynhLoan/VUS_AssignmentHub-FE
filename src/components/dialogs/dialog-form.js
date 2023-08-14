@@ -11,9 +11,9 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
-import { UserModelFunc } from "../../api/models/user";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
+import { UserModelFunc } from "../../shared/models/user";
 
 export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
   const [formData, setFormData] = React.useState([]);

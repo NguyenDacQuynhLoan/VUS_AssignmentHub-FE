@@ -15,9 +15,11 @@ import Checkbox from '@mui/material/Checkbox';
 
 import EnhancedTableHead from './components/table-head';
 import EnhancedTableToolbar from './components/table-toolbar';
-import APIServices, { ENTITY_ENUM, HTTP_METHOD_ENUM } from '../../../api';
-import { UserModelFunc } from '../../../api/models/user';
-import { AssignmentModelFunc } from '../../../api/models/assignment';
+import APIServices from '../../../api';
+import { AssignmentModelFunc } from '../../../shared/models/assignment';
+import { HTTP_METHOD } from '../../../shared/enums/http-methods';
+import { HTTP_ENTITY } from '../../../shared/enums/http-entity';
+import { UserModelFunc } from '../../../shared/models/user';
 
 // function createData(
 //   code,
@@ -561,9 +563,9 @@ export default function EnhancedTable() {
   const getData = async () => {
     var apiValue = await APIServices({
       // user 
-      HttpMethod: HTTP_METHOD_ENUM.HTTP_GET,
+      HttpMethod: HTTP_METHOD.HTTP_GET,
       Data: null,
-      Endpoint: ENTITY_ENUM.USER
+      Endpoint: HTTP_ENTITY.USER
     })
     var convertedValue = apiValue.map(e => UserModelFunc(e));
   
@@ -572,9 +574,9 @@ export default function EnhancedTable() {
 
     // assignment
     var apiAssignment = await APIServices({
-      HttpMethod: HTTP_METHOD_ENUM.HTTP_GET,
+      HttpMethod: HTTP_METHOD.HTTP_GET,
       Data: null,
-      Endpoint: ENTITY_ENUM.ASSIGNMENT
+      Endpoint: HTTP_ENTITY.ASSIGNMENT
     })
     var convertedAssignment = apiAssignment.map(e => AssignmentModelFunc(e));
     setAssignment(convertedAssignment)

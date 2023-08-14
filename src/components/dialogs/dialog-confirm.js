@@ -17,6 +17,7 @@ export default function DialogConfirm({
   title,
   message,
   OnAcceptDialogForm,
+  action
 }) {
   return (
     <div>
@@ -32,7 +33,7 @@ export default function DialogConfirm({
           >
             Cancel
           </Button>
-          <Button onClick={() => OnAcceptDialogForm(true)} autoFocus>
+          <Button onClick={() => OnAcceptDialogForm(true,action)} autoFocus>
             OK
           </Button>
         </DialogActions>
