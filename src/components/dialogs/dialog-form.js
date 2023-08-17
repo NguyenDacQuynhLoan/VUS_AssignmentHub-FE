@@ -14,8 +14,17 @@ import React, { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
 import { UserModelFunc } from "../../shared/models/user";
+import { FormChangePassword } from "./form-sections/update-password-user";
 
-export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
+export default function DialogForm({ 
+  // isOpen, 
+  isOpen,
+  OnCloseDialogForm,
+  title,
+  message,
+  OnAcceptDialogForm,
+  action
+}) {
   const [formData, setFormData] = React.useState([]);
   const [date,setDate] = useState()
 
@@ -27,15 +36,7 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
     // var dateValue =`${day}-${month}-${year}`
 
     // formData.dateOfBirth  = dateValue;
-    var value = UserModelFunc(formData);
-    var token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiQUQifV0sInN1YiI6ImFkbWluQGdtYWlsIiwiaWF0IjoxNjkwMDk2NDIyLCJleHAiOjE2OTAxMjUyMjJ9.3rPTBsgG3TmUedeIpn1fAihvNiGf1VkrdDtQAVoYvNM";
-    var addUser = await axios.get("http://localhost:8090/AssignmentHub/api/users",{
-        headers:{
-            Authorization: token,
-            
-        }
-    })    
-    console.log(addUser.data);    
+    
 };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +47,7 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
 
   return (
     <>
-      <Dialog scroll="paper" open={isOpen} onClose={() => OnCloseDiaglogForm(false)} maxWidth="md">
+      <Dialog scroll="paper" open={isOpen} onClose={() => OnCloseDialogForm(false)} maxWidth="md">
         {/* onClose={handleClose} */}
         <DialogTitle>Create</DialogTitle>
         <DialogContent>
@@ -63,9 +64,9 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
                         fullWidth
                         variant="standard"
                     /> */}
-          <form noValidate onSubmit={onSubmitClicked}>
+          {/* <form noValidate onSubmit={onSubmitClicked}>
             <FormControl>
-              <FormLabel>User id</FormLabel>
+             <FormLabel>User id</FormLabel>
               <TextField
                 name="id"
                 value={formData.id}
@@ -126,20 +127,21 @@ export default function DialogForm({ isOpen, OnCloseDiaglogForm }) {
               />
               <Button type="submit">Submit</Button>
             </FormControl>
-          </form>
+          </form> */}
+          <FormChangePassword/>
+
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => OnCloseDiaglogForm(false)}
-            //   onClick={handleClose}
+            sx={{ color: "red" }}
+            onClick={() => OnCloseDialogForm(false)}
           >
             Cancel
           </Button>
           <Button
-            onClick={() => OnCloseDiaglogForm(false)}
-            //   onClick={handleClose}
+            onClick={() => OnCloseDialogForm(false)}
           >
-            Subscribe
+            OK
           </Button>
         </DialogActions>
       </Dialog>

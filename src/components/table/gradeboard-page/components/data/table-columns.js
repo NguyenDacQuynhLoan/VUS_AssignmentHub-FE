@@ -1,32 +1,40 @@
 export const headCells = [
     {
-      id: 'name',
-      numeric: false,
-      disablePadding: true,
-      label: 'Dessert (100g serving)',
+      id: 1,
+      // numeric: false,
+      // disablePadding: true,
+      label: "Assignment Code",
     },
     {
-      id: 'calories',
-      numeric: true,
-      disablePadding: false,
-      label: 'Calories',
+      id: 2,
+      label: "Assignment Title",
     },
     {
-      id: 'fat',
-      numeric: true,
-      disablePadding: false,
-      label: 'Fat (g)',
+      id: 3,
+      label: "Subject",
     },
     {
-      id: 'carbs',
-      numeric: true,
-      disablePadding: false,
-      label: 'Carbs (g)',
+      id: 3,
+      label: "Student Code",
     },
     {
-      id: 'protein',
-      numeric: true,
-      disablePadding: false,
-      label: 'Protein (g)',
+      id: 4,
+      label: "Student Name",
     },
+    {
+      id: 5,
+      label: "Assignment Title",
+    },
+    {
+      id: 6,
+      label: "Assignment Title",
+    },
+    {
+      id: 7,
+      label: "Assignment Title",
+    },
+    {
+      id: 8,
+      label: "Assignment Title",
+    }
   ];

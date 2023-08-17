@@ -54,6 +54,7 @@ export default function AccountPage() {
     const [birthDate, setBirthDate] = useState(dayjs(""));
     const [majors, setMajors] = useState([{key:"",value:""}]);
 
+    // Dialog config
     const [dialogContent, setDialogContent] = useState({title:"",message:"",action:0});
     const [isOpen, setDialogOpen] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
@@ -74,30 +75,22 @@ export default function AccountPage() {
                         email: userForm.email === "" ? userInfo.email : userForm.email,
                         location:userForm.location === "" ? userInfo.location : userForm.location,
                     }
-                    var userData  = await APIServices({
-                        HttpMethod: HTTP_METHOD.HTTP_POST,
-                        Data:newUserForm,
-                        Endpoint:`${HTTP_ENTITY.USER}`
+
+                     await APIServices({
+                        HttpMethod: HTTP_METHOD.HTTP_PUT,
+                        Endpoint:   HTTP_ENTITY.USER,
+                        Data: UserModelFunc(newUserForm)
                     });
-                    console.log(userData);
                 }
             } catch (error) {
                 console.log(error);
             }
         }
         updateAPI();
+        
     }
 
     const getUser = () =>{
-        
-    }
-
-    const deleteUser = () =>{
-        
-    }
-
-    // get user information
-    useEffect(()=>{
         const getUserData = async () => 
         {    
             var userEmail = (localStorage.getItem("UserEmail")).slice(1,-1);
@@ -108,16 +101,24 @@ export default function AccountPage() {
                 Endpoint:`${HTTP_ENTITY.USER}/email/${userEmail}`
             });
 
-            userData.dateOfBirth = dayjs(userData.dateOfBirth)
+            userData.dateOfBirth = dayjs(userData.dateOfBirth);
             setUserInfo(UserModelFunc(userData));
-            setMajors(MAJOR_ENUM)
+            setMajors(MAJOR_ENUM);
         } 
         getUserData();
+    }
+
+    const deleteUser = () =>{
+        
+    }
+
+    // get user information
+    useEffect(()=>{
+        getUser();
     },[])
 
     // Reload user state
     useEffect(()=>{
-        console.log(majors);
     },[userInfo])
 
     // get form data value
@@ -192,7 +193,6 @@ export default function AccountPage() {
                     <div>
                         <Typography variant="h4">
                             Account 
-                            <Button onClick={onSaveButtonClicked} variant="contained">TEST</Button>
                         </Typography>
                     </div>
                     <div>
@@ -297,14 +297,14 @@ export default function AccountPage() {
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
                                                             InputProps={{
-                                                                readOnly: isReadOnly,
+                                                                readOnly: true,
                                                             }}
                                                             sx={{ marginRight: 2 }}
                                                             fullWidth
                                                             label="User Code"
+                                                            variant="filled"
                                                             name="userCode"
-                                                            requirede
-                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            required
                                                             defaultValue={userInfo.userCode}
                                                             onChange={handleChange}
                                                         />
@@ -324,32 +324,33 @@ export default function AccountPage() {
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
-                                                        <TextField
-                                                            InputProps={{
-                                                                readOnly: isReadOnly,
-                                                            }}
-                                                            sx={{ marginRight: 2 }}
-                                                            fullWidth
-                                                            label="Phone Number"
-                                                            name="phone"
-                                                            required
-                                                            variant={isReadOnly ? "filled" : "outlined"}
-                                                            value={userInfo.phone}
+                                                    <Box sx={{display:"flex",alignItems:"center"}}>
+                                                        <Typography>Major:&nbsp;</Typography>
+                                                        <Select
+                                                            readOnly={isReadOnly}
+                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit',width:"100%" }}
+                                                            defaultValue={2}
+                                                            name="major"
                                                             onChange={handleChange}
-                                                        // value={values.[phone]}
-                                                        />
+                                                        >   
+                                                            {
+                                                                Object.keys(MAJOR_ENUM).map((e)=>(
+                                                                    <MenuItem value={Object.keys(MAJOR_ENUM).indexOf(e)}>{e}</MenuItem>
+                                                                ))
+                                                            }
+                                                        </Select>
+                                                        </Box>
                                                     </Grid>
-                                                    <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }}>
+                                                    
+                                                    <Grid item xs={12} md={2} sx={{ paddingTop: "15px !important" }}>
                                                         <Box sx={{display:"flex",alignItems:"center"}}>
                                                         <Typography>Gender:&nbsp;</Typography>
                                                         <Select
                                                             id="demo-simple-select"
                                                             readOnly={isReadOnly}
-                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
+                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit',width:"100%" }}
                                                             defaultValue={userInfo.gender}
-                                                            value={userInfo.gender}
                                                             name="gender"
-                                                            // value={age}
                                                             onChange={handleChange}
                                                         >
                                                             <MenuItem value={"Female"}>Female</MenuItem>
@@ -357,13 +358,13 @@ export default function AccountPage() {
                                                         </Select>
                                                         </Box>                                                       
                                                     </Grid>
+
                                                     <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
                                                         <Box sx={{display:"flex",alignItems:"center"}}> 
                                                             <TextField
-                                                                // InputProps={{
-                                                                //     readOnly: isReadOnly,
-                                                                // }}
-                                                                readOnly
+                                                                InputProps={{
+                                                                    readOnly: true,
+                                                                }}
                                                                 sx={{ marginRight: 2 }}
                                                                 fullWidth
                                                                 label="E-mail / Account"
@@ -389,25 +390,22 @@ export default function AccountPage() {
                                                             } >Change password</Button>
                                                         </Box>
                                                     </Grid>
-                                                    <Grid item xs={12} md={2} sx={{ paddingTop: "15px !important" }}>
-                                                    <Box sx={{display:"flex",alignItems:"center"}}>
-                                                        <Typography>Major:&nbsp;</Typography>
-                                                        <Select
-                                                            readOnly={isReadOnly}
-                                                            sx={{ background: isReadOnly ? '#F0F0F0' : 'inherit' }}
-                                                            defaultValue={2}
-                                                            // value={age}
-                                                            name="major"
+                                                            <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }}>
+                                                        <TextField
+                                                            InputProps={{
+                                                                readOnly: isReadOnly,
+                                                            }}
+                                                            sx={{ marginRight: 2 }}
+                                                            fullWidth
+                                                            label="Phone Number"
+                                                            name="phone"
+                                                            required
+                                                            variant={isReadOnly ? "filled" : "outlined"}
+                                                            defaultValue={userInfo.phone}
                                                             onChange={handleChange}
-                                                        >   
-                                                            {
-                                                                Object.keys(MAJOR_ENUM).map((e)=>(
-                                                                    <MenuItem value={Object.keys(MAJOR_ENUM).indexOf(e)}>{e}</MenuItem>
-                                                                ))
-                                                            }
-                                                        </Select>
-                                                        </Box>
+                                                        />
                                                     </Grid>
+                                                   
                                                     <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
                                                         <TextField
                                                             InputProps={{
@@ -425,12 +423,7 @@ export default function AccountPage() {
                                                     </Grid>
                                                     <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
                                                         <Typography>
-                                                            total subject
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={12} md={12} sx={{ paddingTop: "15px !important" }}>
-                                                        <Typography>
-                                                            total assignment
+                                                           Total Subject
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -457,7 +450,8 @@ export default function AccountPage() {
                 action={dialogContent.action}
                 OnCloseDialogForm={OnCloseDialogForm} 
                 OnAcceptDialogForm={OnAcceptDialogForm}
-            /></>
+            />
+            </>
             )
             :
             ("Loading...")}  
