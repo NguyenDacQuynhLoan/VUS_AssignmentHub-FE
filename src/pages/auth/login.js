@@ -31,7 +31,7 @@ import { useEffect } from "react";
  * Login page
  * @returns Token allow access pages
  */
-export const LoginPage = ({onLoginSubmit, isError}) => {
+export const LoginPage = ({ onLoginSubmit, isError }) => {
   const [formDataLogin, setFormDataLogin] = useState({
     email: "",
     password: "",
@@ -41,13 +41,12 @@ export const LoginPage = ({onLoginSubmit, isError}) => {
     email: "",
     password: "",
   });
-  
+
   const [showPasswordLogin, setShowPasswordLogin] = useState(false);
   const [showPasswordRegister, setShowPasswordRegister] = useState(false);
 
   const [method, setMethod] = useState("login");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
 
   //  Submit login
   const onSubmitClicked = (e) => {
@@ -65,7 +64,7 @@ export const LoginPage = ({onLoginSubmit, isError}) => {
   };
 
   const handleSnackbar = (e) => {
-    setOpenSnackbar(isError);
+    // setOpenSnackbar(true)
   };
 
   // get form data value
@@ -112,7 +111,9 @@ export const LoginPage = ({onLoginSubmit, isError}) => {
             {method === "login" && (
               <form noValidate onSubmit={onSubmitClicked}>
                 <FormControl>
-                  <FormLabel>Email or account name</FormLabel>
+                  <FormLabel>
+                    Email or account name
+                  </FormLabel>
                   <Stack spacing={3}>
                     <TextField
                       name="email"
@@ -121,7 +122,9 @@ export const LoginPage = ({onLoginSubmit, isError}) => {
                       onChange={handleChange}
                     />
                   </Stack>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel sx={{ paddingTop: 2 }}>
+                    Password
+                  </FormLabel>
                   <Stack spacing={3}>
                     <TextField
                       type={showPasswordLogin ? "text" : "password"}

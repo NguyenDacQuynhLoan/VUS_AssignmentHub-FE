@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Box } from '@mui/material';
@@ -14,9 +13,11 @@ export default function SnackbarStatutes({ isOpen, message, snackbarType, handle
 
   React.useEffect(() => {
     setOpen(isOpen);
+
     setTimeout(() => {
       handleSnackbar(false)
     }, 2000);
+    
   }, [isOpen])
 
   // const handleClick = () => {

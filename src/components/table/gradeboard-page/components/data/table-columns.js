@@ -1,40 +1,39 @@
 export const headCells = [
     {
       id: 1,
-      // numeric: false,
-      // disablePadding: true,
-      label: "Assignment Code",
-    },
-    {
-      id: 2,
-      label: "Assignment Title",
-    },
-    {
-      id: 3,
-      label: "Subject",
-    },
-    {
-      id: 3,
+      // type:"Text",
       label: "Student Code",
     },
     {
-      id: 4,
+      id: 2,
       label: "Student Name",
     },
     {
+      id: 3,
+      label: "Gender",
+    },
+    {
+      id: 4,
+      label: "Major",
+    },
+    { 
       id: 5,
-      label: "Assignment Title",
+      label: "E-mail",
     },
     {
       id: 6,
-      label: "Assignment Title",
+      label: "Assignment Totals",
     },
     {
       id: 7,
-      label: "Assignment Title",
+      label: "Major Assigned",
     },
     {
-      id: 8,
-      label: "Assignment Title",
+      id: 10,
+      label: "Status",
+    },
+    {
+      id: 11,
+      label: "Details",
     }
   ];

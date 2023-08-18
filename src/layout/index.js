@@ -27,7 +27,6 @@ export const LayoutView = () => {
   // loading waiting checking token
   useEffect(() => {
     var token = localStorage.getItem("Token");
-
     setTimeout(() => {
       // token is existed
       if (token !== "" && token != null && token !== undefined) {
@@ -64,7 +63,7 @@ export const LayoutView = () => {
       }
       getToken();
   }
-
+  
   return (
     <LayoutProvider>
       <Box sx={{ display: "flex" }}>
