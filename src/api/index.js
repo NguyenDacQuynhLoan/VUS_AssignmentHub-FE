@@ -36,22 +36,26 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
     };
 
     switch (HttpMethod) {
+
       case HTTP_METHOD.HTTP_GET:
         var responseGet = await axios.get(`${url}`, config);
         // console.log(responseGet.data);
         return responseGet.data;
+
       case HTTP_METHOD.HTTP_POST:
         if (Data == null || Data) {
           var responsePost = await axios.post(`${url}`, Data, config);
           return responsePost.data;
         }
         break;
+
       case HTTP_METHOD.HTTP_PUT:
         if (Data == null || Data) {
           var responsePut = await axios.put(`${url}`, Data, config);
           return responsePut.data;
         }
         break;
+
       case HTTP_METHOD.HTTP_DELETE:
         var responseDelete = await axios.put(`${url}`, Data, config);
         return responseDelete.data;

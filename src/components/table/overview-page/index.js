@@ -425,15 +425,19 @@ export function DataTable() {
           variant="solid"
         >
           <TableHead>
+
             <TableRow>
               <DataTableHead
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
               />
+
             </TableRow>
+            
           </TableHead>
           <TableBody>
+
             {pageSize > 0
               ? stableSort(rows, getComparator(order, orderBy))
                 .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
@@ -447,6 +451,7 @@ export function DataTable() {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
+
           </TableBody>
         </Table>
       </TableContainer>

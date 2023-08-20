@@ -31,6 +31,7 @@ export const AuthenticationService = async (loginData) => {
             // axios.defaults.headers.common["Authorization"] = `Bearer ${result.data}`;
 
             localStorage.setItem("Token", JSON.stringify(result.data));
+            
             return result.data;
         } catch (error) {
             console.error('Error:', error);

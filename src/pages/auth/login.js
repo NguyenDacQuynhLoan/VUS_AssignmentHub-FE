@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -23,18 +23,20 @@ import SnackbarStatutes, {
 } from "../../components/snackbar";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { AuthenticationService } from "../../api/authen";
-import { useDefaultLayoutContext } from "../../layout/provider/layout-provider";
-import { useEffect } from "react";
 
 /**
  * Login page
  * @returns Token allow access pages
  */
-export const LoginPage = ({ onLoginSubmit, isError }) => {
+export const LoginPage = ({ onLoginSubmit, isError, onHandleSubmit }) => {
   const [formDataLogin, setFormDataLogin] = useState({
     email: "",
     password: "",
+  });
+
+  const [snackbarContent, setSnackbarContent] = useState({
+    message:"",
+    snackbarType:""
   });
 
   const [formDataRegister, setFormDataRegister] = useState({
@@ -46,7 +48,7 @@ export const LoginPage = ({ onLoginSubmit, isError }) => {
   const [showPasswordRegister, setShowPasswordRegister] = useState(false);
 
   const [method, setMethod] = useState("login");
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isOpen, setOpenSnackbar] = useState(false);
 
   //  Submit login
   const onSubmitClicked = (e) => {
@@ -59,21 +61,25 @@ export const LoginPage = ({ onLoginSubmit, isError }) => {
     };
 
     onLoginSubmit(data);
-    //isError => snackbar
-
+    
   };
+  
+  useEffect(() => {
+    setSnackbarContent({
+      message:"Incorrect username or password",
+      snackbarType:"error"
+  })
+    setOpenSnackbar(!isError);
 
-  const handleSnackbar = (e) => {
-    // setOpenSnackbar(true)
-  };
-
+  }, [isError])
+  
   // get form data value
   const handleChange = (e) => {
     setFormDataLogin({ ...formDataLogin, [e.target.name]: e.target.value });
   };
 
   // switch login or register
-  const handleMethodChange = useCallback((event, value) => {
+  const handleMethodChange = useCallback((value) => {
     setMethod(value);
   }, []);
 
@@ -111,9 +117,7 @@ export const LoginPage = ({ onLoginSubmit, isError }) => {
             {method === "login" && (
               <form noValidate onSubmit={onSubmitClicked}>
                 <FormControl>
-                  <FormLabel>
-                    Email or account name
-                  </FormLabel>
+                  <FormLabel>Email or account name</FormLabel>
                   <Stack spacing={3}>
                     <TextField
                       name="email"
@@ -122,9 +126,7 @@ export const LoginPage = ({ onLoginSubmit, isError }) => {
                       onChange={handleChange}
                     />
                   </Stack>
-                  <FormLabel sx={{ paddingTop: 2 }}>
-                    Password
-                  </FormLabel>
+                  <FormLabel sx={{ paddingTop: 2 }}>Password</FormLabel>
                   <Stack spacing={3}>
                     <TextField
                       type={showPasswordLogin ? "text" : "password"}
@@ -249,10 +251,9 @@ export const LoginPage = ({ onLoginSubmit, isError }) => {
           />
         </Box>
         <SnackbarStatutes
-          isOpen={openSnackbar}
-          message={"Incorrect username or password"}
-          snackbarType={"error"}
-          handleSnackbar={handleSnackbar}
+          isOpen={isOpen}
+          message={snackbarContent.message}
+          snackbarType={snackbarContent.snackbarType}
         />
       </Box>
     </>

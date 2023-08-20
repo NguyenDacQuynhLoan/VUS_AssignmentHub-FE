@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 
 import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
 
-import { LayoutProvider, useDefaultLayoutContext } from "./provider/layout-provider";
+import {
+  LayoutProvider,
+  useDefaultLayoutContext,
+} from "./provider/layout-provider";
 import { ContainerComponent } from "../components/container";
 import { SidebarComponent } from "../components/sidebar";
 import { HeaderComponent } from "../components/header";
@@ -18,12 +21,11 @@ import { useNavigate } from "react-router-dom";
  */
 export const LayoutView = () => {
   const navigate = useNavigate();
-  const {onStoreCurrentEmail} = useDefaultLayoutContext();
 
   const [isLogin, setLogin] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [isError, setError] = useState(false);
-  
+  const [isError, setError] = useState(true);
+
   // loading waiting checking token
   useEffect(() => {
     var token = localStorage.getItem("Token");
@@ -35,34 +37,36 @@ export const LayoutView = () => {
 
       // turn off loading
       setLoading(false);
-    },1000);
+    }, 1000);
   }, [isLogin]);
+
+  // update due to Error
+  useEffect(() => {}, [isError])
 
   /**
    * Login submitment
-   * @param {*} data 
+   * @param {*} data
    */
-  const onLoginSubmit = (data) =>{
+  const onLoginSubmit = (data) => {
     // get token
     async function getToken() {
       var tokenLogged = await AuthenticationService(data);
-      if (tokenLogged !== "" && tokenLogged !== undefined) 
-      {
-        localStorage.setItem("UserEmail", JSON.stringify(data.email));
 
+      if (tokenLogged !== "" && tokenLogged !== undefined) {
+        localStorage.setItem("UserEmail", JSON.stringify(data.email));
+        
         // reload page
         navigate("/");
         window.location.reload();
-        
-        //onStoreCurrentEmail(data.email);
-      } else {
-        // show toast error message
-        setError(true);
-        // setOpenSnackbar(true);
-        }
       }
-      getToken();
-  }
+      else
+      {
+        setError(false);
+      }
+    }
+    getToken();
+    setError(true);
+  };
   
   return (
     <LayoutProvider>
@@ -83,11 +87,11 @@ export const LayoutView = () => {
                 <ContainerComponent />
               </>
             ) : (
-              <LoginPage onLoginSubmit={onLoginSubmit} isError={isError}/>
+              <LoginPage onLoginSubmit={onLoginSubmit} isError={isError} />
             )}
           </>
         )}
       </Box>
     </LayoutProvider>
   );
-}
+};

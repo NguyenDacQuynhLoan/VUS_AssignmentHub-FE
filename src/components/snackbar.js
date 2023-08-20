@@ -3,32 +3,23 @@ import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Box } from '@mui/material';
+import { useEffect } from 'react';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function SnackbarStatutes({ isOpen, message, snackbarType, handleSnackbar }) {
+export default function SnackbarStatutes({ isOpen, message, snackbarType }) {
   const [open, setOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    setOpen(isOpen);
-
-    setTimeout(() => {
-      handleSnackbar(false)
-    }, 2000);
-    
+  useEffect(() => {
+    setOpen(isOpen)
   }, [isOpen])
-
-  // const handleClick = () => {
-  //   setOpen(true);
-  // };
-
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
 
