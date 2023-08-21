@@ -67,6 +67,6 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
         break;
     }
   } catch (error) {
-    throw new Error(error)
+    console.log(error);
   }
 }

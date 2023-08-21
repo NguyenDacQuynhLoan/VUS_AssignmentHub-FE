@@ -38,6 +38,8 @@ import { MAJOR_ENUM } from "../shared/enums/major-enum";
 import SnackbarStatutes from "../components/snackbar";
 
 export default function AccountPage() {
+  const { currentUserCode } = useDefaultLayoutContext();
+
   // User Information
   const [userInfo, setUserInfo] = useState();
   const [userForm, setUserForm] = useState({
@@ -67,7 +69,7 @@ export default function AccountPage() {
     message: "",
     snackbarType: "",
   });
-  const [isSuccess , setSuccess] = useState(false);
+  const [isSuccess , setSuccess] = useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = useState(false);
   /**
    * Update User Information
@@ -99,14 +101,16 @@ export default function AccountPage() {
             Endpoint: HTTP_ENTITY.USER,
             Data: UserModelFunc(newUserForm),
           });
+          setSuccess(true);
         }
-        setSuccess(true)
-        // return isSuccess;
       } catch (error) {
+        console.log(error);
+        setSuccess(false);
         console.log(error);
       }
     };
     updateAPI();
+    
   };
 
   const getUser = () => {
@@ -165,6 +169,7 @@ export default function AccountPage() {
 
   const OnAcceptDialogForm = (e, action) => {
     setOpenSnackBar(true);
+    console.log(isSuccess);
     switch (action) {
       case 1:
         // {
@@ -188,7 +193,7 @@ export default function AccountPage() {
     }
     // turn off
     setDialogOpen(false);
-    setSuccess(false);
+    // setSuccess(false);
   };
 
   const OnUploadFileButton = () => {
@@ -215,7 +220,7 @@ export default function AccountPage() {
           >
             <Stack spacing={3}>
               <div>
-                <Typography variant="h4">Account</Typography>
+                <Typography variant="h4">Account || {currentUserCode}</Typography>
               </div>
               <div>
                 <Grid container spacing={3}>
@@ -329,18 +334,14 @@ export default function AccountPage() {
                                 md={6}
                                 sx={{ paddingTop: "15px !important" }}
                               >
-                                <TextField
-                                  InputProps={{
-                                    readOnly: true,
-                                  }}
-                                  sx={{ marginRight: 2 }}
-                                  fullWidth
-                                  label="User Code"
-                                  variant="filled"
-                                  name="userCode"
-                                  required
-                                  defaultValue={userInfo.userCode}
+                                <TextField required fullWidth sx={{ marginRight: 2 }} variant="filled"
                                   onChange={handleChange}
+                                  defaultValue={userInfo.userCode}
+                                  label="User Code"
+                                  name="userCode"
+                                  // InputProps={{
+                                  //   readOnly: true,
+                                  // }}
                                 />
                               </Grid>
                               <Grid

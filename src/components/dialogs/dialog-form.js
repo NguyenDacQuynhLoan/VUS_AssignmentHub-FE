@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
 import { UserModelFunc } from "../../shared/models/user";
-import { FormChangePassword } from "./form-sections/update-password-user";
+import { FormChangePassword } from "./form-sections/form-user-password";
 
 export default function DialogForm({ 
   // isOpen, 
@@ -23,7 +23,7 @@ export default function DialogForm({
   title,
   message,
   OnAcceptDialogForm,
-  action
+  FormComponent
 }) {
   const [formData, setFormData] = React.useState([]);
   const [date,setDate] = useState()
@@ -49,7 +49,9 @@ export default function DialogForm({
     <>
       <Dialog scroll="paper" open={isOpen} onClose={() => OnCloseDialogForm(false)} maxWidth="md">
         {/* onClose={handleClose} */}
-        <DialogTitle>Create</DialogTitle>
+        
+        <DialogTitle>{title}</DialogTitle>
+        
         <DialogContent>
           
           {/* <DialogContentText>
@@ -129,7 +131,8 @@ export default function DialogForm({
               <Button type="submit">Submit</Button>
             </FormControl>
           </form> */}
-          <FormChangePassword/>
+          {FormComponent}
+          {/* <FormChangePassword/> */}
 
         </DialogContent>
         <DialogActions>

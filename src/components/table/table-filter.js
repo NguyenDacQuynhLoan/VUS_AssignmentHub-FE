@@ -30,6 +30,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { DatePicker } from "@mui/x-date-pickers";
 
 import DialogForm from "../dialogs/dialog-form";
+import { FormChangePassword } from "../dialogs/form-sections/form-user-password";
 
 const majorOptions = [
   'Finnace',
@@ -118,8 +119,12 @@ export default function TableFilterComponent() {
   }
 
   const OnFilterButtonClicked = () =>{
-
   }
+
+  const OnButtonsClicked = () =>{
+    
+  }
+
   return (
     <Box sx={{ paddingBottom: 1 }}>
       <Grid
@@ -333,7 +338,9 @@ export default function TableFilterComponent() {
           </form>
         </AccordionDetails>
       </Accordion>
-      <DialogForm isOpen={isOpen} OnCloseDiaglogForm={OnCloseNewButtonDiaglog} />
+      <DialogForm isOpen={isOpen} OnCloseDiaglogForm={OnCloseNewButtonDiaglog} 
+        // FormComponent={<FormChangePassword/>}
+      />
     </Box>
   );
 }

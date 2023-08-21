@@ -7,7 +7,7 @@ export const SIDEBAR_WIDTH = 220;
 export function LayoutProvider({...props}) {
     const [openSidebar, setOpenSidebar] = useState(true);
     const [router, setRouter] = useState();
-    const [CurrentEmail, setCurrentEmail] = useState("ad");
+    const [currentUserCode, setCurrentUserCode] = useState("value");
 
     const onToggleSidebar = () =>{
       setOpenSidebar(!openSidebar);        
@@ -17,9 +17,8 @@ export function LayoutProvider({...props}) {
       setRouter(url ?? "/");
     }
 
-    const onStoreCurrentEmail = (email) =>{
-      console.log("provider email " + email);
-      setCurrentEmail(email);
+    const OnUpdateCurrentUserCode = (code) =>{
+      setCurrentUserCode(code);
     }
 
   return (
@@ -27,8 +26,7 @@ export function LayoutProvider({...props}) {
       value={{
         router, onChangeRouter,
         openSidebar, onToggleSidebar,
-        CurrentEmail,onStoreCurrentEmail,
-        SIDEBAR_WIDTH
+        currentUserCode, OnUpdateCurrentUserCode
       }}>
       {props.children}
     </DefaultLayoutContext.Provider>

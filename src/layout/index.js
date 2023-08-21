@@ -22,16 +22,17 @@ import { useNavigate } from "react-router-dom";
 export const LayoutView = () => {
   const navigate = useNavigate();
 
+  // const [token, setToken]  = useState();
   const [isLogin, setLogin] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [isError, setError] = useState(true);
 
   // loading waiting checking token
   useEffect(() => {
-    var token = localStorage.getItem("Token");
+    var tokenValue = localStorage.getItem("Token");
     setTimeout(() => {
       // token is existed
-      if (token !== "" && token != null && token !== undefined) {
+      if (tokenValue !== "" && tokenValue != null && tokenValue !== undefined) {
         setLogin(true);
       }
 
@@ -42,7 +43,7 @@ export const LayoutView = () => {
 
   // update due to Error
   useEffect(() => {}, [isError])
-
+  
   /**
    * Login submitment
    * @param {*} data
@@ -51,7 +52,6 @@ export const LayoutView = () => {
     // get token
     async function getToken() {
       var tokenLogged = await AuthenticationService(data);
-
       if (tokenLogged !== "" && tokenLogged !== undefined) {
         localStorage.setItem("UserEmail", JSON.stringify(data.email));
         
@@ -63,10 +63,16 @@ export const LayoutView = () => {
       {
         setError(false);
       }
+      // setToken(tokenLogged);
     }
     getToken();
     setError(true);
   };
+
+  // const Updatecode = () =>{
+  //   const {OnUpdateCurrentUserCode} = useDefaultLayoutContext();
+  //   OnUpdateCurrentUserCode(token)
+  // }
   
   return (
     <LayoutProvider>

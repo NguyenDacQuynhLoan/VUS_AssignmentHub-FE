@@ -5,7 +5,7 @@ import { Box, Button, FormControl, FormLabel, IconButton, TextField,
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-export function FormjioUser() {
+export function FormUser() {
     const [formData, setFormData] = useState({
         currentPassword:"",
         newPassword:"",
@@ -19,6 +19,7 @@ export function FormjioUser() {
     const [showPassword2, setShowPassword2] = useState(false);
 
     const handleChange = (e) => {
+        console.log(e);
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
