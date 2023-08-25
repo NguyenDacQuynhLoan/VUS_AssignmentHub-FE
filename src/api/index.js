@@ -3,8 +3,13 @@ import { HTTP_METHOD } from "../shared/enums/http-methods";
 
 const baseURL = "http://localhost:8090/AssignmentHub";
 
-
-
+/**
+ * 
+ * @param {0} HttpMethod HTTP Methods
+ * @param {1} Data POST or PUT Data
+ * @param {2} Endpoint Data Endpoint
+ * @returns 
+ */
 export default async function APIServices({HttpMethod, Data, Endpoint}) {
   try {
     var token = localStorage.getItem("Token");
@@ -26,7 +31,6 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
     // }
 
     var url = `${baseURL}${Endpoint}`;
-
 
     var config = {
       headers: {

@@ -17,16 +17,17 @@ const theme = createTheme({
   },
 });
 
+
 const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <StyledEngineProvider>
       <BrowserRouter>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
           <ThemeProvider theme={theme}>
             <LayoutView />
           </ThemeProvider>
-      </LocalizationProvider>
+        </LocalizationProvider>
       </BrowserRouter>
     </StyledEngineProvider>
   </React.StrictMode>

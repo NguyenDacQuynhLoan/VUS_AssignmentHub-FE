@@ -34,7 +34,7 @@ import { HTTP_METHOD } from "../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../shared/enums/http-entity";
 import { UserModelFunc } from "../shared/models/user";
 import { DIALOG_ACTION } from "../shared/enums/dialog-action";
-import { MAJOR_ENUM } from "../shared/enums/major-enum";
+import { ENUM_MAJOR } from "../shared/enums/enum-majors";
 import SnackbarStatutes from "../components/snackbar";
 
 export default function AccountPage() {
@@ -69,14 +69,15 @@ export default function AccountPage() {
     message: "",
     snackbarType: "",
   });
-  const [isSuccess , setSuccess] = useState(true);
+  const [isSuccess, setSuccess] = useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = useState(false);
+
   /**
    * Update User Information
    * @returns 
    */
   const updateUser = () => {
-    const updateAPI = async () => {
+    const updateAsync = async () => {
       try {
         if (Object.values(userForm).includes("")) {
           var newUserForm = {
@@ -109,8 +110,7 @@ export default function AccountPage() {
         console.log(error);
       }
     };
-    updateAPI();
-    
+    updateAsync();
   };
 
   const getUser = () => {
@@ -125,12 +125,12 @@ export default function AccountPage() {
 
       userData.dateOfBirth = dayjs(userData.dateOfBirth);
       setUserInfo(UserModelFunc(userData));
-      setMajors(MAJOR_ENUM);
+      setMajors(ENUM_MAJOR);
     };
     getUserData();
   };
 
-  const deleteUser = () => {};
+  const deleteUser = () => { };
 
   // get user information
   useEffect(() => {
@@ -138,7 +138,7 @@ export default function AccountPage() {
   }, []);
 
   // Reload user state
-  useEffect(() => {}, [userInfo]);
+  useEffect(() => { }, [userInfo]);
 
   // get form data value
   const handleChange = (e) => {
@@ -173,19 +173,19 @@ export default function AccountPage() {
     switch (action) {
       case 1:
         // {
-          updateUser();
-          if(isSuccess == true){
-            setSnackbarContent({
-              message: "Update user profile successful",
-              snackbarType: "success",
-            });
-          } else {
-            setSnackbarContent({
-              message: "CANNOT update user profile successful",
-              snackbarType: "error",
-            });
-          }
-        
+        updateUser();
+        if (isSuccess == true) {
+          setSnackbarContent({
+            message: "Update user profile successful",
+            snackbarType: "success",
+          });
+        } else {
+          setSnackbarContent({
+            message: "CANNOT update user profile successful",
+            snackbarType: "error",
+          });
+        }
+
         break;
       case 2:
         deleteUser();
@@ -339,9 +339,9 @@ export default function AccountPage() {
                                   defaultValue={userInfo.userCode}
                                   label="User Code"
                                   name="userCode"
-                                  // InputProps={{
-                                  //   readOnly: true,
-                                  // }}
+                                // InputProps={{
+                                //   readOnly: true,
+                                // }}
                                 />
                               </Grid>
                               <Grid
@@ -369,33 +369,28 @@ export default function AccountPage() {
                                 md={3}
                                 sx={{ paddingTop: "15px !important" }}
                               >
-                                <Box
-                                  sx={{ display: "flex", alignItems: "center" }}
+                                <TextField
+                                  readOnly={isReadOnly}
+                                  sx={{
+                                    background: isReadOnly
+                                      ? "#F0F0F0"
+                                      : "inherit",
+                                    width: "100%",
+                                  }}
+                                  defaultValue={2}
+                                  name="major"
+                                  select
+                                  label="Major"
+                                  onChange={handleChange}
                                 >
-                                  <Typography>Major:&nbsp;</Typography>
-                                  <Select
-                                    readOnly={isReadOnly}
-                                    sx={{
-                                      background: isReadOnly
-                                        ? "#F0F0F0"
-                                        : "inherit",
-                                      width: "100%",
-                                    }}
-                                    defaultValue={2}
-                                    name="major"
-                                    onChange={handleChange}
-                                  >
-                                    {Object.keys(MAJOR_ENUM).map((e) => (
-                                      <MenuItem
-                                        value={Object.keys(MAJOR_ENUM).indexOf(
-                                          e
-                                        )}
-                                      >
-                                        {e}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </Box>
+                                  {Object.keys(ENUM_MAJOR).map((e) => (
+                                    <MenuItem
+                                      value={Object.keys(ENUM_MAJOR).indexOf(e)}
+                                    >
+                                      {e}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
                               </Grid>
 
                               <Grid
@@ -404,27 +399,23 @@ export default function AccountPage() {
                                 md={2}
                                 sx={{ paddingTop: "15px !important" }}
                               >
-                                <Box
-                                  sx={{ display: "flex", alignItems: "center" }}
+                                <TextField
+                                  readOnly={isReadOnly}
+                                  sx={{
+                                    background: isReadOnly
+                                      ? "#F0F0F0"
+                                      : "inherit",
+                                    width: "100%",
+                                  }}
+                                  defaultValue={userInfo.gender}
+                                  name="gender"
+                                  select
+                                  label="Gender"
+                                  onChange={handleChange}
                                 >
-                                  <Typography>Gender:&nbsp;</Typography>
-                                  <Select
-                                    id="demo-simple-select"
-                                    readOnly={isReadOnly}
-                                    sx={{
-                                      background: isReadOnly
-                                        ? "#F0F0F0"
-                                        : "inherit",
-                                      width: "100%",
-                                    }}
-                                    defaultValue={userInfo.gender}
-                                    name="gender"
-                                    onChange={handleChange}
-                                  >
-                                    <MenuItem value={"Female"}>Female</MenuItem>
-                                    <MenuItem value={"Male"}>Male</MenuItem>
-                                  </Select>
-                                </Box>
+                                  <MenuItem value={"Female"}>Female</MenuItem>
+                                  <MenuItem value={"Male"}>Male</MenuItem>
+                                </TextField>
                               </Grid>
 
                               <Grid
@@ -448,7 +439,7 @@ export default function AccountPage() {
                                     variant="filled"
                                     defaultValue={userInfo.email}
                                     onChange={handleChange}
-                                    // value={values.email}
+                                  // value={values.email}
                                   />
                                   <Button
                                     variant={isReadOnly ? "filled" : "outlined"}
@@ -492,7 +483,6 @@ export default function AccountPage() {
                                   onChange={handleChange}
                                 />
                               </Grid>
-
                               <Grid
                                 item
                                 xs={12}
@@ -552,7 +542,9 @@ export default function AccountPage() {
           />
         </>
       ) : (
-        "Loading..."
+        <Typography>
+          Loading...
+        </Typography>
       )}
       <SnackbarStatutes
         isOpen={isOpenSnackBar}

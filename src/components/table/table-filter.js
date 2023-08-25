@@ -31,6 +31,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 
 import DialogForm from "../dialogs/dialog-form";
 import { FormChangePassword } from "../dialogs/form-sections/form-user-password";
+import { FormUser } from "../dialogs/form-sections/form-user";
 
 const majorOptions = [
   'Finnace',
@@ -122,7 +123,14 @@ export default function TableFilterComponent() {
   }
 
   const OnButtonsClicked = () =>{
+    // switch (key) {
+    //   case value:
+        
+    //     break;
     
+    //   default:
+    //     break;
+    // }
   }
 
   return (
@@ -338,8 +346,11 @@ export default function TableFilterComponent() {
           </form>
         </AccordionDetails>
       </Accordion>
-      <DialogForm isOpen={isOpen} OnCloseDiaglogForm={OnCloseNewButtonDiaglog} 
-        // FormComponent={<FormChangePassword/>}
+      <DialogForm 
+        title={"Create User"}
+        isOpen={isOpen} 
+        FormComponent={<FormUser/>}
+        OnCloseDiaglogForm={OnCloseNewButtonDiaglog} 
       />
     </Box>
   );

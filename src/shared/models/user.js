@@ -7,6 +7,7 @@ export function UserModelFunc(object) {
                 userCode: object.userCode,
                 userName: object.userName,
                 gender: object.gender,
+                role:object.role,
                 dateOfBirth: object.dateOfBirth,
                 phone: (object.phone != null) ? object.phone : "",
                 major: object.major,
@@ -28,6 +29,7 @@ UserModelFunc.PropTypes = {
     email: PropTypes.string.isRequired, 
     dateOfBirth: PropTypes.instanceOf(Date).isRequired,
     major: PropTypes.any.isRequired,
+    role: PropTypes.any.isRequired,
     phone: PropTypes.string,
     location: PropTypes.string,
     // assignments: PropTypes.arrayOf(PropTypes.shape({

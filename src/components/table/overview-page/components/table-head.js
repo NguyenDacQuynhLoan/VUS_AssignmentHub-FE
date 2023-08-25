@@ -54,11 +54,11 @@ export const DataTableHead = ({ order, orderBy, onRequestSort }) => {
             onClick={createSortHandler(e.field)}
           >
             {e.label}
-            {orderBy === e.field ? (
+            {orderBy === e.field  && (
               <Box component="span" sx={visuallyHidden}>
                 {order === "desc" ? "sorted descending" : "sorted ascending"}
               </Box>
-            ) : null}
+            )}
           </TableSortLabel>
         </TableCell>
       ))}

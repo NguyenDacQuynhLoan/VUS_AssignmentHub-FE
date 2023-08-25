@@ -38,27 +38,27 @@ export default function EnhancedTableToolbar(props) {
             List
           </Typography>
         )}
-        {numSelected == 0 ? (
+        {numSelected == 0 && (
           <Tooltip title="Filter list">
             <IconButton>
             <FilterListIcon />
             </IconButton>
           </Tooltip>
-        ):null}
-        {numSelected == 1 ? (
+        )}
+        {numSelected == 1 && (
           <Tooltip title="Edit">
             <IconButton>
               <EditIcon />
             </IconButton>
           </Tooltip>
-        ):null}
-        {numSelected >= 1 ? (
+        )}
+        {numSelected >= 1 && (
           <Tooltip title="Delete">
             <IconButton>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        ):null}
+        )}
       </Toolbar>
     );
   }
