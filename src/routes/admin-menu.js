@@ -5,7 +5,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ChatIcon from '@mui/icons-material/Chat';
 
 import Dashboard from '../pages/dashboard';
-import Overview from '../pages';
+import HomePage from '../pages/home';
 import AccountPage from '../pages/account';
 import ChatAppPage from '../pages/chat-app';
 import { LoginPage } from '../pages/auth/login';
@@ -15,10 +15,10 @@ import { LoginPage } from '../pages/auth/login';
  */
 export const adminMenu = [
     {
-        title: "Overview",
+        title: "HomePage",
         url: "/",
         icon: <DashboardIcon />,
-        page: <Overview />
+        page: <HomePage />
     },
     {
         title: "Grade Board",

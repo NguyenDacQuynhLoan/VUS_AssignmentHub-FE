@@ -11,7 +11,6 @@ import {
   Input,
   InputAdornment,
   MenuItem,
-  Select,
   Stack,
   TextField,
   Tooltip,
@@ -19,23 +18,23 @@ import {
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
 import { DatePicker } from "@mui/x-date-pickers";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HttpsIcon from "@mui/icons-material/Https";
+import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
 
 import DialogConfirm from "../components/dialogs/dialog-confirm";
-import { useDefaultLayoutContext } from "../layout/provider/layout-provider";
 import APIServices from "../api";
-import { ConvertDate } from "../shared/func";
+import SnackbarStatutes from "../components/snackbar";
+import { useDefaultLayoutContext } from "../layout/layout-provider";
 import { HTTP_METHOD } from "../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../shared/enums/http-entity";
-import { UserModelFunc } from "../shared/models/user";
-import { DIALOG_ACTION } from "../shared/enums/dialog-action";
 import { ENUM_MAJOR } from "../shared/enums/enum-majors";
-import SnackbarStatutes from "../components/snackbar";
+import { DIALOG_ACTION } from "../shared/enums/dialog-action";
+import { UserModelFunc } from "../shared/models/user";
+import { ConvertDate } from "../shared/func";
 
 export default function AccountPage() {
   const { currentUserCode } = useDefaultLayoutContext();
@@ -115,12 +114,12 @@ export default function AccountPage() {
 
   const getUser = () => {
     const getUserData = async () => {
-      var userEmail = localStorage.getItem("UserEmail").slice(1, -1);
+      // var userEmail = localStorage.getItem("UserEmail").slice(1, -1);
 
       var userData = await APIServices({
         HttpMethod: HTTP_METHOD.HTTP_GET,
         Data: null,
-        Endpoint: `${HTTP_ENTITY.USER}/email/${userEmail}`,
+        // Endpoint: `${HTTP_ENTITY.USER}/email/${userEmail}`,
       });
 
       userData.dateOfBirth = dayjs(userData.dateOfBirth);
@@ -205,7 +204,7 @@ export default function AccountPage() {
   };
 
   const OnCloseDialogForm = (e) => {
-    setDialogOpen(e);
+    setDialogOpen(false);
   };
 
   return (

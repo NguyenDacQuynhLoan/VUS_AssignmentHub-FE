@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 
 import { adminMenu } from "../routes/admin-menu";
-import { SIDEBAR_WIDTH, useDefaultLayoutContext } from '../layout/provider/layout-provider';
+import { SIDEBAR_WIDTH, useDefaultLayoutContext } from '../layout/layout-provider';
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({

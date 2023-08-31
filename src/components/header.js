@@ -17,9 +17,9 @@ import {
   Badge,
   Toolbar,
 } from "@mui/material";
-import { SIDEBAR_WIDTH, useDefaultLayoutContext } from "../layout/provider/layout-provider";
 import DialogConfirm from "./dialogs/dialog-confirm";
 import { useNavigate } from "react-router-dom";
+import { SIDEBAR_WIDTH, useDefaultLayoutContext } from "../layout/layout-provider";
 ;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -54,7 +54,7 @@ export function HeaderComponent() {
   }
 
   const OnAcceptDialogForm = () =>{
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.reload();
   }
 

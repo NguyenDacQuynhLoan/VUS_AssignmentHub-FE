@@ -5,10 +5,10 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Drawer, ListItem, ListItemIcon, ListItemText, ListItemButton, Typography, Divider, IconButton, List, Box, } from "@mui/material";
 
-import { SIDEBAR_WIDTH, useDefaultLayoutContext, } from "../layout/provider/layout-provider";
 import { adminMenu } from "../routes/admin-menu";
 import DialogConfirm from "./dialogs/dialog-confirm";
 import { useState } from "react";
+import { SIDEBAR_WIDTH, useDefaultLayoutContext } from "../layout/layout-provider";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -35,7 +35,7 @@ export function SidebarComponent() {
   }
 
   const OnAcceptDialogForm = () =>{
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.reload();
   }
 

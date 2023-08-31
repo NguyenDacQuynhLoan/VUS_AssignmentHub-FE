@@ -5,7 +5,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { LayoutView } from './layout';
+import { PageDirect } from './pages';
+import { Height } from '@mui/icons-material';
 
 const theme = createTheme({
   palette: {
@@ -25,7 +26,7 @@ root.render(
       <BrowserRouter>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <ThemeProvider theme={theme}>
-            <LayoutView />
+            <PageDirect />
           </ThemeProvider>
         </LocalizationProvider>
       </BrowserRouter>

@@ -55,7 +55,7 @@ const TotalItemsComponent = ({ totalData }) => {
   return (
     <>
       {totalData.map((e, index) => (
-        <Grid item xs={2} sm={4} md={4} key={index}>
+        <Grid item xs={2} sm={4} md={4} key={index} >
           <Card>
             <CardContent>
               <Stack
@@ -64,7 +64,7 @@ const TotalItemsComponent = ({ totalData }) => {
                 justifyContent="space-between"
                 spacing={3}
               >
-                <Stack spacing={1}>
+                <Stack spacing={1} >
                   <Typography color="text.secondary" variant="overline">
                     {e.title}
                   </Typography>

@@ -32,6 +32,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import DialogForm from "../dialogs/dialog-form";
 import { FormChangePassword } from "../dialogs/form-sections/form-user-password";
 import { FormUser } from "../dialogs/form-sections/form-user";
+import FormUser2 from "../dialogs/form-sections/form-user";
 
 const majorOptions = [
   'Finnace',
@@ -115,7 +116,7 @@ export default function TableFilterComponent() {
   }
 
   // Close new button dialog
-  const OnCloseNewButtonDiaglog = (e) => {
+  const OnCloseDialogForm = (e) => {
     setDialogOpen(e);
   }
 
@@ -332,11 +333,10 @@ export default function TableFilterComponent() {
                     sx={{ width: "100%" }}
                     slotProps={{
                       actionBar: {
-                        actions: ["clear", "today"],
-                      },
-                    }} />
+                        actions: ["clear", "today"]
+                      }
+                    }}/>
                 </Grid>
-
                 <Grid item xs={12}>
                   <Button variant="contained" type="submit" sx={{ marginRight: 2 }}>Filter</Button>
                   <Button variant="outlined" type="submit">Clear</Button>
@@ -346,12 +346,20 @@ export default function TableFilterComponent() {
           </form>
         </AccordionDetails>
       </Accordion>
-      <DialogForm 
+      <FormUser2
+      title={"Create User"}
+      isOpen={isOpen} 
+      OnCloseDialogForm={OnCloseDialogForm}
+      />
+      {/* <DialogForm 
         title={"Create User"}
         isOpen={isOpen} 
         FormComponent={<FormUser/>}
-        OnCloseDiaglogForm={OnCloseNewButtonDiaglog} 
-      />
+        OnCloseDialogForm={OnCloseDialogForm}
+      ></DialogForm> */}
     </Box>
   );
+  {/* 
+    <form noValidate onSubmit={OnSubmitButton} ></form> 
+  */}
 }

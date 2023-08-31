@@ -3,7 +3,6 @@ import { createContext, useContext, useState } from "react";
 const DefaultLayoutContext = createContext({})
 
 export const SIDEBAR_WIDTH = 220;
-
 export function LayoutProvider({...props}) {
     const [openSidebar, setOpenSidebar] = useState(true);
     const [router, setRouter] = useState();

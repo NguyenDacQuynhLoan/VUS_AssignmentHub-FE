@@ -1,0 +1,129 @@
+import React, { useState, useEffect } from "react";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormLabel,
+    IconButton,
+    InputAdornment,
+    Stack,
+    Tab,
+    Tabs,
+    TextField,
+    Typography,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+import SnackbarStatutes from "../../components/snackbar";
+
+/**
+ * Login page
+ * @returns Token allow access pages
+ */
+export const LoginComponent = ({ onLoginSubmit, isError, onHandleSubmit }) => {
+    // User Login information
+    const [formDataLogin, setFormDataLogin] = useState({ email: "", password: "" });
+    const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+
+    // User Register information
+    const [formDataRegister, setFormDataRegister] = useState({ email: "", password: "", confirmPassword: "" });
+    const [showPasswordRegister, setShowPasswordRegister] = useState(false);
+    const [showConfirmPasswordRegister, setShowConfirmPasswordRegister] = useState(false);
+
+    // switch method Login or Register
+    const [method, setMethod] = useState("login");
+
+    // Snackbar config
+    const [isOpen, setOpenSnackbar] = useState(false);
+    const [snackbarContent, setSnackbarContent] = useState({ message: "", snackbarType: "" });
+
+    //  Submit login
+    const onSubmitClicked = (e) => {
+        e.preventDefault();
+
+        // validate 
+
+        var data = {
+            email: formDataLogin.email,
+            password: formDataLogin.password,
+        };
+        onLoginSubmit(data);
+    };
+
+    // Show alert snackbar if login false
+    useEffect(() => {
+        setSnackbarContent({
+            message: "Incorrect username or password",
+            snackbarType: "error"
+        })
+        setOpenSnackbar(!isError);
+
+    }, [isError])
+
+    // get form data value
+    const handleChangeLogin = (e) => {
+        setFormDataLogin({ ...formDataLogin, [e.target.name]: e.target.value });
+    };
+
+    // get form data value
+    const handleChangeRegister = (e) => {
+        setFormDataRegister({ ...formDataRegister, [e.target.name]: e.target.value });
+    };
+
+    // switch login or register
+    const handleMethodChange = ((value, newValue) => {
+        setMethod(newValue);
+    });
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
+    return (
+        <form noValidate onSubmit={onSubmitClicked}>
+            <FormControl>
+                <FormLabel>Email or account name</FormLabel>
+                <Stack spacing={3}>
+                    <TextField
+                        name="email"
+                        placeholder="Enter your account or email"
+                        value={formDataLogin.email}
+                        onChange={handleChangeLogin}
+                    />
+                </Stack>
+                <FormLabel sx={{ paddingTop: 2 }}>Password</FormLabel>
+                <Stack spacing={3}>
+                    <TextField
+                        name="password"
+                        placeholder="Enter your password"
+                        type={showPasswordLogin ? "text" : "password"}
+                        value={formDataLogin.password}
+                        onChange={handleChangeLogin}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPasswordLogin((show) => !show)}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {showPasswordLogin ? (
+                                            <VisibilityOff />
+                                        ) : (
+                                            <Visibility />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Stack>
+                <Button variant="contained" type="submit" sx={{ marginTop: 3 }} >
+                    Login
+                </Button>
+            </FormControl>
+        </form>
+    );
+};

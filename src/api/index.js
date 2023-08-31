@@ -11,10 +11,12 @@ const baseURL = "http://localhost:8090/AssignmentHub";
  * @returns 
  */
 export default async function APIServices({HttpMethod, Data, Endpoint}) {
-  try {
-    var token = localStorage.getItem("Token");
-
+try{
     // validate
+
+    var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
+    var token = sessionValue.token;
+
     // if (
     //   (HttpMethod == null) & (HttpMethod.length > 0) ||
     //   !HTTP_METHOD[HttpMethod.toUpperCase()]
@@ -31,7 +33,7 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
     // }
 
     var url = `${baseURL}${Endpoint}`;
-
+    console.log(token);
     var config = {
       headers: {
         "Content-Type": "application/json",
@@ -39,20 +41,18 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
       },
     };
 
+    var result;
     switch (HttpMethod) {
-
       case HTTP_METHOD.HTTP_GET:
         var responseGet = await axios.get(`${url}`, config);
+        result = responseGet.data;
         // console.log(responseGet.data);
-        return responseGet.data;
-
+        // return responseGet.data;
       case HTTP_METHOD.HTTP_POST:
-        if (Data == null || Data) {
-          var responsePost = await axios.post(`${url}`, Data, config);
-          return responsePost.data;
-        }
+        var responsePost = await axios.post(`${url}`, Data, config);
+        result = responsePost.data;
+        // return responsePost.data;
         break;
-
       case HTTP_METHOD.HTTP_PUT:
         if (Data == null || Data) {
           var responsePut = await axios.put(`${url}`, Data, config);
@@ -63,14 +63,12 @@ export default async function APIServices({HttpMethod, Data, Endpoint}) {
       case HTTP_METHOD.HTTP_DELETE:
         var responseDelete = await axios.put(`${url}`, Data, config);
         return responseDelete.data;
-        // if (Data != null && paramUrl != null && paramUrl !== "") {
-        // } else {
-        //   throw new Error("Missing input value or param");
-        // }
       default:
         break;
     }
-  } catch (error) {
-    console.log(error);
+    console.log(result);
+    // return result;
+  }catch(error){
+    console.log("Error :::" + error.message);
   }
 }
