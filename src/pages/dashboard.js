@@ -1,13 +1,21 @@
-import EnhancedTable from "../components/table/gradeboard-page/dashboard-table";
+import { useState } from "react";
+import EnhancedTable from "../components/table/gradeboard-page/table-body";
 import TableBreadcrumb from "../components/table/overview-page/components/table-breadcrumb";
-import TableFilterComponent from "../components/table/table-filter";
+import TableToolBarComponent from "../components/table/gradeboard-page/components/table-toolbar";
+
 
 export default function Dashboard() {
+  const [isReload,setReload] = useState(false);
+
+  const handleReloadChange = (reloadFlag) =>{
+    setReload(reloadFlag)
+  }
+
   return (
     <>
       {/* <TableBreadcrumb/> */}
-      <TableFilterComponent/>
-      <EnhancedTable/>
+      <TableToolBarComponent sendReloadChange={handleReloadChange}/>
+      <EnhancedTable isReload={isReload}/>
     </>
   );
 }

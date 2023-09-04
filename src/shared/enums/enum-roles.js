@@ -1,7 +1,7 @@
 export const ENUM_ROLE = {
-    Admin    : 0,
+    Admin    : "ADMIN",
 
-    Teacher  : 1,
+    Teacher  : "",
 
     Student  : 2,
 }

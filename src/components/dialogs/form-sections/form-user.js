@@ -1,22 +1,18 @@
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    FormControl,
-    FormLabel,
-    Stack,
-    TextField,
-    Box, IconButton,
-    InputAdornment,
-    Grid,
-    Typography,
-    Tabs,
-    Tab,
-    Select,
-    MenuItem
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  TextField,
+  IconButton,
+  InputAdornment,
+  Grid,
+  Typography,
+  Tabs,
+  Tab,
+  MenuItem,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
@@ -30,423 +26,494 @@ import { UserModelFunc } from "../../../shared/models/user";
 import APIServices from "../../../api";
 import { HTTP_METHOD } from "../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
+import SnackbarStatutes from "../../snackbar";
 
-export default function FormUser2({
-    title,
-    isOpen,
-    OnCloseDialogForm,
-}) {
-    const [userForm, setUserForm] = useState({
-        email: "",
-        role: "",
-        password: "",
-        userName: "",
-        userCode: "",
-        major: "",
-        dateOfBirth: "",
-        gender: "",
-        location: "",
-        phone: "",
-    });
+export default function FormUserComponent({ 
+  title, 
+  isOpen, 
+  OnCloseDialogForm,
+  sendReloadChange
+ }) {
+  // User form information
+  const [userForm, setUserForm] = useState({
+    email: "",
+    userRoleCode: "",
+    password: "",
+    confirmPassword: "",
+    userName: "",
+    userCode: "",
+    major: "",
+    dateOfBirth: "",
+    gender: "",
+    location: "",
+    phone: "",
+  });
+  const [birthDate, setBirthDate] = useState(dayjs(new Date()));
 
-    const [showPassword1, setShowPassword1] = useState(false);
-    const [showPassword2, setShowPassword2] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
 
-    const [errorContent, setErrorContent] = useState([]);
-    
-    const ValidateFormUser = () => {
-        try {
-            let requiredList = []
-            userForm.dateOfBirth = birthDate;
-            if(userForm.email == ""){
-                requiredList.push({
-                    isError: true,
-                    field: userForm.email,
-                    message: "E-mail is required."
-                })
-            }
-            if(userForm.userName === ""){
-                requiredList.push({
-                    isError: true,
-                    field: userForm.userName,
-                    message: "User Name is required."
-                })
-            }
-            if(userForm.userCode === ""){
-                requiredList.push({
-                    isError: true,
-                    field: userForm.userCode,
-                    message: "User Code is required."
-                })
-            }
+  // error setting
+  const [errorContent, setErrorContent] = useState([]);
 
-            if(userForm.password === ""){
-                requiredList.push({
-                    isError: true,
-                    field: userForm.password,
-                    message: "Password is required."
-                })
-            }
-            if(requiredList.length > 0 ){
-                setErrorContent(requiredList);
-            }
-            console.log(errorContent);
-            // var requiredList = Object.entries(userForm).filter((e) => 
-            //        e[0] === "email"  && e[1] == ""
-            //     || e[0] === "role" && e[1] == ""
-            //     || e[0] === "password" && e[1] == ""
-            //     || e[0] === "userName" && e[1] == ""
-            //     || e[0] === "userCode" && e[1] == ""
-            //     || e[0] !== "major" && e[1] == ""                
-            //     // if( e[0] === "email"  && e[1] == ""
-            //     //     || e[0] === "role" && e[1] == ""
-            //     //     || e[0] === "password" && e[1] == ""
-            //     //     || e[0] === "userName" && e[1] == ""
-            //     //     || e[0] === "userCode" && e[1] == ""
-            //     //     || e[0] !== "major" && e[1] == "")
-            //     //     {
-                        
-            //     //     }
-            //     // if(key == "email" || key == "userName"){
-            //     //     e[key] = value;
-            //     // }
-            //     // console.log(e);
-            //     // if (key !== "email"  
-            //     //     // || key === "role"
-            //     //     // || key === "password"
-            //     //     // || key === "userName"
-            //     //     // || key === "userCode"
-            //     //     || key !== "major") 
-            //     // {
-            //     //     e[key] = value;
-            //     //     // throw Error(key)
-            //     // }
-            //     // return e;
-            //     // return null;
-            // )
-            // console.log(requiredList[0][0]);
+  // snackbar setting
+  const [isOpenSnackBar, setOpenSnackBar] = useState(false);
+  const [snackbarContent, setSnackbarContent] = useState({
+    message: "",
+    snackbarType: "",
+  });
 
-            // createUser(UserModelFunc(userForm))
-        } catch (error) {
-            console.log(error);
-            // setErrorContent({
-            //     isError: true,
-            //     message:`${errorField} is required`,
-            //     field:errorField
-            // })
-        }
-    }
+  const [roles, setRoles] = useState([]);
 
-    const updateUser = () => {
-        const updateAsync = async () => {
+  // updated by depends
+  useEffect(() => {}, [errorContent, isOpenSnackBar]);
 
-        }
-        updateAsync();
-    }
+  useEffect(() => {
+    // clean when open dialog
+    setUserForm({ ...userForm });
 
-    const createUser = (data) => {
-        try {
-            const createAsync = async () => {
-                await APIServices({
-                    HttpMethod: HTTP_METHOD.HTTP_POST,
-                    Data: data,
-                    Endpoint: HTTP_ENTITY.USER
-                })
-            }
-            createAsync()
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
-    }
+    // get roles
+    const getRoles = async () => {
+      var roleList = await APIServices({
+        HttpMethod: HTTP_METHOD.HTTP_GET,
+        Data: "",
+        Endpoint: HTTP_ENTITY.ROLE,
+      });
+      console.log(roleList);
 
-    const handleChange = (e) => {
-        setTimeout(() =>{
-            setUserForm({ ...userForm, [e.target.name]: e.target.value });
-        },1000)
+      setRoles(roleList);
     };
+    getRoles();
+  }, []);
 
-    //region password 
-    const handleClickShowPassword1 = () => setShowPassword1((show) => !show);
-    const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
-    const handleMouseDownPassword = (event) => event.preventDefault();
+  /**
+   *  Check Form User input is valid or not
+   * @returns true if form user is valid
+   */
+  const CheckValidateFormUser = () => {
+    let requiredList = [];
+    userForm.dateOfBirth = birthDate;
 
-    // switch login or register
-    const [method, setMethod] = useState("information");
-    const handleMethodChange = ((value, newValue) => {
-        setMethod(newValue);
-    });
+    if (userForm.email === "") {
+      requiredList.push({
+        isError: true,
+        field: "email",
+        message: "E-mail is required.",
+      });
+    }
 
-    const [birthDate, setBirthDate] = useState(dayjs(new Date()));
+    if (userForm.userRoleCode === "") {
+      requiredList.push({
+        isError: true,
+        field: "userRoleCode",
+        message: "Role is required.",
+      });
+    }
+
+    if (userForm.password === "") {
+      requiredList.push({
+        isError: true,
+        field: "password",
+        message: "Password is required.",
+      });
+    }
+
+    if (userForm.confirmPassword === "") {
+      requiredList.push({
+        isError: true,
+        field: "confirmPassword",
+        message: "Confirm Password is required.",
+      });
+    }
+
+    if (userForm.confirmPassword !== userForm.password) {
+      requiredList.push({
+        isError: true,
+        field: "confirmPassword",
+        message: "Confirm Password is not match with Password field.",
+      });
+    }
+
+    if (userForm.userName === "") {
+      requiredList.push({
+        isError: true,
+        field: "userName",
+        message: "User Name is required.",
+      });
+    }
+
+    if (userForm.userCode === "") {
+      requiredList.push({
+        isError: true,
+        field: "userCode",
+        message: "User Code is required.",
+      });
+    }
+
+    if (userForm.major === "") {
+      requiredList.push({
+        isError: true,
+        field: "major",
+        message: "Major is required.",
+      });
+    }
+    console.log(userForm);
+    if (requiredList.length > 0) {
+      setErrorContent(requiredList);
+      return false;
+    }
+    return true;
+  };
+
+  /**
+   *
+   */
+  const createUser = async () => {
+    setOpenSnackBar(false);
     
-    return (
-        <>
-            <Dialog fullWidth maxWidth="lg" scroll="paper"
-                open={isOpen} onClose={() => OnCloseDialogForm(false)}>
-                <form >
+    try {
+      var isValidated = CheckValidateFormUser();
+      if (isValidated === true) {
+        var result = await APIServices({
+          HttpMethod: HTTP_METHOD.HTTP_POST,
+          Data: UserModelFunc(userForm),
+          Endpoint: HTTP_ENTITY.USER,
+        });
 
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogContent>
-                        <FormControl fullWidth sx={{ height: "64vh" }} >
-                            <Tabs sx={{ mb: 3 }} value={method} onChange={handleMethodChange}>
-                                <Tab label="Information" value="information" />
-                                <Tab label="Files" value="files" />
-                            </Tabs>
-                            {
-                                method === "information" && (
-                                    <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
-                                        <Grid item xs={12} md={12} lg={12} padding={0}>
-                                            <Typography paddingLeft={2} fontSize={22}>Account </Typography>
-                                        </Grid>
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <TextField sx={{ paddingBottom: 2, width: "100%" }}
-                                                required
-                                                name="email"
-                                                type="email"
-                                                label="E-mail"
-                                                error={() =>{
-                                                    console.log(errorContent);
-                                                    var existed = errorContent.find(e => e.isError === true && e.field === "email")
-                                                    if(existed != null){
-                                                        return true;
-                                                    }else{
-                                                        return false;
-                                                    }
-                                                }}
-                                                helperText={
-                                                    // errorContent.find(e => e.isError == true && e.field == "email").message
-                                                    ""
-                                                }
-                                                defaultValue={userForm.email}
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={2} lg={2}>
-                                            <TextField sx={{ paddingBottom: 2, width: "100%" }}
-                                                required
-                                                select
-                                                name="role"
-                                                label="Role"
-                                                // error={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "role"
-                                                // }
-                                                // helperText={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "role"
-                                                //     ? errorContent.message : ""
-                                                // }
-                                                onChange={handleChange}
-                                            >
-                                                {
-                                                    Object.keys(ENUM_ROLE).map((e) => (
-                                                        <MenuItem value={Object.keys(ENUM_ROLE).indexOf(e)}>
-                                                            {e}
-                                                        </MenuItem>
-                                                    ))
-                                                }
-                                            </TextField>
-                                        </Grid>
-                                        <Grid item xs={12} md={3} lg={3}>
-                                            <TextField sx={{ paddingBottom: 2 }}
-                                                fullWidth
-                                                required
-                                                name="password"
-                                                label="Password"
-                                                type={showPassword1 ? "text" : "password"}
-                                                // error={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "password"
-                                                // }
-                                                // helperText={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "password"
-                                                //     ? errorContent.message : ""
-                                                // }
-                                                onChange={handleChange}
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                aria-label="toggle password visibility"
-                                                                onClick={handleClickShowPassword1}
-                                                                onMouseDown={handleMouseDownPassword}
-                                                                edge="end"
-                                                            >
-                                                                {showPassword1 ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={3} lg={3}>
-                                            <TextField
-                                                fullWidth
-                                                required
-                                                // error={errorContent.isError}
-                                                sx={{ paddingBottom: 2 }}
-                                                label="Confirm Password"
-                                                name="confirmPassword"
-                                                type={showPassword2 ? "text" : "password"}
-                                                onChange={handleChange}
-                                                // helperText={errorContent.message}
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                aria-label="toggle password visibility"
-                                                                onClick={handleClickShowPassword2}
-                                                                onMouseDown={handleMouseDownPassword}
-                                                                edge="end"
-                                                            >
-                                                                {showPassword2 ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={12} lg={12} padding={0}>
-                                            <Typography paddingLeft={2} fontSize={22}>User Information</Typography>
-                                        </Grid>
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <TextField sx={{ paddingBottom: 2, width: "100%" }}
-                                                required
-                                                name="userName"
-                                                label="Name"
-                                                // error={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "userName"
-                                                // }
-                                                // helperText={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "userName"
-                                                //     ? errorContent.message : ""
-                                                // }
-                                                defaultValue={userForm.userName}
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={2} lg={2}>
-                                            <TextField sx={{ paddingBottom: 2, width: "100%" }}
-                                                required
-                                                name="userCode"
-                                                label="Code"
-                                                // error={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "userCode"
-                                                // }
-                                                // helperText={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "userCode"
-                                                //     ? errorContent.message : ""
-                                                // }
-                                                defaultValue={userForm.userCode}
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={3} lg={3}>
-                                            <TextField sx={{ paddingBottom: 2, width: "100%" }}
-                                                required
-                                                select
-                                                name="major"
-                                                label="Major"
-                                                // error={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "major"
-                                                // }
-                                                // helperText={
-                                                //     errorContent.isError == true
-                                                //     && errorContent.field == "major"
-                                                //     ? errorContent.message : ""
-                                                // }
-                                                onChange={handleChange}
-                                            >
-                                                {Object.keys(ENUM_MAJOR).map((e) => (
-                                                    <MenuItem value={Object.keys(ENUM_MAJOR).indexOf(e)} >
-                                                        {e}
-                                                    </MenuItem>
-                                                ))}
-                                            </TextField>
-                                        </Grid>
-                                        <Grid item xs={12} md={2} lg={3}>
-                                            <DatePicker
-                                                label={"Date Of Birth"}
-                                                // name="dateOfBirth"
-                                                sx={{ width: "100%" }}
-                                                onChange={(newDate) => setBirthDate(newDate)}
-                                                defaultValue={birthDate}
-                                                slotProps={{
-                                                    actionBar: {
-                                                        actions: ["clear", "today"],
-                                                    },
-                                                }} />
-                                        </Grid>
-                                        <Grid item xs={12} md={1} lg={1}>
-                                            <TextField
-                                                select
-                                                label="Gender"
-                                                name="gender"
-                                                defaultValue={"Female"}
-                                                onChange={handleChange}
-                                            >
-                                                <MenuItem value={"Female"}>Female</MenuItem>
-                                                <MenuItem value={"Male"}>Male</MenuItem>
-                                            </TextField>
-                                        </Grid>
-                                        <Grid item xs={12} md={8} lg={8}>
-                                            <TextField
-                                                sx={{ paddingBottom: 2, width: "100%" }}
-                                                defaultValue={userForm.location}
-                                                name="location"
-                                                label="Location"
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <TextField
-                                                sx={{ paddingBottom: 2, width: "100%" }}
-                                                defaultValue={userForm.phone}
-                                                name="phone"
-                                                label="Phone"
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                )
-                            }
+        //close dialog
+        OnCloseDialogForm(false);
 
-                            {
-                                method === "files" && (
-                                    <DemoFileViewer />
-                                )
-                            }
-                        </FormControl>
+        // show snackbar
+        setOpenSnackBar(true);
+        setSnackbarContent({
+          message: result.message,
+          snackbarType: result.executionStatus,
+        });
 
-                    </DialogContent>
-                    <DialogActions>
-                        <Button sx={{ color: "red" }}
-                            onClick={() => OnCloseDialogForm(false)} >
-                            Cancel
-                        </Button>
-                        <Button onClick={() => {
-                            ValidateFormUser();
-                            // OnCloseDialogForm(false);
-                        }}>
-                            OK
-                        </Button>
-                    </DialogActions>
-                </form>
-            </Dialog>
-        </>
-    );
+
+      }
+    } catch (error) {
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: error.message,
+        snackbarType: error.executionStatus,
+      });
+    }
+    finally{
+        // send reload 
+        sendReloadChange(true);
+    }
+  };
+
+  const handleChange = (e) => {
+    setTimeout(() => {
+      setUserForm({ ...userForm, [e.target.name]: e.target.value });
+    }, 1000);
+  };
+
+  //region password
+  const handleClickShowPassword1 = () => setShowPassword1((show) => !show);
+  const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+
+  // switch login or register
+  const [method, setMethod] = useState("information");
+  const handleMethodChange = (value, newValue) => {
+    setMethod(newValue);
+  };
+
+  return (
+    <>
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        scroll="paper"
+        open={isOpen}
+        onClose={() => OnCloseDialogForm(false)}
+      >
+        <form>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>
+            <FormControl fullWidth sx={{ height: "64vh" }}>
+              <Tabs sx={{ mb: 3 }} value={method} onChange={handleMethodChange}>
+                <Tab label="Information" value="information" />
+                <Tab label="Files" value="files" />
+              </Tabs>
+              {method === "information" && (
+                <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
+                  <Grid item xs={12} md={12} lg={12} padding={0}>
+                    <Typography paddingLeft={2} fontSize={22}>
+                      Account{" "}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={4}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      required
+                      name="email"
+                      type="email"
+                      label="E-mail"
+                      error={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "email"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "email"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={2} lg={2}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      required
+                      select
+                      name="userRoleCode"
+                      label="Role"
+                      error={
+                        errorContent.find(
+                          (e) =>
+                            e.isError === true && e.field === "userRoleCode"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) =>
+                            e.isError === true && e.field === "userRoleCode"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                    >
+                      {roles.length > 0 &&
+                        roles.map((role) => (
+                          <MenuItem value={role.code}>{role.name}</MenuItem>
+                        ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={3}>
+                    <TextField
+                      sx={{ paddingBottom: 2 }}
+                      fullWidth
+                      required
+                      name="password"
+                      label="Password"
+                      type={showPassword1 ? "text" : "password"}
+                      error={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "password"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "password"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword1}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword1 ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={3}>
+                    <TextField
+                      sx={{ paddingBottom: 2 }}
+                      fullWidth
+                      required
+                      name="confirmPassword"
+                      label="Confirm Password"
+                      type={showPassword2 ? "text" : "password"}
+                      error={
+                        errorContent.find(
+                          (e) =>
+                            e.isError === true && e.field === "confirmPassword"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) =>
+                            e.isError === true && e.field === "confirmPassword"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword2}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword2 ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={12} lg={12} padding={0}>
+                    <Typography paddingLeft={2} fontSize={22}>
+                      User Information
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={4}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      required
+                      name="userName"
+                      label="Name"
+                      error={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "userName"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "userName"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={2} lg={2}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      required
+                      name="userCode"
+                      label="Code"
+                      error={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "userCode"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "userCode"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={3}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      required
+                      select
+                      name="major"
+                      label="Major"
+                      error={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "major"
+                        ) != null
+                      }
+                      helperText={
+                        errorContent.find(
+                          (e) => e.isError === true && e.field === "major"
+                        )?.message ?? ""
+                      }
+                      onChange={handleChange}
+                    >
+                      {Object.keys(ENUM_MAJOR).map((e) => (
+                        <MenuItem value={Object.keys(ENUM_MAJOR).indexOf(e)}>
+                          {e}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={1}>
+                    <TextField
+                      sx={{ width: "100%" }}
+                      select
+                      label="Gender"
+                      name="gender"
+                      defaultValue={"Female"}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={"Female"}>Female</MenuItem>
+                      <MenuItem value={"Male"}>Male</MenuItem>
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={6}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      defaultValue={userForm.location}
+                      name="location"
+                      label="Location"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={3}>
+                    <TextField
+                      sx={{ paddingBottom: 2, width: "100%" }}
+                      defaultValue={userForm.phone}
+                      name="phone"
+                      label="Phone"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3} lg={3}>
+                    <DatePicker
+                      label={"Date Of Birth"}
+                      sx={{ width: "100%" }}
+                      onChange={(newDate) => setBirthDate(newDate)}
+                      defaultValue={birthDate}
+                      slotProps={{
+                        actionBar: {
+                          actions: ["clear", "today"],
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              )}
+
+              {method === "files" && <DemoFileViewer />}
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              sx={{ color: "red" }}
+              onClick={() => OnCloseDialogForm(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                createUser();
+              }}
+            >
+              OK
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+      <SnackbarStatutes
+        isOpen={isOpenSnackBar}
+        message={snackbarContent.message}
+        snackbarType={snackbarContent.snackbarType}
+      />
+    </>
+  );
 }

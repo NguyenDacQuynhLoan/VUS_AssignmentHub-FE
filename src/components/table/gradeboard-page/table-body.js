@@ -13,18 +13,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 
-import EnhancedTableHead from './components/table-head';
-import EnhancedTableToolbar from './components/table-toolbar';
+import EnhancedTableHead from './table-head';
+import EnhancedTableToolbar from './components/table-head-buttons';
 import APIServices from '../../../api';
-import { AssignmentModelFunc } from '../../../shared/models/assignment';
 import { HTTP_METHOD } from '../../../shared/enums/http-methods';
 import { HTTP_ENTITY } from '../../../shared/enums/http-entity';
-import { UserModelFunc } from '../../../shared/models/user';
 import { Button } from '@mui/material';
+import FormUserComponent from '../../dialogs/form-sections/form-user';
 
-function createDataFrame(obj) {
-  
-}
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -53,31 +50,33 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function EnhancedTable() {
+/**
+ * TABLE
+ * @returns 
+ */
+export default function EnhancedTable({isReload}) {
+
   const [users,setUsers]= useState([]);
 
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('userCode');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const getData = () => {
-    const getUserList = async() =>{
-      var userList = await APIServices({
-        HttpMethod: HTTP_METHOD.HTTP_GET,
-        Endpoint: HTTP_ENTITY.USER,
-        Data: null,
-      })
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   
-      var convertedValue = userList.map(e => UserModelFunc(e));
-      setUsers(convertedValue);
-    }
-    getUserList();
+useEffect(() => {
+  const getUserList = async() =>{
+    var userList = await APIServices({
+      HttpMethod: HTTP_METHOD.HTTP_GET,
+      Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}`,
+      Data: null,
+    })
+    // var convertedValue = userList.map(e => UserModelFunc(e));
+    setUsers(userList.result);
   }
+  getUserList();  
+}, [isReload,page,rowsPerPage]);
 
-
-  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -126,29 +125,13 @@ export default function EnhancedTable() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(users, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
-      ),
-    [order, orderBy, page, rowsPerPage],
-  );
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-
-  useEffect(() => {}, [users]);
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
+        <TableContainer sx={{minHeight:700}}>
           <Table
-            sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="small"
           >
@@ -162,8 +145,8 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {
-                visibleRows.length > 0 ?
-                  visibleRows.map((row, index) => {
+                users.length > 0 ?
+                  users.map((row, index) => {
                     const isItemSelected = isSelected(row.userCode);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -223,7 +206,7 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 50, 100]}
+          rowsPerPageOptions={[15, 50, 100]}
           component="div"
           count={users.length}
           rowsPerPage={rowsPerPage}

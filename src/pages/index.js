@@ -27,7 +27,6 @@ export const PageDirect = () => {
   const [isLogin, setLogin] = useState(false); // Check if user logged and in expired
 
   const [isError, setError] = useState(true);
-  const [loginResult, setLoginResult] = useState({ isError: false, message: "", });
 
   // Snackbar setting
   const [isOpen, setOpenSnackbar] = useState(false);
@@ -52,21 +51,24 @@ export const PageDirect = () => {
 
   /**
    * Login submitment
-   * @param {*} data
+   * @param {*} data Email and Password
    */
-  const OnLoginSubmit = (data) => {
-    const loginAsync = async() => {
-      var token = await AuthenticationService(data);      
-      if (token !== "" && token !== undefined) {
-        navigate("/");
-        window.location.reload();
-      }
-      else {
-        setError(false);
-      }
+  const OnLoginSubmit = async(data) => {
+    setOpenSnackbar(false);
+    try{
+      setError(false);
+      await AuthenticationService(data);      
+      navigate("/");
+      window.location.reload();
+      
+    }catch(error){
+      setError(true);
+      setOpenSnackbar(true);
+      setSnackbarContent({
+        message:"Incorrect Email or Password",
+        snackbarType:false,
+      })
     }
-    loginAsync();
-    setError(true);
   };
 
   /**

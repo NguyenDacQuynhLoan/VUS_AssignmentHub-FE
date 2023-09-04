@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import jwt_decode from "jwt-decode";
 export const AuthenticationService = async (loginData) => {
     try {
-        console.log(loginData);
+        
         if (loginData == null || Object.values(loginData) === "") {
             return null;
         }
@@ -23,20 +23,17 @@ export const AuthenticationService = async (loginData) => {
         };
 
 
-        var result = await axios.post(url, data, config);
-
-        // Add token to Session Storage
-        var expiredDate = new Date().setHours(new Date().getHours() + 15);;
-        var sessionValue = {
-            token: result.data,
-            expiredAt: expiredDate
-        }
-        console.log(sessionValue);
-        sessionStorage.setItem("Token", JSON.stringify(sessionValue));
-
-        return result.data;
+        await axios.post(url, data, config).then(e =>{
+            // Add token to Session Storage
+            var expiredDate = new Date().setHours(new Date().getHours() + 15);;
+            var sessionValue = {
+                token: e.data,
+                expiredAt: expiredDate
+            }
+            sessionStorage.setItem("Token", JSON.stringify(sessionValue));
+        });
     } catch (error) {
-        console.error('Error:', error);
+        throw error.response.data;
     }
 }
 

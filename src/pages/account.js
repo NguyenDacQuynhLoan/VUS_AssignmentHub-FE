@@ -35,6 +35,7 @@ import { ENUM_MAJOR } from "../shared/enums/enum-majors";
 import { DIALOG_ACTION } from "../shared/enums/dialog-action";
 import { UserModelFunc } from "../shared/models/user";
 import { ConvertDate } from "../shared/func";
+import jwtDecode from "jwt-decode";
 
 export default function AccountPage() {
   const { currentUserCode } = useDefaultLayoutContext();
@@ -84,6 +85,8 @@ export default function AccountPage() {
               userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
             userName:
               userForm.userName === "" ? userInfo.userName : userForm.userName,
+              userRoleCode:"",
+              userRoleName:"",
             gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
             dateOfBirth:
               userForm.dateOfBirth === ""
@@ -114,14 +117,18 @@ export default function AccountPage() {
 
   const getUser = () => {
     const getUserData = async () => {
-      // var userEmail = localStorage.getItem("UserEmail").slice(1, -1);
+      // decode jwt get user code
+      var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
+      var token = sessionValue.token;
+      var userCode = (jwtDecode(token)).code;
 
       var userData = await APIServices({
         HttpMethod: HTTP_METHOD.HTTP_GET,
         Data: null,
-        // Endpoint: `${HTTP_ENTITY.USER}/email/${userEmail}`,
+        Endpoint:`${HTTP_ENTITY.USER}/${userCode}`
       });
-
+      userData = userData.result;
+      console.log(userData);
       userData.dateOfBirth = dayjs(userData.dateOfBirth);
       setUserInfo(UserModelFunc(userData));
       setMajors(ENUM_MAJOR);
@@ -166,33 +173,14 @@ export default function AccountPage() {
     setReadOnly(!isReadOnly);
   };
 
+  
   const OnAcceptDialogForm = (e, action) => {
     setOpenSnackBar(true);
-    console.log(isSuccess);
-    switch (action) {
-      case 1:
-        // {
-        updateUser();
-        if (isSuccess == true) {
-          setSnackbarContent({
-            message: "Update user profile successful",
-            snackbarType: "success",
-          });
-        } else {
-          setSnackbarContent({
-            message: "CANNOT update user profile successful",
-            snackbarType: "error",
-          });
-        }
 
-        break;
-      case 2:
-        deleteUser();
-        break;
-    }
+    updateUser();
+
     // turn off
     setDialogOpen(false);
-    // setSuccess(false);
   };
 
   const OnUploadFileButton = () => {

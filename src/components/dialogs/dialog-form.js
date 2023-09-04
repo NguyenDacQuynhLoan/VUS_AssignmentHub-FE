@@ -13,10 +13,6 @@ import {
 import React, { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
-import { UserModelFunc } from "../../shared/models/user";
-import { FormChangePassword } from "./form-sections/form-user-password";
-import { FormUser } from "./form-sections/form-user";
-
 
 export default function DialogForm({ 
   isOpen,

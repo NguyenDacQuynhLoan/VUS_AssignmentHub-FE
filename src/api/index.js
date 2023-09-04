@@ -12,11 +12,8 @@ const baseURL = "http://localhost:8090/AssignmentHub";
  */
 export default async function APIServices({HttpMethod, Data, Endpoint}) {
 try{
-    // validate
-
-    var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
-    var token = sessionValue.token;
-
+  
+    // #region validate
     // if (
     //   (HttpMethod == null) & (HttpMethod.length > 0) ||
     //   !HTTP_METHOD[HttpMethod.toUpperCase()]
@@ -31,44 +28,43 @@ try{
     // if (token === "" || token === null) {
     //   throw new Error("Token is not existed.");
     // }
+    // #endregion
 
+    var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
+    var token = sessionValue.token;
+  
     var url = `${baseURL}${Endpoint}`;
-    console.log(token);
     var config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token.slice(1,-1)}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-
-    var result;
+    var result = null;
     switch (HttpMethod) {
       case HTTP_METHOD.HTTP_GET:
         var responseGet = await axios.get(`${url}`, config);
         result = responseGet.data;
-        // console.log(responseGet.data);
-        // return responseGet.data;
+        break;
       case HTTP_METHOD.HTTP_POST:
         var responsePost = await axios.post(`${url}`, Data, config);
         result = responsePost.data;
-        // return responsePost.data;
         break;
       case HTTP_METHOD.HTTP_PUT:
         if (Data == null || Data) {
           var responsePut = await axios.put(`${url}`, Data, config);
-          return responsePut.data;
+          result = responsePut.data;
         }
         break;
-
       case HTTP_METHOD.HTTP_DELETE:
         var responseDelete = await axios.put(`${url}`, Data, config);
-        return responseDelete.data;
+        result = responseDelete.data;
+        break;
       default:
         break;
     }
-    console.log(result);
-    // return result;
+    return result;
   }catch(error){
-    console.log("Error :::" + error.message);
+    throw error.response.data;
   }
 }
