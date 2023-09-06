@@ -57,7 +57,7 @@ try{
         }
         break;
       case HTTP_METHOD.HTTP_DELETE:
-        var responseDelete = await axios.put(`${url}`, Data, config);
+        var responseDelete = await axios.delete(`${url}`, config);
         result = responseDelete.data;
         break;
       default:

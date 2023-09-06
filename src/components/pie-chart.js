@@ -11,7 +11,7 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 
 export default function PieChart({ ...props }) {
-  console.log(props.data); 
+  // console.log(props.data); 
     const pattern = [
       {
         id: 0,

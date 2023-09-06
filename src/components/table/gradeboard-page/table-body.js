@@ -19,8 +19,6 @@ import APIServices from '../../../api';
 import { HTTP_METHOD } from '../../../shared/enums/http-methods';
 import { HTTP_ENTITY } from '../../../shared/enums/http-entity';
 import { Button } from '@mui/material';
-import FormUserComponent from '../../dialogs/form-sections/form-user';
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -66,17 +64,17 @@ export default function EnhancedTable({isReload}) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   
-useEffect(() => {
   const getUserList = async() =>{
     var userList = await APIServices({
       HttpMethod: HTTP_METHOD.HTTP_GET,
       Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}`,
       Data: null,
     })
-    console.log(userList);
-    // var convertedValue = userList.map(e => UserModelFunc(e));
+    console.log(userList.result);
     setUsers(userList.result);
   }
+
+useEffect(() => {
   getUserList();  
 }, [isReload,page,rowsPerPage]);
 
@@ -128,13 +126,18 @@ useEffect(() => {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-
+  const handleReloadChange = (reloadFlag) =>{
+    if(reloadFlag === true){
+      getUserList();  
+    }
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar 
           numSelected={selected.length} 
           selectedItem={selected}
+          sendReloadChange={handleReloadChange}
         />
         <TableContainer sx={{minHeight:700}}>
           <Table

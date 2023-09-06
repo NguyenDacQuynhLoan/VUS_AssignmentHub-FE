@@ -27,6 +27,7 @@ import APIServices from "../../../api";
 import { HTTP_METHOD } from "../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
 import SnackbarStatutes from "../../snackbar";
+import { ConvertDate } from "../../../shared/func";
 
 export default function FormUserComponent({
   title,
@@ -67,7 +68,7 @@ export default function FormUserComponent({
   const [roles, setRoles] = useState([]);
 
   // updated by depends
-  useEffect(() => { console.log(roles) }, [errorContent, isOpenSnackBar, updatedUserValue]);
+  useEffect(() => {}, [errorContent, isOpenSnackBar, updatedUserValue]);
 
   useEffect(() => {
     // clean when open dialog
@@ -80,8 +81,6 @@ export default function FormUserComponent({
         Data: "",
         Endpoint: HTTP_ENTITY.ROLE,
       });
-
-      console.log(roleList)
       setRoles(roleList.result);
     };
     getRoles();
@@ -158,7 +157,7 @@ export default function FormUserComponent({
         message: "Major is required.",
       });
     }
-    console.log(userForm);
+    
     if (requiredList.length > 0) {
       setErrorContent(requiredList);
       return false;
@@ -204,16 +203,32 @@ export default function FormUserComponent({
   };
 
   const updateUser = async () => {
-    console.log(111);
-
     setOpenSnackBar(false);
 
     try {
-      var isValidated = CheckValidateFormUser();
-      if (isValidated === true) {
+      // if (Object.values(userForm).entries === "") {
+        var newUserForm = {
+          userCode:
+            userForm.userCode === "" ? updatedUserValue?.userCode : userForm.userCode,
+          userName:
+            userForm.userName === "" ? updatedUserValue.userName : userForm.userName,
+          userRoleCode: 
+            userForm.userRoleCode === "" ? updatedUserValue.userRoleCode : userForm.userRoleCode,
+          gender: userForm.gender === "" ? updatedUserValue.gender : userForm.gender,
+          dateOfBirth:
+            userForm.dateOfBirth === ""
+              ? ConvertDate(updatedUserValue.dateOfBirth)
+              : ConvertDate(birthDate),
+          phone: userForm.phone === "" ? updatedUserValue.phone : userForm.phone,
+          major: userForm.major === "" ? updatedUserValue.major : userForm.major,
+          email: userForm.email === "" ? updatedUserValue.email : userForm.email,
+          location:
+            userForm.location === "" ? updatedUserValue.location : userForm.location,
+        };
+
         var result = await APIServices({
           HttpMethod: HTTP_METHOD.HTTP_PUT,
-          Data: UserModelFunc(userForm),
+          Data: newUserForm,
           Endpoint: HTTP_ENTITY.USER
         });
 
@@ -225,10 +240,7 @@ export default function FormUserComponent({
         setSnackbarContent({
           message: result.message,
           snackbarType: result.executionStatus,
-        });
-
-
-      }
+        });      
     } catch (error) {
       setOpenSnackBar(true);
       setSnackbarContent({

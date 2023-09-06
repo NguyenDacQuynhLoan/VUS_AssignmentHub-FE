@@ -62,6 +62,7 @@ export default function AccountPage() {
     action: 0,
   });
   const [isOpen, setDialogOpen] = useState(false);
+  
   const [isReadOnly, setReadOnly] = useState(false);
 
   // Snackbar setting
