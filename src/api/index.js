@@ -32,7 +32,7 @@ try{
 
     var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
     var token = sessionValue.token;
-  
+    
     var url = `${baseURL}${Endpoint}`;
     var config = {
       headers: {

@@ -28,12 +28,13 @@ import { HTTP_METHOD } from "../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
 import SnackbarStatutes from "../../snackbar";
 
-export default function FormUserComponent({ 
-  title, 
-  isOpen, 
+export default function FormUserComponent({
+  title,
+  isOpen,
   OnCloseDialogForm,
-  sendReloadChange
- }) {
+  sendReloadChange,
+  updatedUserValue
+}) {
   // User form information
   const [userForm, setUserForm] = useState({
     email: "",
@@ -48,7 +49,7 @@ export default function FormUserComponent({
     location: "",
     phone: "",
   });
-  const [birthDate, setBirthDate] = useState(dayjs(new Date()));
+  const [birthDate, setBirthDate] = useState(dayjs(updatedUserValue?.dateOfBirth ?? new Date()));
 
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -66,7 +67,7 @@ export default function FormUserComponent({
   const [roles, setRoles] = useState([]);
 
   // updated by depends
-  useEffect(() => {}, [errorContent, isOpenSnackBar]);
+  useEffect(() => { console.log(roles) }, [errorContent, isOpenSnackBar, updatedUserValue]);
 
   useEffect(() => {
     // clean when open dialog
@@ -79,9 +80,9 @@ export default function FormUserComponent({
         Data: "",
         Endpoint: HTTP_ENTITY.ROLE,
       });
-      console.log(roleList);
 
-      setRoles(roleList);
+      console.log(roleList)
+      setRoles(roleList.result);
     };
     getRoles();
   }, []);
@@ -165,12 +166,9 @@ export default function FormUserComponent({
     return true;
   };
 
-  /**
-   *
-   */
   const createUser = async () => {
     setOpenSnackBar(false);
-    
+
     try {
       var isValidated = CheckValidateFormUser();
       if (isValidated === true) {
@@ -199,11 +197,50 @@ export default function FormUserComponent({
         snackbarType: error.executionStatus,
       });
     }
-    finally{
-        // send reload 
-        sendReloadChange(true);
+    finally {
+      // send reload 
+      sendReloadChange(true);
     }
   };
+
+  const updateUser = async () => {
+    console.log(111);
+
+    setOpenSnackBar(false);
+
+    try {
+      var isValidated = CheckValidateFormUser();
+      if (isValidated === true) {
+        var result = await APIServices({
+          HttpMethod: HTTP_METHOD.HTTP_PUT,
+          Data: UserModelFunc(userForm),
+          Endpoint: HTTP_ENTITY.USER
+        });
+
+        //close dialog
+        OnCloseDialogForm(false);
+
+        // show snackbar
+        setOpenSnackBar(true);
+        setSnackbarContent({
+          message: result.message,
+          snackbarType: result.executionStatus,
+        });
+
+
+      }
+    } catch (error) {
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: error.message,
+        snackbarType: error.executionStatus,
+      });
+    }
+    finally {
+      // send reload 
+      sendReloadChange(true);
+    }
+  }
 
   const handleChange = (e) => {
     setTimeout(() => {
@@ -263,6 +300,7 @@ export default function FormUserComponent({
                           (e) => e.isError === true && e.field === "email"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.email ?? ""}
                       onChange={handleChange}
                     />
                   </Grid>
@@ -285,6 +323,7 @@ export default function FormUserComponent({
                             e.isError === true && e.field === "userRoleCode"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.userRoleCode ?? ""}
                       onChange={handleChange}
                     >
                       {roles.length > 0 &&
@@ -311,6 +350,7 @@ export default function FormUserComponent({
                           (e) => e.isError === true && e.field === "password"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.password ?? ""}
                       onChange={handleChange}
                       InputProps={{
                         endAdornment: (
@@ -352,6 +392,7 @@ export default function FormUserComponent({
                             e.isError === true && e.field === "confirmPassword"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.password ?? ""}
                       onChange={handleChange}
                       InputProps={{
                         endAdornment: (
@@ -394,6 +435,7 @@ export default function FormUserComponent({
                           (e) => e.isError === true && e.field === "userName"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.userName ?? ""}
                       onChange={handleChange}
                     />
                   </Grid>
@@ -413,6 +455,7 @@ export default function FormUserComponent({
                           (e) => e.isError === true && e.field === "userCode"
                         )?.message ?? ""
                       }
+                      defaultValue={updatedUserValue?.userCode ?? ""}
                       onChange={handleChange}
                     />
                   </Grid>
@@ -436,7 +479,9 @@ export default function FormUserComponent({
                       onChange={handleChange}
                     >
                       {Object.keys(ENUM_MAJOR).map((e) => (
-                        <MenuItem value={Object.keys(ENUM_MAJOR).indexOf(e)}>
+                        <MenuItem
+                          // defaultValue={updatedUserValue?.major ?? ""}
+                          value={Object.keys(ENUM_MAJOR).indexOf(e)}>
                           {e}
                         </MenuItem>
                       ))}
@@ -458,7 +503,7 @@ export default function FormUserComponent({
                   <Grid item xs={12} md={6} lg={6}>
                     <TextField
                       sx={{ paddingBottom: 2, width: "100%" }}
-                      defaultValue={userForm.location}
+                      defaultValue={updatedUserValue?.location ?? ""}
                       name="location"
                       label="Location"
                       onChange={handleChange}
@@ -467,7 +512,7 @@ export default function FormUserComponent({
                   <Grid item xs={12} md={3} lg={3}>
                     <TextField
                       sx={{ paddingBottom: 2, width: "100%" }}
-                      defaultValue={userForm.phone}
+                      defaultValue={updatedUserValue?.phone ?? ""}
                       name="phone"
                       label="Phone"
                       onChange={handleChange}
@@ -501,7 +546,11 @@ export default function FormUserComponent({
             </Button>
             <Button
               onClick={() => {
-                createUser();
+                if (updatedUserValue == null) {
+                  createUser();
+                } else {
+                  updateUser();
+                }
               }}
             >
               OK

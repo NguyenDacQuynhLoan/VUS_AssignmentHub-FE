@@ -38,8 +38,6 @@ import { ConvertDate } from "../shared/func";
 import jwtDecode from "jwt-decode";
 
 export default function AccountPage() {
-  const { currentUserCode } = useDefaultLayoutContext();
-
   // User Information
   const [userInfo, setUserInfo] = useState();
   const [userForm, setUserForm] = useState({
@@ -51,9 +49,11 @@ export default function AccountPage() {
     phone: "",
     major: "",
     email: "",
+    userRoleCode :"",
   });
   const [birthDate, setBirthDate] = useState(dayjs(""));
-  const [majors, setMajors] = useState([{ key: "", value: "" }]);
+  // const [majors, setMajors] = useState([{ key: "", value: "" }]);
+  const [roles,setRoles] = useState([]);
 
   // Dialog setting
   const [dialogContent, setDialogContent] = useState({
@@ -85,8 +85,8 @@ export default function AccountPage() {
               userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
             userName:
               userForm.userName === "" ? userInfo.userName : userForm.userName,
-              userRoleCode:"",
-              userRoleName:"",
+            userRoleCode: 
+              userForm.userRoleCode === "" ? userInfo.userRoleCode : userForm.userRoleCode,
             gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
             dateOfBirth:
               userForm.dateOfBirth === ""
@@ -98,49 +98,63 @@ export default function AccountPage() {
             location:
               userForm.location === "" ? userInfo.location : userForm.location,
           };
-
+          
           await APIServices({
             HttpMethod: HTTP_METHOD.HTTP_PUT,
             Endpoint: HTTP_ENTITY.USER,
             Data: UserModelFunc(newUserForm),
           });
-          setSuccess(true);
+          
         }
       } catch (error) {
-        console.log(error);
-        setSuccess(false);
         console.log(error);
       }
     };
     updateAsync();
   };
 
-  const getUser = () => {
-    const getUserData = async () => {
+  const getUsers = () => {
+    const getUserAsync = async () => {
       // decode jwt get user code
       var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
       var token = sessionValue.token;
-      var userCode = (jwtDecode(token)).code;
+      var decodeToken = jwtDecode(token);
+
+      var userCode = decodeToken.code;
+      var userRole = decodeToken.authorities[0].authority;
 
       var userData = await APIServices({
         HttpMethod: HTTP_METHOD.HTTP_GET,
         Data: null,
-        Endpoint:`${HTTP_ENTITY.USER}/${userCode}`
+        // Endpoint: `${HTTP_ENTITY.USER}/role-${userRole}/${userCode}`
+        Endpoint: `${HTTP_ENTITY.USER}/${userCode}`
       });
       userData = userData.result;
-      console.log(userData);
       userData.dateOfBirth = dayjs(userData.dateOfBirth);
       setUserInfo(UserModelFunc(userData));
-      setMajors(ENUM_MAJOR);
+      // setMajors(ENUM_MAJOR);
     };
-    getUserData();
+    getUserAsync();
   };
-
+  
   const deleteUser = () => { };
+
+  const getRoles =() =>{
+    const getRoleAsync = async () =>{
+      var roleData = await APIServices({
+        HttpMethod:HTTP_METHOD.HTTP_GET,
+        Data:null,
+        Endpoint:HTTP_ENTITY.ROLE
+      })
+      setRoles(roleData.result);
+    } 
+    getRoleAsync();
+  }
 
   // get user information
   useEffect(() => {
-    getUser();
+    getUsers();
+    getRoles();
   }, []);
 
   // Reload user state
@@ -173,7 +187,7 @@ export default function AccountPage() {
     setReadOnly(!isReadOnly);
   };
 
-  
+
   const OnAcceptDialogForm = (e, action) => {
     setOpenSnackBar(true);
 
@@ -198,328 +212,343 @@ export default function AccountPage() {
   return (
     <>
       {userInfo != null ? (
-        <>
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-            }}
-          >
-            <Stack spacing={3}>
-              <div>
-                <Typography variant="h4">Account || {currentUserCode}</Typography>
-              </div>
-              <div>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6} lg={4}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+          }}
+        >
+          <Stack spacing={3}>
+            <div>
+              <Typography variant="h4">Account</Typography>
+            </div>
+            <div>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6} lg={4}>
+                  <Card>
+                    <CardContent>
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "60vh",
+                        }}
+                      >
+                        <Avatar
+                          //   src={user.avatar}
+                          sx={{
+                            my: 3,
+                            height: "40vh",
+                            mb: 2,
+                            width: "40vh",
+                          }}
+                        />
+                        <Typography gutterBottom variant="h5">
+                          {userInfo.userName}
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2">
+                          {userInfo.userCode}
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2">
+                          {userInfo.major}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                    <Divider />
+                    <CardActions>
+                      <Button
+                        onClick={OnUploadFileButton}
+                        fullWidth
+                        variant="text"
+                      >
+                        Upload picture
+                      </Button>
+                      <Input
+                        id="get-file"
+                        sx={{ display: "none" }}
+                        type="file"
+                      />
+                    </CardActions>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={8}>
+                  <form
+                    autoComplete="off"
+                    noValidate
+                    onSubmit={onSubmitClicked}
+                  >
                     <Card>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <CardHeader
+                          subheader="The information can be edited"
+                          title="Profile"
+                        ></CardHeader>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Button onClick={OnDeleteProfileButton}>
+                            <Tooltip title="Delete">
+                              <DeleteIcon />
+                            </Tooltip>
+                          </Button>
+                          <Button onClick={OnEditProfileButton}>
+                            <Tooltip title="Edit">
+                              <EditIcon />
+                            </Tooltip>
+                          </Button>
+                        </Box>
+                      </Box>
                       <CardContent>
                         <Box
-                          sx={{
-                            alignItems: "center",
-                            display: "flex",
-                            flexDirection: "column",
-                            height: "60vh",
-                          }}
+                          sx={{ height: "53vh", flexGrow: 1 }}
+                          paddingLeft={3}
                         >
-                          <Avatar
-                            //   src={user.avatar}
-                            sx={{
-                              my: 3,
-                              height: "40vh",
-                              mb: 2,
-                              width: "40vh",
-                            }}
-                          />
-                          <Typography gutterBottom variant="h5">
-                            {userInfo.userName}
-                          </Typography>
-                          <Typography color="text.secondary" variant="body2">
-                            {userInfo.userCode}
-                          </Typography>
-                          <Typography color="text.secondary" variant="body2">
-                            {userInfo.major}
-                          </Typography>
+                          <Grid container spacing={4}>
+                            <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }} >
+                              <TextField
+                                InputProps={{
+                                  readOnly: isReadOnly,
+                                }}
+                                sx={{ marginRight: 2 }}
+                                fullWidth
+                                label="Name"
+                                name="userName"
+                                required
+                                variant={isReadOnly ? "filled" : "outlined"}
+                                defaultValue={userInfo.userName}
+                                onChange={handleChange}
+                              />
+                            </Grid>
+                            <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }} >
+                              <TextField
+                                required
+                                fullWidth
+                                sx={{ marginRight: 2 }}
+                                variant="filled"
+                                onChange={handleChange}
+                                defaultValue={userInfo.userCode}
+                                label="Code"
+                                name="userCode"
+                              />
+                            </Grid>
+                            <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }} >
+                            <TextField
+                                fullWidth
+                                select
+                                name="userRoleCode"
+                                label="Role"
+                                readOnly={isReadOnly}
+                                sx={{
+                                  background: isReadOnly
+                                    ? "#F0F0F0"
+                                    : "inherit",
+                                }}
+                                defaultValue={userInfo.userRoleCode}
+                                onChange={handleChange}
+                              >
+                                {
+                                  roles.map((e)=>(
+                                    <MenuItem value={e.code}>{e.name}</MenuItem>
+                                  ))
+                                }
+                                {/* {Object.keys(ENUM_MAJOR).map((e) => (
+                                  <MenuItem
+                                    value={Object.keys(ENUM_MAJOR).indexOf(e)}
+                                  >
+                                    {e}
+                                  </MenuItem>
+                                ))} */}
+                              </TextField>
+                            </Grid>
+                            <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }} >
+                              <DatePicker
+                                sx={{ width: "100%" }}
+                                disabled={isReadOnly}
+                                label="Date of Birth"
+                                value={userInfo.dateOfBirth}
+                                slotProps={{
+                                  actionBar: {
+                                    actions: ["clear", "today"],
+                                  },
+                                }}
+                                onChange={(newDate) => setBirthDate(newDate)}
+                              />
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              md={3}
+                              sx={{ paddingTop: "15px !important" }}
+                            >
+                              <TextField
+                                fullWidth
+                                select
+                                name="major"
+                                label="Major"
+                                readOnly={isReadOnly}
+                                sx={{
+                                  background: isReadOnly
+                                    ? "#F0F0F0"
+                                    : "inherit",
+                                  width: "100%",
+                                }}
+                                defaultValue={2}
+                                onChange={handleChange}
+                              >
+                                {Object.keys(ENUM_MAJOR).map((e) => (
+                                  <MenuItem
+                                    value={Object.keys(ENUM_MAJOR).indexOf(e)}
+                                  >
+                                    {e}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            </Grid>
+
+                            <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }} >
+                              <TextField
+                                fullWidth
+                                select
+                                label="Gender"
+                                name="gender"
+                                readOnly={isReadOnly}
+                                sx={{
+                                  background: isReadOnly
+                                    ? "#F0F0F0"
+                                    : "inherit"
+                                }}
+                                defaultValue={userInfo.gender}
+                                onChange={handleChange}
+                              >
+                                <MenuItem value={"Female"}>Female</MenuItem>
+                                <MenuItem value={"Male"}>Male</MenuItem>
+                              </TextField>
+                            </Grid>
+
+                            <Grid
+                              item
+                              xs={12}
+                              md={6}
+                              sx={{ paddingTop: "15px !important" }}
+                            >
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
+                                <TextField
+                                  InputProps={{
+                                    readOnly: true,
+                                  }}
+                                  sx={{ marginRight: 2 }}
+                                  fullWidth
+                                  label="E-mail / Account"
+                                  name="email"
+                                  required
+                                  variant="filled"
+                                  defaultValue={userInfo.email}
+                                  onChange={handleChange}
+                                // value={values.email}
+                                />
+                                <Button
+                                  variant={isReadOnly ? "filled" : "outlined"}
+                                  disabled={isReadOnly}
+                                  sx={{
+                                    background: isReadOnly
+                                      ? "#F0F0F0"
+                                      : "inherit",
+                                  }}
+                                  startIcon={
+                                    <InputAdornment position="start">
+                                      {isReadOnly ? (
+                                        <HttpsIcon />
+                                      ) : (
+                                        <LockOpenIcon />
+                                      )}
+                                    </InputAdornment>
+                                  }
+                                >
+                                  Change password
+                                </Button>
+                              </Box>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              md={6}
+                              sx={{ paddingTop: "15px !important" }}
+                            >
+                              <TextField
+                                InputProps={{
+                                  readOnly: isReadOnly,
+                                }}
+                                sx={{ marginRight: 2 }}
+                                fullWidth
+                                label="Phone Number"
+                                name="phone"
+                                required
+                                variant={isReadOnly ? "filled" : "outlined"}
+                                defaultValue={userInfo.phone}
+                                onChange={handleChange}
+                              />
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              md={12}
+                              sx={{ paddingTop: "15px !important" }}
+                            >
+                              <TextField
+                                InputProps={{
+                                  readOnly: isReadOnly,
+                                }}
+                                sx={{ marginRight: 2 }}
+                                fullWidth
+                                label="Location"
+                                name="location"
+                                required
+                                variant={isReadOnly ? "filled" : "outlined"}
+                                defaultValue={userInfo.location}
+                                onChange={handleChange}
+                              />
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              md={12}
+                              sx={{ paddingTop: "15px !important" }}
+                            >
+                              <Typography>Total Subject</Typography>
+                            </Grid>
+                          </Grid>
                         </Box>
                       </CardContent>
                       <Divider />
-                      <CardActions>
+                      <CardActions sx={{ justifyContent: "flex-end" }}>
                         <Button
-                          onClick={OnUploadFileButton}
-                          fullWidth
-                          variant="text"
+                          variant="contained"
+                          disabled={isReadOnly}
+                          type="submit"
+                          onClick={() => OnOpenDialogForm()}
                         >
-                          Upload picture
+                          Save
                         </Button>
-                        <Input
-                          id="get-file"
-                          sx={{ display: "none" }}
-                          type="file"
-                        />
                       </CardActions>
                     </Card>
-                  </Grid>
-                  <Grid item xs={12} md={6} lg={8}>
-                    <form
-                      autoComplete="off"
-                      noValidate
-                      onSubmit={onSubmitClicked}
-                    >
-                      <Card>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <CardHeader
-                            subheader="The information can be edited"
-                            title="Profile"
-                          ></CardHeader>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Button onClick={OnDeleteProfileButton}>
-                              <Tooltip title="Delete">
-                                <DeleteIcon />
-                              </Tooltip>
-                            </Button>
-                            <Button onClick={OnEditProfileButton}>
-                              <Tooltip title="Edit">
-                                <EditIcon />
-                              </Tooltip>
-                            </Button>
-                          </Box>
-                        </Box>
-                        <CardContent>
-                          <Box
-                            sx={{ height: "53vh", flexGrow: 1 }}
-                            paddingLeft={3}
-                          >
-                            <Grid container spacing={4}>
-                              <Grid
-                                item
-                                xs={12}
-                                md={6}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField
-                                  InputProps={{
-                                    readOnly: isReadOnly,
-                                  }}
-                                  sx={{ marginRight: 2 }}
-                                  fullWidth
-                                  label="User Name"
-                                  name="userName"
-                                  required
-                                  variant={isReadOnly ? "filled" : "outlined"}
-                                  defaultValue={userInfo.userName}
-                                  onChange={handleChange}
-                                />
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={6}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField required fullWidth sx={{ marginRight: 2 }} variant="filled"
-                                  onChange={handleChange}
-                                  defaultValue={userInfo.userCode}
-                                  label="User Code"
-                                  name="userCode"
-                                // InputProps={{
-                                //   readOnly: true,
-                                // }}
-                                />
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={6}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <DatePicker
-                                  sx={{ width: "100%" }}
-                                  disabled={isReadOnly}
-                                  label="Date of Birth"
-                                  value={userInfo.dateOfBirth}
-                                  slotProps={{
-                                    actionBar: {
-                                      actions: ["clear", "today"],
-                                    },
-                                  }}
-                                  onChange={(newDate) => setBirthDate(newDate)}
-                                />
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={3}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField
-                                  readOnly={isReadOnly}
-                                  sx={{
-                                    background: isReadOnly
-                                      ? "#F0F0F0"
-                                      : "inherit",
-                                    width: "100%",
-                                  }}
-                                  defaultValue={2}
-                                  name="major"
-                                  select
-                                  label="Major"
-                                  onChange={handleChange}
-                                >
-                                  {Object.keys(ENUM_MAJOR).map((e) => (
-                                    <MenuItem
-                                      value={Object.keys(ENUM_MAJOR).indexOf(e)}
-                                    >
-                                      {e}
-                                    </MenuItem>
-                                  ))}
-                                </TextField>
-                              </Grid>
-
-                              <Grid
-                                item
-                                xs={12}
-                                md={2}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField
-                                  readOnly={isReadOnly}
-                                  sx={{
-                                    background: isReadOnly
-                                      ? "#F0F0F0"
-                                      : "inherit",
-                                    width: "100%",
-                                  }}
-                                  defaultValue={userInfo.gender}
-                                  name="gender"
-                                  select
-                                  label="Gender"
-                                  onChange={handleChange}
-                                >
-                                  <MenuItem value={"Female"}>Female</MenuItem>
-                                  <MenuItem value={"Male"}>Male</MenuItem>
-                                </TextField>
-                              </Grid>
-
-                              <Grid
-                                item
-                                xs={12}
-                                md={6}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <Box
-                                  sx={{ display: "flex", alignItems: "center" }}
-                                >
-                                  <TextField
-                                    InputProps={{
-                                      readOnly: true,
-                                    }}
-                                    sx={{ marginRight: 2 }}
-                                    fullWidth
-                                    label="E-mail / Account"
-                                    name="email"
-                                    required
-                                    variant="filled"
-                                    defaultValue={userInfo.email}
-                                    onChange={handleChange}
-                                  // value={values.email}
-                                  />
-                                  <Button
-                                    variant={isReadOnly ? "filled" : "outlined"}
-                                    disabled={isReadOnly}
-                                    sx={{
-                                      background: isReadOnly
-                                        ? "#F0F0F0"
-                                        : "inherit",
-                                    }}
-                                    startIcon={
-                                      <InputAdornment position="start">
-                                        {isReadOnly ? (
-                                          <HttpsIcon />
-                                        ) : (
-                                          <LockOpenIcon />
-                                        )}
-                                      </InputAdornment>
-                                    }
-                                  >
-                                    Change password
-                                  </Button>
-                                </Box>
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={6}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField
-                                  InputProps={{
-                                    readOnly: isReadOnly,
-                                  }}
-                                  sx={{ marginRight: 2 }}
-                                  fullWidth
-                                  label="Phone Number"
-                                  name="phone"
-                                  required
-                                  variant={isReadOnly ? "filled" : "outlined"}
-                                  defaultValue={userInfo.phone}
-                                  onChange={handleChange}
-                                />
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={12}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <TextField
-                                  InputProps={{
-                                    readOnly: isReadOnly,
-                                  }}
-                                  sx={{ marginRight: 2 }}
-                                  fullWidth
-                                  label="Location"
-                                  name="location"
-                                  required
-                                  variant={isReadOnly ? "filled" : "outlined"}
-                                  defaultValue={userInfo.location}
-                                  onChange={handleChange}
-                                />
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                md={12}
-                                sx={{ paddingTop: "15px !important" }}
-                              >
-                                <Typography>Total Subject</Typography>
-                              </Grid>
-                            </Grid>
-                          </Box>
-                        </CardContent>
-                        <Divider />
-                        <CardActions sx={{ justifyContent: "flex-end" }}>
-                          <Button
-                            variant="contained"
-                            disabled={isReadOnly}
-                            type="submit"
-                            onClick={() => OnOpenDialogForm()}
-                          >
-                            Save
-                          </Button>
-                        </CardActions>
-                      </Card>
-                    </form>
-                  </Grid>
+                  </form>
                 </Grid>
-              </div>
-            </Stack>
-          </Box>
-          <DialogConfirm
+              </Grid>
+            </div>
+          </Stack>
+        </Box>
+      ) : (
+        <Typography>
+          Loading...
+        </Typography>
+      )}
+       <DialogConfirm
             isOpen={isOpen}
             title={dialogContent.title}
             message={dialogContent.message}
@@ -527,12 +556,6 @@ export default function AccountPage() {
             OnCloseDialogForm={OnCloseDialogForm}
             OnAcceptDialogForm={OnAcceptDialogForm}
           />
-        </>
-      ) : (
-        <Typography>
-          Loading...
-        </Typography>
-      )}
       <SnackbarStatutes
         isOpen={isOpenSnackBar}
         message={snackbarContent.message}

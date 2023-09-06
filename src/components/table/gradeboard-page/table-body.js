@@ -55,12 +55,14 @@ function stableSort(array, comparator) {
  * @returns 
  */
 export default function EnhancedTable({isReload}) {
-
   const [users,setUsers]= useState([]);
 
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('userCode');
+
   const [selected, setSelected] = useState([]);
+
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   
@@ -71,6 +73,7 @@ useEffect(() => {
       Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}`,
       Data: null,
     })
+    console.log(userList);
     // var convertedValue = userList.map(e => UserModelFunc(e));
     setUsers(userList.result);
   }
@@ -129,7 +132,10 @@ useEffect(() => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar 
+          numSelected={selected.length} 
+          selectedItem={selected}
+        />
         <TableContainer sx={{minHeight:700}}>
           <Table
             aria-labelledby="tableTitle"
@@ -149,7 +155,7 @@ useEffect(() => {
                   users.map((row, index) => {
                     const isItemSelected = isSelected(row.userCode);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
+                    
                     return (
                       <TableRow
                         hover

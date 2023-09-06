@@ -27,7 +27,7 @@ export const AuthenticationService = async (loginData) => {
             // Add token to Session Storage
             var expiredDate = new Date().setHours(new Date().getHours() + 15);;
             var sessionValue = {
-                token: e.data,
+                token: e.data.result,
                 expiredAt: expiredDate
             }
             sessionStorage.setItem("Token", JSON.stringify(sessionValue));

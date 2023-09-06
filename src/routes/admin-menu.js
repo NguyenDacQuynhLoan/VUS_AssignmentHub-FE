@@ -15,7 +15,7 @@ import { LoginPage } from '../pages/auth/login';
  */
 export const adminMenu = [
     {
-        title: "HomePage",
+        title: "Home Page",
         url: "/",
         icon: <DashboardIcon />,
         page: <HomePage />

@@ -6,13 +6,34 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import EditIcon from "@mui/icons-material/Edit";
 import FormUserComponent from "../../../dialogs/form-sections/form-user";
 import { useState } from "react";
+import { useEffect } from "react";
+import APIServices from "../../../../api";
+import { HTTP_METHOD } from "../../../../shared/enums/http-methods";
+import { HTTP_ENTITY } from "../../../../shared/enums/http-entity";
+import dayjs from "dayjs";
 
-export default function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
+export default function EnhancedTableToolbar({ numSelected,selectedItem } ) {
   const [isOpen, setDialogOpen] = useState(false);
+  const [defaultUserValue, setDefaultUserValue] = useState();
+  // useEffect(()=>{},[numSelected])
 
-  // Show new button dialog
-  const OnOpenEditButtonDialog = () => {
+  const OnEditButtonClicked = async() => {
+    console.log(selectedItem);
+    var userData = await APIServices({
+      HttpMethod:HTTP_METHOD.HTTP_GET,
+      Data:null,
+      Endpoint:`${HTTP_ENTITY.USER}/${selectedItem}`
+    })
+    console.log(userData);
+    setDefaultUserValue(userData.result);
+    setDialogOpen(true);
+  };
+
+  const OnDeleteButtonClicked = async() => {
+    var userData = await APIServices({
+      HttpMethod:HTTP_METHOD.HTTP_GET,
+      Data:null,
+    })
     setDialogOpen(true);
   };
 
@@ -20,7 +41,6 @@ export default function EnhancedTableToolbar(props) {
   const OnCloseDialogForm = (e) => {
     setDialogOpen(e);
   };
-
   return (
     <>
       <Toolbar
@@ -58,14 +78,14 @@ export default function EnhancedTableToolbar(props) {
 
         {numSelected == 1 && (
           <Tooltip title="Edit">
-            <IconButton onClick={() => OnOpenEditButtonDialog()}>
+            <IconButton onClick={() => OnEditButtonClicked()}>
               <EditIcon />
             </IconButton>
           </Tooltip>
         )}
         {numSelected >= 1 && (
           <Tooltip title="Delete">
-            <IconButton>
+            <IconButton onClick={() => OnDeleteButtonClicked()}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -74,6 +94,7 @@ export default function EnhancedTableToolbar(props) {
       <FormUserComponent
         title={"Update User"}
         isOpen={isOpen}
+        updatedUserValue={defaultUserValue}
         // sendReloadChange={sendReloadChange}
         OnCloseDialogForm={OnCloseDialogForm}
       />
