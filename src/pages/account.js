@@ -36,6 +36,7 @@ import { DIALOG_ACTION } from "../shared/enums/dialog-action";
 import { UserModelFunc } from "../shared/models/user";
 import { ConvertDate } from "../shared/func";
 import jwtDecode from "jwt-decode";
+import { FormChangePassword } from "../components/dialogs/form-sections/form-user-password";
 
 export default function AccountPage() {
   // User Information
@@ -49,11 +50,12 @@ export default function AccountPage() {
     phone: "",
     major: "",
     email: "",
-    userRoleCode :"",
+    userRoleCode: "",
   });
+  const [currentUserCode, setCurrentUserCode] = useState("");
   const [birthDate, setBirthDate] = useState(dayjs(""));
   // const [majors, setMajors] = useState([{ key: "", value: "" }]);
-  const [roles,setRoles] = useState([]);
+  const [roles, setRoles] = useState([]);
 
   // Dialog setting
   const [dialogContent, setDialogContent] = useState({
@@ -61,8 +63,9 @@ export default function AccountPage() {
     message: "",
     action: 0,
   });
-  const [isOpen, setDialogOpen] = useState(false);
-  
+  const [isOpenDialogConfirm, setOpenDialogConfirm] = useState(false);
+  const [isOpenDialogChangePassword, setOpenDialogChangePassword] = useState(false);
+
   const [isReadOnly, setReadOnly] = useState(false);
 
   // Snackbar setting
@@ -70,85 +73,89 @@ export default function AccountPage() {
     message: "",
     snackbarType: "",
   });
-  const [isSuccess, setSuccess] = useState(true);
   const [isOpenSnackBar, setOpenSnackBar] = useState(false);
 
   /**
    * Update User Information
    * @returns 
    */
-  const updateUser = () => {
-    const updateAsync = async () => {
-      try {
-        if (Object.values(userForm).includes("")) {
-          var newUserForm = {
-            userCode:
-              userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
-            userName:
-              userForm.userName === "" ? userInfo.userName : userForm.userName,
-            userRoleCode: 
-              userForm.userRoleCode === "" ? userInfo.userRoleCode : userForm.userRoleCode,
-            gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
-            dateOfBirth:
-              userForm.dateOfBirth === ""
-                ? ConvertDate(userInfo.dateOfBirth)
-                : ConvertDate(birthDate),
-            phone: userForm.phone === "" ? userInfo.phone : userForm.phone,
-            major: userForm.major === "" ? userInfo.major : userForm.major,
-            email: userForm.email === "" ? userInfo.email : userForm.email,
-            location:
-              userForm.location === "" ? userInfo.location : userForm.location,
-          };
-          
-          await APIServices({
-            HttpMethod: HTTP_METHOD.HTTP_PUT,
-            Endpoint: HTTP_ENTITY.USER,
-            Data: UserModelFunc(newUserForm),
-          });
-          
-        }
-      } catch (error) {
-        console.log(error);
+  const updateUser = async () => {
+    setOpenSnackBar(false);
+    try {
+      if (Object.values(userForm).includes("")) {
+        var newUserForm = {
+          userCode:
+            userForm.userCode === "" ? userInfo.userCode : userForm.userCode,
+          userName:
+            userForm.userName === "" ? userInfo.userName : userForm.userName,
+          userRoleCode:
+            userForm.userRoleCode === "" ? userInfo.userRoleCode : userForm.userRoleCode,
+          gender: userForm.gender === "" ? userInfo.gender : userForm.gender,
+          dateOfBirth:
+            userForm.dateOfBirth === ""
+              ? ConvertDate(userInfo.dateOfBirth)
+              : ConvertDate(birthDate),
+          phone: userForm.phone === "" ? userInfo.phone : userForm.phone,
+          major: userForm.major === "" ? userInfo.major : userForm.major,
+          email: userForm.email === "" ? userInfo.email : userForm.email,
+          location:
+            userForm.location === "" ? userInfo.location : userForm.location,
+        };
+
+        var result = await APIServices({
+          HttpMethod: HTTP_METHOD.HTTP_PUT,
+          Endpoint: HTTP_ENTITY.USER,
+          Data: UserModelFunc(newUserForm),
+        });
+        console.log(result);
+        setOpenSnackBar(true);
+        setSnackbarContent({
+          message: result.message,
+          snackbarType: result.executionStatus
+        })
       }
-    };
-    updateAsync();
+    } catch (error) {
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: error.message,
+        snackbarType: error.executionStatus
+      })
+    }
   };
 
-  const getUsers = () => {
-    const getUserAsync = async () => {
-      // decode jwt get user code
-      var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
-      var token = sessionValue.token;
-      var decodeToken = jwtDecode(token);
+  const getUsers = async () => {
+    // decode jwt get user code
+    var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
+    var token = sessionValue.token;
+    var decodeToken = jwtDecode(token);
 
-      var userCode = decodeToken.code;
-      var userRole = decodeToken.authorities[0].authority;
+    var userCode = decodeToken.code;
+    setCurrentUserCode(userCode);
 
-      var userData = await APIServices({
-        HttpMethod: HTTP_METHOD.HTTP_GET,
-        Data: null,
-        // Endpoint: `${HTTP_ENTITY.USER}/role-${userRole}/${userCode}`
-        Endpoint: `${HTTP_ENTITY.USER}/${userCode}`
-      });
-      userData = userData.result;
-      userData.dateOfBirth = dayjs(userData.dateOfBirth);
-      setUserInfo(UserModelFunc(userData));
-      // setMajors(ENUM_MAJOR);
-    };
-    getUserAsync();
+    var userRole = decodeToken.authorities[0].authority;
+
+    var userData = await APIServices({
+      HttpMethod: HTTP_METHOD.HTTP_GET,
+      Data: null,
+      Endpoint: `${HTTP_ENTITY.USER}/${userCode}`
+    });
+    userData = userData.result;
+    userData.dateOfBirth = dayjs(userData.dateOfBirth);
+    setUserInfo(UserModelFunc(userData));
+    // setMajors(ENUM_MAJOR);
   };
-  
+
   const deleteUser = () => { };
 
-  const getRoles =() =>{
-    const getRoleAsync = async () =>{
+  const getRoles = () => {
+    const getRoleAsync = async () => {
       var roleData = await APIServices({
-        HttpMethod:HTTP_METHOD.HTTP_GET,
-        Data:null,
-        Endpoint:HTTP_ENTITY.ROLE
+        HttpMethod: HTTP_METHOD.HTTP_GET,
+        Data: null,
+        Endpoint: HTTP_ENTITY.ROLE
       })
       setRoles(roleData.result);
-    } 
+    }
     getRoleAsync();
   }
 
@@ -181,13 +188,12 @@ export default function AccountPage() {
       message: "Do you want to delete this account ?",
       action: DIALOG_ACTION.DELETE,
     });
-    setDialogOpen(true);
+    setOpenDialogConfirm(true);
   };
 
   const OnEditProfileButton = () => {
     setReadOnly(!isReadOnly);
   };
-
 
   const OnAcceptDialogForm = (e, action) => {
     setOpenSnackBar(true);
@@ -195,20 +201,25 @@ export default function AccountPage() {
     updateUser();
 
     // turn off
-    setDialogOpen(false);
+    setOpenDialogConfirm(false);
   };
 
   const OnUploadFileButton = () => {
     document.getElementById("get-file").click();
   };
 
-  const OnOpenDialogForm = () => {
-    setDialogOpen(true);
+  const OnOpenDialogConfirm = () => {
+    setOpenDialogConfirm(true);
   };
 
   const OnCloseDialogForm = (e) => {
-    setDialogOpen(false);
+    setOpenDialogConfirm(e);
+    setOpenDialogChangePassword(e)
   };
+
+  const OnOpenDialogChangePassword = () => {
+    setOpenDialogChangePassword(true);
+  }
 
   return (
     <>
@@ -337,7 +348,7 @@ export default function AccountPage() {
                               />
                             </Grid>
                             <Grid item xs={12} md={3} sx={{ paddingTop: "15px !important" }} >
-                            <TextField
+                              <TextField
                                 fullWidth
                                 select
                                 name="userRoleCode"
@@ -352,17 +363,10 @@ export default function AccountPage() {
                                 onChange={handleChange}
                               >
                                 {
-                                  roles.map((e)=>(
+                                  roles.map((e) => (
                                     <MenuItem value={e.code}>{e.name}</MenuItem>
                                   ))
                                 }
-                                {/* {Object.keys(ENUM_MAJOR).map((e) => (
-                                  <MenuItem
-                                    value={Object.keys(ENUM_MAJOR).indexOf(e)}
-                                  >
-                                    {e}
-                                  </MenuItem>
-                                ))} */}
                               </TextField>
                             </Grid>
                             <Grid item xs={12} md={6} sx={{ paddingTop: "15px !important" }} >
@@ -470,6 +474,7 @@ export default function AccountPage() {
                                       )}
                                     </InputAdornment>
                                   }
+                                  onClick={OnOpenDialogChangePassword}
                                 >
                                   Change password
                                 </Button>
@@ -532,7 +537,7 @@ export default function AccountPage() {
                           variant="contained"
                           disabled={isReadOnly}
                           type="submit"
-                          onClick={() => OnOpenDialogForm()}
+                          onClick={() => OnOpenDialogConfirm()}
                         >
                           Save
                         </Button>
@@ -549,14 +554,19 @@ export default function AccountPage() {
           Loading...
         </Typography>
       )}
-       <DialogConfirm
-            isOpen={isOpen}
-            title={dialogContent.title}
-            message={dialogContent.message}
-            action={dialogContent.action}
-            OnCloseDialogForm={OnCloseDialogForm}
-            OnAcceptDialogForm={OnAcceptDialogForm}
-          />
+      <DialogConfirm
+        isOpen={isOpenDialogConfirm}
+        title={dialogContent.title}
+        message={dialogContent.message}
+        action={dialogContent.action}
+        OnCloseDialogForm={OnCloseDialogForm}
+        OnAcceptDialogForm={OnAcceptDialogForm}
+      />
+      <FormChangePassword
+        isOpen={isOpenDialogChangePassword}
+        UserCode={currentUserCode}
+        OnCloseDialogForm={OnCloseDialogForm}
+      />
       <SnackbarStatutes
         isOpen={isOpenSnackBar}
         message={snackbarContent.message}

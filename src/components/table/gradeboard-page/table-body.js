@@ -73,10 +73,10 @@ export default function EnhancedTable({isReload}) {
     console.log(userList.result);
     setUsers(userList.result);
   }
-
+  
 useEffect(() => {
   getUserList();  
-}, [isReload,page,rowsPerPage]);
+}, [isReload || page || rowsPerPage]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -131,6 +131,7 @@ useEffect(() => {
       getUserList();  
     }
   }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

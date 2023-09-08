@@ -186,8 +186,6 @@ export default function FormUserComponent({
           message: result.message,
           snackbarType: result.executionStatus,
         });
-
-
       }
     } catch (error) {
       setOpenSnackBar(true);
@@ -206,24 +204,18 @@ export default function FormUserComponent({
     setOpenSnackBar(false);
 
     try {
-      // if (Object.values(userForm).entries === "") {
         var newUserForm = {
-          userCode:
-            userForm.userCode === "" ? updatedUserValue?.userCode : userForm.userCode,
-          userName:
-            userForm.userName === "" ? updatedUserValue.userName : userForm.userName,
-          userRoleCode: 
-            userForm.userRoleCode === "" ? updatedUserValue.userRoleCode : userForm.userRoleCode,
-          gender: userForm.gender === "" ? updatedUserValue.gender : userForm.gender,
-          dateOfBirth:
-            userForm.dateOfBirth === ""
-              ? ConvertDate(updatedUserValue.dateOfBirth)
-              : ConvertDate(birthDate),
-          phone: userForm.phone === "" ? updatedUserValue.phone : userForm.phone,
-          major: userForm.major === "" ? updatedUserValue.major : userForm.major,
-          email: userForm.email === "" ? updatedUserValue.email : userForm.email,
-          location:
-            userForm.location === "" ? updatedUserValue.location : userForm.location,
+          userCode: userForm.userCode === "" ? updatedUserValue?.userCode : userForm.userCode,
+          userName: userForm.userName === "" ? updatedUserValue.userName : userForm.userName,
+          gender:   userForm.gender === "" ? updatedUserValue.gender : userForm.gender,
+          phone:    userForm.phone === "" ? updatedUserValue.phone : userForm.phone,
+          major:    userForm.major === "" ? updatedUserValue.major : userForm.major,
+          email:    userForm.email === "" ? updatedUserValue.email : userForm.email,
+          location: userForm.location === "" ? updatedUserValue.location : userForm.location,
+          userRoleCode:  userForm.userRoleCode === "" ? updatedUserValue.userRoleCode : userForm.userRoleCode,
+          dateOfBirth:   userForm.dateOfBirth === ""
+            ? ConvertDate(updatedUserValue.dateOfBirth)
+            : ConvertDate(birthDate),
         };
 
         var result = await APIServices({

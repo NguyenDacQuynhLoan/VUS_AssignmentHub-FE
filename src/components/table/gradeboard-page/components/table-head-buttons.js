@@ -13,11 +13,17 @@ import { HTTP_ENTITY } from "../../../../shared/enums/http-entity";
 import dayjs from "dayjs";
 import DialogConfirm from "../../../dialogs/dialog-confirm";
 import { DIALOG_ACTION } from "../../../../shared/enums/dialog-action";
+import SnackbarStatutes from "../../../snackbar";
 
 export default function EnhancedTableToolbar({ numSelected,selectedItem,sendReloadChange } ) {
   const [isOpenFormUser, setDialogOpenFromUser] = useState(false);
   const [isOpenConfirm, setDialogOpenConfirm] = useState(false);
+
   const [isOpenSnackBar, setOpenSnackBar] = useState(false);
+  const [snackbarContent, setSnackbarContent] = useState({
+    message: "",
+    snackbarType: "",
+  });
 
   // Dialog setting
   const [dialogContent, setDialogContent] = useState({
@@ -39,15 +45,32 @@ export default function EnhancedTableToolbar({ numSelected,selectedItem,sendRelo
     setDialogOpenFromUser(true);
   };
 
-  const OnDeleteButtonClicked = async() => {
-    selectedItem.forEach(async(element) => {
-      await APIServices({
-        HttpMethod:HTTP_METHOD.HTTP_DELETE,
-        Data:null,
-        Endpoint:`${HTTP_ENTITY.USER}/${element}`
-      })  
-    });
-    setDialogOpenConfirm(true);
+  const OnDeleteButtonClicked = () => {
+    setOpenSnackBar(false);
+    try{
+      selectedItem.forEach(async(element) => {
+        await APIServices({
+          HttpMethod:HTTP_METHOD.HTTP_DELETE,
+          Data:null,
+          Endpoint:`${HTTP_ENTITY.USER}/${element}`
+        })  
+      });
+      setDialogOpenConfirm(true);
+
+      // show snackbar
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: "Delete successful",
+        snackbarType: true,
+      });
+
+    }catch(error){
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: "Delete error",
+        snackbarType: error.executionStatus,
+      });
+    }
   };
 
   // Close new button dialog
@@ -63,11 +86,10 @@ export default function EnhancedTableToolbar({ numSelected,selectedItem,sendRelo
       action: DIALOG_ACTION.DELETE,
     });
     setDialogOpenConfirm(true);
+    
   };
 
   const OnAcceptDialogForm = (e, action) => {
-    setOpenSnackBar(true);
-
     OnDeleteButtonClicked();
 
     // turn off
@@ -141,11 +163,11 @@ export default function EnhancedTableToolbar({ numSelected,selectedItem,sendRelo
             OnCloseDialogForm={OnCloseDialogForm}
             OnAcceptDialogForm={OnAcceptDialogForm}
           />
-      {/* <SnackbarStatutes
+      <SnackbarStatutes
         isOpen={isOpenSnackBar}
         message={snackbarContent.message}
         snackbarType={snackbarContent.snackbarType}
-      />   */}
+      />  
     </>
   );
 }
