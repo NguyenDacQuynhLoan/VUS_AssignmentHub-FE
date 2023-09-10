@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import { visuallyHidden } from "@mui/utils";
 import { headCells } from "./components/data/table-columns";
 
-export default function EnhancedTableHead(props) {
+export default function TablePageHead(props) {
   const {
     onSelectAllClick,
     order,

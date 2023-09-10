@@ -13,8 +13,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 
-import EnhancedTableHead from './table-head';
-import EnhancedTableToolbar from './components/table-head-buttons';
+import TablePageHead from './table-head';
+import TableHeadButtonsComponent from './components/table-head-buttons';
 import APIServices from '../../../api';
 import { HTTP_METHOD } from '../../../shared/enums/http-methods';
 import { HTTP_ENTITY } from '../../../shared/enums/http-entity';
@@ -52,7 +52,7 @@ function stableSort(array, comparator) {
  * TABLE
  * @returns 
  */
-export default function EnhancedTable({isReload}) {
+export default function TablePageBody({isReload}) {
   const [users,setUsers]= useState([]);
 
   const [order, setOrder] = useState('asc');
@@ -75,8 +75,10 @@ export default function EnhancedTable({isReload}) {
   }
   
 useEffect(() => {
+  
   getUserList();  
-}, [isReload || page || rowsPerPage]);
+  // console.log(123);
+}, [isReload,page, rowsPerPage]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -129,13 +131,14 @@ useEffect(() => {
   const handleReloadChange = (reloadFlag) =>{
     if(reloadFlag === true){
       getUserList();  
+      setSelected([]);
     }
   }
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar 
+        <TableHeadButtonsComponent 
           numSelected={selected.length} 
           selectedItem={selected}
           sendReloadChange={handleReloadChange}
@@ -145,7 +148,7 @@ useEffect(() => {
             aria-labelledby="tableTitle"
             size="small"
           >
-            <EnhancedTableHead
+            <TablePageHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}

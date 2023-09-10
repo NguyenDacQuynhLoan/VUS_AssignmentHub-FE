@@ -26,15 +26,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import SearchIcon from "@mui/icons-material/Search";
 import { DatePicker } from "@mui/x-date-pickers";
 
-import DialogForm from "../../../dialogs/dialog-form";
-import { FormChangePassword } from "../../../dialogs/form-sections/form-user-password";
-import FormUserComponent, {
-  FormUser,
-} from "../../../dialogs/form-sections/form-user";
-import FormUser2 from "../../../dialogs/form-sections/form-user";
 
 const majorOptions = ["Finnace", "Computer Science", "Law"];
 
@@ -42,75 +35,31 @@ const subjectOptions = ["HTML & CSS", "Human Law", "Account"];
 
 const gradeOptions = ["A", "B", "C", "D", "F"];
 
-export default function TableFilterComponent({ sendReloadChange }) {
-  const [isOpen, setDialogOpen] = React.useState(false);
+export default function TableFilterComponent({filterValue}) {
 
-  const [filterForm, setFilterForm] = React.useState({
-    majors: [],
-    studentCode: "",
-    studentName: "",
-    subjects: [],
-    grades: [],
+  const [formValue, setFormValue] = React.useState({
+    major:"",
+    userCode:"",
+    userName:"",
+    gender:"",
+    grade:"",
+    subject:"",
+    createdDate:"",
+    updatedDate:""
   });
 
-  const [major, setMajor] = React.useState([]);
-  const [subject, setSubject] = React.useState([]);
-  const [grade, setGrade] = React.useState([]);
-
-  // Select major
-  const OnFilterMajorSelect = (event) => {
-    var value = event.target.value;
-    if (!value.includes("")) {
-      setMajor(typeof value === "string" ? value.split(",") : value);
-    } else {
-      setMajor([]);
-    }
+  const OnFilterButtonClicked = (e) => {
+    e.preventDefault();
+    filterValue(formValue);
   };
 
-  // Select subject
-  const OnFilterSubjectSelect = (event) => {
-    var value = event.target.value;
-    if (!value.includes("")) {
-      setSubject(typeof value === "string" ? value.split(",") : value);
-    } else {
-      setSubject([]);
-    }
-  };
-
-  // Select Grade
-  const OnFilterGradeSelect = (event) => {
-    // const { target: { value } } = event;
-    var value = event.target.value;
-    if (!value.includes("")) {
-      setGrade(typeof value === "string" ? value.split(",") : value);
-    } else {
-      setGrade([]);
-    }
-  };
-
-  // Show new button dialog
-  const OnOpenNewButtonDialog = () => {
-    setDialogOpen(true);
-  };
-
-  // Close new button dialog
-  const OnCloseDialogForm = (e) => {
-    setDialogOpen(e);
-  };
-
-  const OnFilterButtonClicked = () => {};
-
-  const OnButtonsClicked = () => {
-    // switch (key) {
-    //   case value:
-    //     break;
-    //   default:
-    //     break;
-    // }
+  // get form data value
+  const handleChange = (e) => {
+    setFormValue({ ...formValue, [e.target.name]: e.target.value });
   };
 
   return (
-    <Accordion>
+    <Accordion expanded="true">
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ paddingRight: 1 }}>Filter</Typography>
         <FilterListIcon />
@@ -120,26 +69,22 @@ export default function TableFilterComponent({ sendReloadChange }) {
           <FormControl fullWidth>
             <Grid container spacing={4} columns={{ xs: 4, sm: 8, md: 12 }}>
               <Grid item xs={3}>
-                <InputLabel id="demo-simple-select-label">Major</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
+                <TextField
                   sx={{ width: "100%" }}
                   label="Major"
-                  multiple
-                  value={major}
-                  onChange={OnFilterMajorSelect}
-                  renderValue={(selected) => selected.join(", ")}
+                  select
+                  name="major"
+                  onChange={handleChange}
                 >
                   <MenuItem key="" value="">
-                    None
+                    <i>None</i> 
                   </MenuItem>
                   {majorOptions.map((name) => (
                     <MenuItem key={name} value={name}>
-                      <Checkbox checked={major.indexOf(name) > -1} />
-                      <ListItemText primary={name} />
+                      {name}
                     </MenuItem>
                   ))}
-                </Select>
+                </TextField>
               </Grid>
               <Grid item xs={3}>
                 <Stack spacing={3}>
@@ -151,8 +96,7 @@ export default function TableFilterComponent({ sendReloadChange }) {
                   <TextField
                     name="studentName"
                     label="Student Name"
-                    // value={formData.email}
-                    // onChange={handleChange}
+                    onChange={handleChange}
                   />
                 </Stack>
               </Grid>
@@ -161,35 +105,29 @@ export default function TableFilterComponent({ sendReloadChange }) {
                   <FormControlLabel
                     control={
                       <Switch name="antoine" size="medium" />
-                      // checked={state.antoine} onChange={handleChange}
                     }
                     label={"Male"}
                   />
                 </Stack>
               </Grid>
               <Grid item xs={6}>
-                <InputLabel id="select-subject" sx={{ marginTop: 11 }}>
-                  Subject
-                </InputLabel>
-                <Select
-                  multiple
+                <TextField
+                  select
                   label="Subject"
+                  name="subject"
                   labelId="select-subject"
                   sx={{ width: "100%" }}
-                  value={subject}
-                  onChange={OnFilterSubjectSelect}
-                  renderValue={(e) => e.join(", ")}
+                  onChange={handleChange}
                 >
                   <MenuItem key="" value="">
-                    None
+                    <i>None</i>
                   </MenuItem>
                   {subjectOptions.map((name) => (
                     <MenuItem key={name} value={name}>
-                      <Checkbox checked={subject.indexOf(name) > -1} />
-                      <ListItemText primary={name} />
+                      {name}
                     </MenuItem>
                   ))}
-                </Select>
+                </TextField>
               </Grid>
               <Grid item xs={4}>
                 <Stack spacing={3}>
@@ -201,35 +139,29 @@ export default function TableFilterComponent({ sendReloadChange }) {
                   <FormControlLabel
                     control={
                       <Switch name="antoine" size="medium" />
-                      // checked={state.antoine} onChange={handleChange}
                     }
                     label={"Checked"}
                   />
                 </Stack>
               </Grid>
               <Grid item xs={3}>
-                <InputLabel id="select-grade" sx={{ marginTop: 22 }}>
-                  Grade
-                </InputLabel>
-                <Select
+                <TextField
                   labelId="select-grade"
                   sx={{ width: "100%" }}
                   label="Grade"
-                  multiple
-                  value={grade}
-                  onChange={OnFilterGradeSelect}
-                  renderValue={(selected) => selected.join(", ")}
+                  select
+                  name="grade"
+                  onChange={handleChange}
                 >
                   <MenuItem key="" value="">
                     None
                   </MenuItem>
                   {gradeOptions.map((name) => (
                     <MenuItem key={name} value={name}>
-                      <Checkbox checked={grade.indexOf(name) > -1} />
-                      <ListItemText primary={name} />
+                      {name}
                     </MenuItem>
                   ))}
-                </Select>
+                </TextField>
               </Grid>
               <Grid item xs={3} sx={{ display: "flex", alignItems: "center" }}>
                 <DatePicker

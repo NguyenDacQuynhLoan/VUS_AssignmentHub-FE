@@ -15,7 +15,7 @@ import DialogConfirm from "../../../dialogs/dialog-confirm";
 import { DIALOG_ACTION } from "../../../../shared/enums/dialog-action";
 import SnackbarStatutes from "../../../snackbar";
 
-export default function EnhancedTableToolbar({ numSelected,selectedItem,sendReloadChange } ) {
+export default function TableHeadButtonsComponent({ numSelected,selectedItem,sendReloadChange } ) {
   const [isOpenFormUser, setDialogOpenFromUser] = useState(false);
   const [isOpenConfirm, setDialogOpenConfirm] = useState(false);
 
@@ -31,7 +31,6 @@ export default function EnhancedTableToolbar({ numSelected,selectedItem,sendRelo
     message: "",
     action: 0,
   });
-  
   
   const [defaultUserValue, setDefaultUserValue] = useState();
 
@@ -70,6 +69,8 @@ export default function EnhancedTableToolbar({ numSelected,selectedItem,sendRelo
         message: "Delete error",
         snackbarType: error.executionStatus,
       });
+    }finally{
+      sendReloadChange(true);
     }
   };
 
