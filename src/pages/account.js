@@ -77,7 +77,6 @@ export default function AccountPage() {
 
   /**
    * Update User Information
-   * @returns 
    */
   const updateUser = async () => {
     setOpenSnackBar(false);
@@ -144,8 +143,6 @@ export default function AccountPage() {
     setUserInfo(UserModelFunc(userData));
     // setMajors(ENUM_MAJOR);
   };
-
-  const deleteUser = () => { };
 
   const getRoles = () => {
     const getRoleAsync = async () => {

@@ -93,7 +93,3 @@ const TotalItemsComponent = ({ totalData }) => {
     </>
   );
 };
-
-// TotalContainerComponent.propTypes = {
-//   value: PropTypes.array,
-// };

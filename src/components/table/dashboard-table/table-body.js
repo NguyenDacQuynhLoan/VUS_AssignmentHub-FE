@@ -52,7 +52,7 @@ function stableSort(array, comparator) {
  * TABLE
  * @returns 
  */
-export default function TablePageBody({isReload}) {
+export default function TablePageBody({isReload,searchValue,filterValue}) {
   const [users,setUsers]= useState([]);
 
   const [order, setOrder] = useState('asc');
@@ -74,11 +74,17 @@ export default function TablePageBody({isReload}) {
     setUsers(userList.result);
   }
   
-useEffect(() => {
-  
-  getUserList();  
-  // console.log(123);
-}, [isReload,page, rowsPerPage]);
+useEffect(() => {getUserList()}, [isReload,page, rowsPerPage]);
+
+useEffect(() => {}, [searchValue]);
+useEffect(() => {filterUserAsync()}, [filterValue]);
+  const filterUserAsync = async() =>{
+    var filterList = await APIServices({
+      HTTP_METHOD:HTTP_METHOD.HTTP_POST,
+      Endpoint:HTTP_ENTITY.USER,
+      Data:null
+    })
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

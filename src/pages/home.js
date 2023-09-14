@@ -1,9 +1,12 @@
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PieChart from "../components/pie-chart";
 import { TotalContainerComponent } from "../components/overview-totals";
-import { DataTable } from "../components/table/overview-page";
+import { TableViewComponent } from "../components/table/homepage-table";
+import { HTTP_METHOD } from "../shared/enums/http-methods";
+import { HTTP_ENTITY } from "../shared/enums/http-entity";
+import APIServices from "../api";
 
 // sample chart data
 export const MajorDefault = [
@@ -40,19 +43,38 @@ export const MajorDefault = [
 ];
 
 export default function HomePage() {
-  // assignment api -> table ,total container
+   const [assignmentList , setAssignmentList] = useState();
 
-  // user -> pie chart
+  useEffect(()=>{
+    getAssignmentAsync();
+  },[])
+
+  useEffect(() => {},[assignmentList])
+
+  const getAssignmentAsync = async() =>{
+    var assignmentList = await APIServices({
+      HttpMethod:HTTP_METHOD.HTTP_GET,
+      Endpoint:HTTP_ENTITY.ASSIGNMENT,
+      Data:null
+    })
+    setAssignmentList(assignmentList.result);
+  }
+
+  const onReloadAssignment = () => { 
+    getAssignmentAsync();
+  }
 
   return (
     <>
       <Box component="main" sx={{ flexGrow: 1 ,alignItems:"stretch",padding:"0"}}>
         <Box sx={{paddingBottom:2}}>
-          <TotalContainerComponent />
+           <TotalContainerComponent/>
         </Box>
         <Grid container columns={{ xs: 4, sm: 12, md: 12 }} >
           <Grid item xs={2} sm={9} md={8.5}>
-            <DataTable />
+            <TableViewComponent 
+              assignmentList={assignmentList}
+              onReloadAssignment={onReloadAssignment}/>
           </Grid>
           <Grid item xs={2} sm={3} md={3.5}>
             <PieChart data={MajorDefault} />

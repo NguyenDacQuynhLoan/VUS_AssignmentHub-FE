@@ -18,6 +18,9 @@ import {
 import DataTableRow from "./components/table-row";
 import { TableDataPagination } from "./components/table-pagination";
 import { DataTableHead } from "./components/table-head";
+import APIServices from "../../../api";
+import { HTTP_METHOD } from "../../../shared/enums/http-methods";
+import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
 
 //data
 const rows = [
@@ -360,12 +363,14 @@ function stableSort(array, comparator) {
 /**
  *  Table with detail row
  */
-export function DataTable() {
+export function TableViewComponent({assignmentList,onReloadAssignment}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [pageIndex, setPageIndex] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(12);
+  const [pageSize, setPageSize] = React.useState(20);
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+  
+  // const [assignmentList, setAssignmentList] = React.useState([]);
 
   // change padding for title when screen is >= 24inch
   React.useEffect(() => {
@@ -379,7 +384,21 @@ export function DataTable() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+
   }, []);
+  React.useEffect(() => {},[]);
+  const getAssignmentAsync = async() =>{
+    // try{
+    //   var assignmentList = await APIServices({
+    //     HttpMethod:HTTP_METHOD.HTTP_GET,
+    //     Endpoint:HTTP_ENTITY.ASSIGNMENT,
+    //     Data:null
+    //   })
+    //   setAssignmentList(assignmentList.result);
+    // }catch(error){
+        
+    // }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -387,17 +406,7 @@ export function DataTable() {
     setOrderBy(property);
   };
 
-  const emptyRows =
-    pageIndex > 0 ? Math.max(0, (1 + pageIndex) * pageSize - rows.length) : 0;
-
-  const handleChangePageIndex = (event, newPage) => {
-    setPageIndex(newPage);
-  };
-
-  const handleChangePageSize = (event) => {
-    setPageSize(parseInt(event.target.value, 10));
-    setPageIndex(0);
-  };
+  
 
   return (
     <Box >
@@ -413,6 +422,7 @@ export function DataTable() {
               <CachedIcon />
             </SvgIcon>
           }
+          onClick={()=>onReloadAssignment()}
         >
           Sync
         </Button>
@@ -430,30 +440,22 @@ export function DataTable() {
               <DataTableHead
                 order={order}
                 orderBy={orderBy}
-                onRequestSort={handleRequestSort}
+                // onRequestSort={handleRequestSort}
               />
 
             </TableRow>
             
           </TableHead>
           <TableBody>
-
-            {pageSize > 0
-              ? stableSort(rows, getComparator(order, orderBy))
-                .slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
-                .map((e) => (
-                  <>
-                    <DataTableRow key={e.id} row={e} />
-                  </>
-                ))
-              : emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-
+            {assignmentList != null && assignmentList.length > 0 && 
+            (
+              <DataTableRow assignmentList={assignmentList}/>
+            )}
           </TableBody>
         </Table>
+        {assignmentList != null && assignmentList.length == 0 && (
+          <Typography align="center">No data to Display</Typography>
+        )} 
       </TableContainer>
     </Box>
   );

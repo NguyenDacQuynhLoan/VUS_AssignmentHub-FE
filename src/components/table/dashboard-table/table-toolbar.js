@@ -51,7 +51,7 @@ const gradeOptions = [
   'F'
 ];
 
-export default function TablePageToolBar({sendReloadChange}) {
+export default function TablePageToolBar({sendReloadChange,sendFilterValue,sendSearchValue}) {
   const [isOpen, setDialogOpen] = React.useState(false);
 
   const [filterForm, setFilterForm] = React.useState({ 
@@ -73,11 +73,11 @@ export default function TablePageToolBar({sendReloadChange}) {
   }
 
   const handleFilterValue = (filterValue) =>{
-    console.log(filterValue);
+    sendFilterValue(filterValue);
   }
 
   const handleSearchValue = (keyword) =>{
-    console.log(keyword);
+    sendSearchValue(keyword);
   }
 
   return (
