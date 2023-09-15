@@ -10,33 +10,39 @@ import {
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import { useEffect } from "react";
 
-export function TotalContainerComponent() {
+export function TotalContainerComponent({
+  checkedTotal,
+  unCheckedTotal,
+  assignmentTotal,
+  gradedTotal
+}) {
   var today = new Date();
   var currentYear = today.getFullYear();
   var currentMonth = today.getMonth() + 1;
 
   // 3 semester per a year
   var quarter = Math.ceil(currentMonth / 4);
-
+  useEffect(()=>{},[checkedTotal])
   let data = [
     {
       title: "Checked assignment total",
-      value: "124/ 423",
+      value: `${checkedTotal}/ ${assignmentTotal}`,
       semester: quarter,
       icon: <DoneAllIcon />,
       iconColor: "#00e676"
     },
     {
       title: "Unchecked assignment total",
-      value: "32/ 423",
+      value: `${unCheckedTotal}/ ${assignmentTotal}`,
       semester: quarter,
       icon: <RemoveDoneIcon />,
       iconColor: "#f44336"
     },
     {
       title: "Ranked grade total",
-      value: "54",
+      value: `${gradedTotal}`,
       icon: <AttachEmailIcon />,
       iconColor: "#3f51b5"
     },
@@ -45,7 +51,10 @@ export function TotalContainerComponent() {
   return (
     <>
       <Grid container spacing={4} columns={{ xs: 4, sm: 8, md: 12 }}>
-        <TotalItemsComponent totalData={data} />
+        <TotalItemsComponent 
+          totalData={data} 
+          
+          />
       </Grid>
     </>
   );
