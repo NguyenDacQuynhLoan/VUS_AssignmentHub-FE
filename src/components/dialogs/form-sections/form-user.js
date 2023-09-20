@@ -13,6 +13,7 @@ import {
   Tabs,
   Tab,
   MenuItem,
+  Box,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
@@ -21,20 +22,23 @@ import { ENUM_MAJOR } from "../../../shared/enums/enum-majors";
 import { ENUM_ROLE } from "../../../shared/enums/enum-roles";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
-import { DemoFileViewer } from "../../../test-file-viewer";
 import { UserModelFunc } from "../../../shared/models/user";
 import APIServices from "../../../api";
 import { HTTP_METHOD } from "../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
 import SnackbarStatutes from "../../snackbar";
 import { ConvertDate } from "../../../shared/func";
+import { DemoFileViewer } from "./test-file-viewer";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+const mammoth = require("mammoth/mammoth.browser");
 
 export default function FormUserComponent({
   title,
   isOpen,
   OnCloseDialogForm,
   sendReloadChange,
-  updatedUserValue
+  updatedUserValue,
+  updateAssignmentValue,
 }) {
   // User form information
   const [userForm, setUserForm] = useState({
@@ -50,7 +54,22 @@ export default function FormUserComponent({
     location: "",
     phone: "",
   });
-  const [birthDate, setBirthDate] = useState(dayjs(updatedUserValue?.dateOfBirth ?? new Date()));
+
+  // Assignment form information
+  const [assignmentForm, setAssignmentForm] = useState({
+    code: "",
+    title: "",
+    subjectName: "",
+    status: null,
+    grade: null,
+    file: "",
+    createdDate: "",
+    updatedDate: "",
+  });
+
+  const [birthDate, setBirthDate] = useState(
+    dayjs(updatedUserValue?.dateOfBirth ?? new Date())
+  );
 
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -157,7 +176,7 @@ export default function FormUserComponent({
         message: "Major is required.",
       });
     }
-    
+
     if (requiredList.length > 0) {
       setErrorContent(requiredList);
       return false;
@@ -166,89 +185,108 @@ export default function FormUserComponent({
   };
 
   const createUser = async () => {
+    console.log(assignmentForm);
     setOpenSnackBar(false);
 
-    try {
-      var isValidated = CheckValidateFormUser();
-      if (isValidated === true) {
-        var result = await APIServices({
-          HttpMethod: HTTP_METHOD.HTTP_POST,
-          Data: UserModelFunc(userForm),
-          Endpoint: HTTP_ENTITY.USER,
-        });
+    // try {
+    //   var isValidated = CheckValidateFormUser();
+    //   if (isValidated === true) {
+    //     var result = await APIServices({
+    //       HttpMethod: HTTP_METHOD.HTTP_POST,
+    //       Data: UserModelFunc(userForm),
+    //       Endpoint: HTTP_ENTITY.USER,
+    //     });
 
-        //close dialog
-        OnCloseDialogForm(false);
+    //     //close dialog
+    //     OnCloseDialogForm(false);
 
-        // show snackbar
-        setOpenSnackBar(true);
-        setSnackbarContent({
-          message: result.message,
-          snackbarType: result.executionStatus,
-        });
-      }
-    } catch (error) {
-      setOpenSnackBar(true);
-      setSnackbarContent({
-        message: error.message,
-        snackbarType: error.executionStatus,
-      });
-    }
-    finally {
-      // send reload 
-      sendReloadChange(true);
-    }
+    //     // show snackbar
+    //     setOpenSnackBar(true);
+    //     setSnackbarContent({
+    //       message: result.message,
+    //       snackbarType: result.executionStatus,
+    //     });
+    //   }
+    // } catch (error) {
+    //   setOpenSnackBar(true);
+    //   setSnackbarContent({
+    //     message: error.message,
+    //     snackbarType: error.executionStatus,
+    //   });
+    // } finally {
+    //   // send reload
+    //   sendReloadChange(true);
+    // }
   };
 
   const updateUser = async () => {
     setOpenSnackBar(false);
 
     try {
-        var newUserForm = {
-          userCode: userForm.userCode === "" ? updatedUserValue?.userCode : userForm.userCode,
-          userName: userForm.userName === "" ? updatedUserValue.userName : userForm.userName,
-          gender:   userForm.gender === "" ? updatedUserValue.gender : userForm.gender,
-          phone:    userForm.phone === "" ? updatedUserValue.phone : userForm.phone,
-          major:    userForm.major === "" ? updatedUserValue.major : userForm.major,
-          email:    userForm.email === "" ? updatedUserValue.email : userForm.email,
-          location: userForm.location === "" ? updatedUserValue.location : userForm.location,
-          userRoleCode:  userForm.userRoleCode === "" ? updatedUserValue.userRoleCode : userForm.userRoleCode,
-          dateOfBirth:   userForm.dateOfBirth === ""
+      var newUserForm = {
+        userCode:
+          userForm.userCode === ""
+            ? updatedUserValue?.userCode
+            : userForm.userCode,
+        userName:
+          userForm.userName === ""
+            ? updatedUserValue.userName
+            : userForm.userName,
+        gender:
+          userForm.gender === "" ? updatedUserValue.gender : userForm.gender,
+        phone: userForm.phone === "" ? updatedUserValue.phone : userForm.phone,
+        major: userForm.major === "" ? updatedUserValue.major : userForm.major,
+        email: userForm.email === "" ? updatedUserValue.email : userForm.email,
+        location:
+          userForm.location === ""
+            ? updatedUserValue.location
+            : userForm.location,
+        userRoleCode:
+          userForm.userRoleCode === ""
+            ? updatedUserValue.userRoleCode
+            : userForm.userRoleCode,
+        dateOfBirth:
+          userForm.dateOfBirth === ""
             ? ConvertDate(updatedUserValue.dateOfBirth)
             : ConvertDate(birthDate),
-        };
+      };
 
-        var result = await APIServices({
-          HttpMethod: HTTP_METHOD.HTTP_PUT,
-          Data: newUserForm,
-          Endpoint: HTTP_ENTITY.USER
-        });
+      var result = await APIServices({
+        HttpMethod: HTTP_METHOD.HTTP_PUT,
+        Data: newUserForm,
+        Endpoint: HTTP_ENTITY.USER,
+      });
 
-        //close dialog
-        OnCloseDialogForm(false);
+      //close dialog
+      OnCloseDialogForm(false);
 
-        // show snackbar
-        setOpenSnackBar(true);
-        setSnackbarContent({
-          message: result.message,
-          snackbarType: result.executionStatus,
-        });      
+      // show snackbar
+      setOpenSnackBar(true);
+      setSnackbarContent({
+        message: result.message,
+        snackbarType: result.executionStatus,
+      });
     } catch (error) {
       setOpenSnackBar(true);
       setSnackbarContent({
         message: error.message,
         snackbarType: error.executionStatus,
       });
-    }
-    finally {
-      // send reload 
+    } finally {
+      // send reload
       sendReloadChange(true);
     }
-  }
+  };
 
-  const handleChange = (e) => {
+  const handleChangeUser = (e) => {
     setTimeout(() => {
       setUserForm({ ...userForm, [e.target.name]: e.target.value });
+    }, 1000);
+  };
+
+  const handleChangeAssignment = (e) => {
+    setTimeout(() => {
+      setAssignmentForm({ ...assignmentForm, [e.target.name]: e.target.value });
     }, 1000);
   };
 
@@ -258,10 +296,38 @@ export default function FormUserComponent({
   const handleMouseDownPassword = (event) => event.preventDefault();
 
   // switch login or register
-  const [method, setMethod] = useState("information");
+  const [method, setMethod] = useState("files");
   const handleMethodChange = (value, newValue) => {
     setMethod(newValue);
   };
+  const filePath1 = process.env.PUBLIC_URL + "/sample_word.html";
+  const filePath2 = process.env.PUBLIC_URL + "/sample_excel.html";
+  const docs = [
+    {
+      uri: filePath1,
+    },
+    {
+      uri: filePath2,
+    },
+  ];
+
+  // demo convert word to html --> ERROR
+  useEffect(() => {
+    const demoConverter = () => {
+      mammoth
+        .convertToHtml({ path: process.env.PUBLIC_URL + "/test_word.docx" })
+        .then(function (result) {
+          var html = result.value; // The generated HTML
+          docs.push({
+            uri: html,
+          });
+        })
+        .catch(function (error) {
+          console.error("this is error " + error);
+        });
+    };
+    demoConverter();
+  }, []);
 
   return (
     <>
@@ -305,7 +371,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.email ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     />
                   </Grid>
                   <Grid item xs={12} md={2} lg={2}>
@@ -328,7 +394,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.userRoleCode ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     >
                       {roles.length > 0 &&
                         roles.map((role) => (
@@ -355,7 +421,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.password ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -397,7 +463,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.password ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -440,7 +506,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.userName ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     />
                   </Grid>
                   <Grid item xs={12} md={2} lg={2}>
@@ -460,7 +526,7 @@ export default function FormUserComponent({
                         )?.message ?? ""
                       }
                       defaultValue={updatedUserValue?.userCode ?? ""}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     />
                   </Grid>
                   <Grid item xs={12} md={3} lg={3}>
@@ -480,12 +546,13 @@ export default function FormUserComponent({
                           (e) => e.isError === true && e.field === "major"
                         )?.message ?? ""
                       }
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     >
                       {Object.keys(ENUM_MAJOR).map((e) => (
                         <MenuItem
                           // defaultValue={updatedUserValue?.major ?? ""}
-                          value={Object.keys(ENUM_MAJOR).indexOf(e)}>
+                          value={Object.keys(ENUM_MAJOR).indexOf(e)}
+                        >
                           {e}
                         </MenuItem>
                       ))}
@@ -498,7 +565,7 @@ export default function FormUserComponent({
                       label="Gender"
                       name="gender"
                       defaultValue={"Female"}
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     >
                       <MenuItem value={"Female"}>Female</MenuItem>
                       <MenuItem value={"Male"}>Male</MenuItem>
@@ -510,7 +577,7 @@ export default function FormUserComponent({
                       defaultValue={updatedUserValue?.location ?? ""}
                       name="location"
                       label="Location"
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     />
                   </Grid>
                   <Grid item xs={12} md={3} lg={3}>
@@ -519,7 +586,7 @@ export default function FormUserComponent({
                       defaultValue={updatedUserValue?.phone ?? ""}
                       name="phone"
                       label="Phone"
-                      onChange={handleChange}
+                      onChange={handleChangeUser}
                     />
                   </Grid>
                   <Grid item xs={12} md={3} lg={3}>
@@ -538,7 +605,123 @@ export default function FormUserComponent({
                 </Grid>
               )}
 
-              {method === "files" && <DemoFileViewer />}
+              {method === "files" && (
+                <>
+                  <Grid
+                    container
+                    spacing={1}
+                    columns={{ xs: 4, sm: 8, md: 12 }}
+                  >
+                    <Grid item xs={12} md={12} lg={12} padding={0}>
+                      <Typography paddingLeft={2} fontSize={22}>
+                        Assignment Submitment
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={4}>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="code"
+                        label="Code"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={4}>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="title"
+                        label="Title"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={4}>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="subjectName"
+                        label="Subject"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={4}>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="createdDate"
+                        label="Create Date"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    {/* <Grid item xs={0} md={8} lg={8}/> */}
+                    <Grid item xs={12} md={4} lg={4}>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="updatedDate"
+                        label="Update Date"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={0} md={4} lg={4} />
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      lg={4}
+                      display={"flex"}
+                      alignItems={"baseline"}
+                      gap={"15px"}
+                    >
+                      <Typography>Status</Typography>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="status"
+                        variant="filled"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={0} md={8} lg={8} />
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      lg={4}
+                      display={"flex"}
+                      alignItems={"baseline"}
+                      gap={"15px"}
+                    >
+                      <Typography>Grade</Typography>
+                      <TextField
+                        sx={{ paddingBottom: 2, width: "100%" }}
+                        required
+                        name="grade"
+                        variant="filled"
+                        // defaultValue={updateAssignmentValue?.code ?? ""}
+                        onChange={handleChangeAssignment}
+                      />
+                    </Grid>
+                    <Grid item xs={0} md={8} lg={8} />
+                  </Grid>
+                  <Box height={"80vh"}>
+                    <DocViewer
+                      prefetchMethod="GET"
+                      documents={docs}
+                      pluginRenderers={DocViewerRenderers}
+                      style={{
+                        height: "80vh",
+                      }}
+                    />
+                  </Box>
+                </>
+              )}
             </FormControl>
           </DialogContent>
           <DialogActions>
