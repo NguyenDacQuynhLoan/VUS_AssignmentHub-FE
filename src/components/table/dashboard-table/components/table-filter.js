@@ -28,24 +28,22 @@ import {
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { DatePicker } from "@mui/x-date-pickers";
 
-
 const majorOptions = ["Finnace", "Computer Science", "Law"];
 
 const subjectOptions = ["HTML & CSS", "Human Law", "Account"];
 
 const gradeOptions = ["A", "B", "C", "D", "F"];
 
-export default function TableFilterComponent({filterValue}) {
-
+export default function TableFilterComponent({ filterValue }) {
   const [formValue, setFormValue] = React.useState({
-    major:"",
-    userCode:"",
-    userName:"",
-    gender:"",
-    grade:"",
-    subject:"",
-    createdDate:"",
-    updatedDate:""
+    major: "",
+    userCode: "",
+    userName: "",
+    gender: "",
+    grade: "",
+    subject: "",
+    createdDate: "",
+    updatedDate: "",
   });
 
   const OnFilterButtonClicked = (e) => {
@@ -77,7 +75,7 @@ export default function TableFilterComponent({filterValue}) {
                   onChange={handleChange}
                 >
                   <MenuItem key="" value="">
-                    <i>None</i> 
+                    <i>None</i>
                   </MenuItem>
                   {majorOptions.map((name) => (
                     <MenuItem key={name} value={name}>
@@ -103,9 +101,7 @@ export default function TableFilterComponent({filterValue}) {
               <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Stack spacing={3}>
                   <FormControlLabel
-                    control={
-                      <Switch name="antoine" size="medium" />
-                    }
+                    control={<Switch name="antoine" size="medium" />}
                     label={"Male"}
                   />
                 </Stack>
@@ -137,10 +133,13 @@ export default function TableFilterComponent({filterValue}) {
               <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Stack spacing={3}>
                   <FormControlLabel
-                    control={
-                      <Switch name="antoine" size="medium" />
-                    }
                     label={"Checked"}
+                    control={
+                      <Switch 
+                        name="gender" 
+                        onChange={handleChange}
+                        size="medium" />
+                    }
                   />
                 </Stack>
               </Grid>

@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import axios from "axios";
-import PropTypes from "prop-types";
-
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,13 +9,16 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
+import { 
+  Button,
+
+} from "@mui/material";
 
 import TablePageHead from "./table-head";
 import TableHeadButtonsComponent from "./components/table-head-buttons";
 import APIServices from "../../../api";
 import { HTTP_METHOD } from "../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
-import { Button } from "@mui/material";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -61,32 +61,59 @@ export default function TablePageBody({ isReload, searchValue, filterValue }) {
   const [selected, setSelected] = useState([]);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowTotal, setRowTotal] = useState(0);
 
   const getUserList = async () => {
+    // get user list
     var userList = await APIServices({
       HttpMethod: HTTP_METHOD.HTTP_GET,
       Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}`,
       Data: null,
     });
-    console.log(userList.result);
     setUsers(userList.result);
+
+    // get total user
+    var userTotal = await APIServices({
+      HttpMethod: HTTP_METHOD.HTTP_GET,
+      Endpoint: `${HTTP_ENTITY.USER}/total`,
+      Data: null,
+    });
+    setRowTotal(userTotal);
   };
 
   useEffect(() => {
     getUserList();
   }, [isReload, page, rowsPerPage]);
 
-  useEffect(() => {}, [searchValue]);
+  useEffect(() => {
+    if (searchValue !== "") {
+      searchUserAsync();
+    }else{
+      getUserList();
+    }
+  }, [searchValue]);
+
+  const searchUserAsync = async() =>{
+    var searchedList  = await APIServices({
+      HttpMethod:HTTP_METHOD.HTTP_GET,
+      Data:null,
+      Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}/search/${searchValue}`,
+    })
+    setUsers(searchedList.result);
+  }
+
   useEffect(() => {
     filterUserAsync();
   }, [filterValue]);
+
   const filterUserAsync = async () => {
     var filterList = await APIServices({
       HTTP_METHOD: HTTP_METHOD.HTTP_POST,
-      Endpoint: HTTP_ENTITY.USER,
-      Data: null,
+      Endpoint: `${HTTP_ENTITY.USER}/${page}/${rowsPerPage}/filter`,
+      Data: filterValue,
     });
+    console.log(filterList);
   };
 
   const handleRequestSort = (event, property) => {
@@ -125,6 +152,7 @@ export default function TablePageBody({ isReload, searchValue, filterValue }) {
   };
 
   const handleChangePage = (event, newPage) => {
+    
     setPage(newPage);
   };
 
@@ -221,12 +249,17 @@ export default function TablePageBody({ isReload, searchValue, filterValue }) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[15, 50, 100]}
-          component="div"
-          count={users.length}
+        {/* <TableDataPagination
+          count={15}
           rowsPerPage={rowsPerPage}
+          
+        /> */}
+        <TablePagination
+          rowsPerPageOptions={[10, 50, 100]}
+          component="div"
+          count={rowTotal}
           page={page}
+          rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />

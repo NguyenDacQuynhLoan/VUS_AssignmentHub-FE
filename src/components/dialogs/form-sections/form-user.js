@@ -19,7 +19,6 @@ import React, { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { ENUM_MAJOR } from "../../../shared/enums/enum-majors";
-import { ENUM_ROLE } from "../../../shared/enums/enum-roles";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { UserModelFunc } from "../../../shared/models/user";
