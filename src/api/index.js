@@ -4,34 +4,31 @@ import { HTTP_METHOD } from "../shared/enums/http-methods";
 const baseURL = "http://localhost:8090/AssignmentHub";
 
 /**
- * 
+ *  Common restful API services
  * @param {0} HttpMethod HTTP Methods
  * @param {1} Data POST or PUT Data
  * @param {2} Endpoint Data Endpoint
- * @returns 
+ * @returns Data from API
  */
 export default async function APIServices({HttpMethod, Data, Endpoint}) {
 try{
   
     // #region validate
-    // if (
-    //   (HttpMethod == null) & (HttpMethod.length > 0) ||
-    //   !HTTP_METHOD[HttpMethod.toUpperCase()]
-    // ) {
-    //   throw new Error("Invalid or missing HttpMethod.");
-    // }
-
-    // if (!HTTP_ENTITY[Endpoint.toUpperCase()]) {
-    //   throw new Error("Invalid or missing Table Entity name.");
-    // }
-
-    // if (token === "" || token === null) {
-    //   throw new Error("Token is not existed.");
-    // }
-    // #endregion
-
+    if ((HttpMethod == null) || (HttpMethod == '')) {
+      throw new Error("Invalid or missing HttpMethod.");
+    }
+    
+    if ((HttpMethod == null) || (HttpMethod == '')) {
+      throw new Error("Invalid or missing HttpMethod.");
+    }
+    
     var sessionValue = JSON.parse(sessionStorage.getItem("Token"))
     var token = sessionValue.token;
+    
+    if (token === "" || token === null) {
+      throw new Error("Token is not existed.");
+    }
+    // #endregion
     
     var url = `${baseURL}${Endpoint}`;
     var config = {
