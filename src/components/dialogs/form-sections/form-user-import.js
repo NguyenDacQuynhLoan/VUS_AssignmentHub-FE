@@ -14,14 +14,7 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useEffect } from "react";
-import { esES } from "@mui/x-date-pickers";
-import { HTTP_METHOD } from "../../../shared/enums/http-methods";
-import { HTTP_ENTITY } from "../../../shared/enums/http-entity";
-import APIServices from "../../../api";
-import SnackbarStatutes from "../../snackbar";
+import { APIImportFile } from "../../../api/apiAttachment";
 
 export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
   const [fileName, setFileName] = useState("");
@@ -42,12 +35,9 @@ export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
     setFileName(name);
   };
 
-  const readCSVFile = () => {
-    var file = document.getElementById("fileImport");
-    if(file.files.length > 0){
-      var reader = new FileReader()
-      reader.readAsText(file[0])
-    }
+  const readCSVFile = async() => {
+    var file = document.getElementById("fileImport").files[0];
+    APIImportFile(file);
   }
 
   return (
@@ -56,7 +46,7 @@ export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
         fullWidth
         maxWidth="sm"
         scroll="paper"
-        open={isOpen}
+        open={true}
         onClose={() => OnCloseDialogForm(false)}
       >
         <DialogTitle>Import User</DialogTitle>

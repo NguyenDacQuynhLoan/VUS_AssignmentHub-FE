@@ -1,6 +1,9 @@
 import axios from "axios";
-import dayjs from "dayjs";
-import jwt_decode from "jwt-decode";
+
+/**
+ *  API Authentication Access
+ * @param {*} loginData Object Email and Password
+ */
 export const AuthenticationService = async (loginData) => {
     try {
         
