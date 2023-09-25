@@ -16,17 +16,19 @@ import {
 } from "@mui/material";
 import { APIImportFile } from "../../../api/apiAttachment";
 
-export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
+export function FormImport({ title, isOpen, OnCloseDialogForm,OnAcceptDialogForm }) {
   const [fileName, setFileName] = useState("");
   const [errorMessage,setErrorMessage] = useState();
 
   const onSubmitClicked = (e) => {
     e.preventDefault();
     if(fileName == null || fileName == ""){
-        setErrorMessage("Please upload File")
+      setErrorMessage("Please upload File")
     }else{
-        setErrorMessage('');
-        readCSVFile();
+      setErrorMessage('');
+
+      var file = document.getElementById("fileImport").files[0];
+      OnAcceptDialogForm(file);
     }
   };
 
@@ -35,18 +37,13 @@ export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
     setFileName(name);
   };
 
-  const readCSVFile = async() => {
-    var file = document.getElementById("fileImport").files[0];
-    APIImportFile(file);
-  }
-
   return (
     <>
       <Dialog
         fullWidth
         maxWidth="sm"
         scroll="paper"
-        open={true}
+        open={isOpen}
         onClose={() => OnCloseDialogForm(false)}
       >
         <DialogTitle>Import User</DialogTitle>
@@ -58,6 +55,7 @@ export function FormImport({ title, isOpen, OnCloseDialogForm, UserCode }) {
                 <input
                   type="file"
                   id="fileImport"
+                  accept=".csv"
                   onChange={getFileName}
                   hidden
                 />

@@ -7,12 +7,21 @@ import { HTTP_METHOD } from "../../../../shared/enums/http-methods";
 import { HTTP_ENTITY } from "../../../../shared/enums/http-entity";
 import axios from "axios";
 import { FormImport } from "../../../dialogs/form-sections/form-user-import";
-import { APIExportFile } from "../../../../api/apiAttachment";
+import { APIExportFile, APIImportFile } from "../../../../api/apiAttachment";
+import { useState } from "react";
+import SnackbarStatutes from "../../../snackbar";
 
 export default function TableToolBarComponent({
   OnOpenNewButtonDialog,
   OnOpenImportButtonDialog,
 }) {
+  const [isOpen ,setOpen] = useState(false);
+  const [isOpenSnackBar, setOpenSnackBar] = useState(false);
+  const [snackbarContent, setSnackbarContent] = useState({
+    message: "",
+    snackbarType: "",
+  });
+
   const OnExportButtonClicked = async () => {
     APIExportFile().then((res) => {
       var blob = new Blob([res], { type: "application/csv" });
@@ -26,6 +35,33 @@ export default function TableToolBarComponent({
       link.click();
     });
   };
+
+  const OnImportButtonClicked = async() =>{
+    setOpen(true);
+  }
+  
+  const OnCloseDialogForm = (e) => {
+    setOpen(e);
+  };
+
+  const OnAcceptDialogForm = async(file) =>{
+    var data = await APIImportFile(file);
+    console.log(data);
+    console.log(typeof data.result);
+    setOpenSnackBar(true);
+    if(data != null && data.result.totalSuccess >0){
+      setSnackbarContent({
+        message:`Total Success ${data.result.totalSuccess} lines , Total Fail ${data.result.totalFail} lines`,
+        snackbarType: data.executionStatus
+      })
+    }else{
+      setSnackbarContent({
+        message:`Can\'t import file.`,
+        snackbarType:false
+      })
+    }
+    setOpen(false);
+  }
 
   return (
     <>
@@ -49,6 +85,7 @@ export default function TableToolBarComponent({
           backgroundColor: "default.dark",
         }}
         startIcon={<FileUploadIcon />}
+        onClick={OnImportButtonClicked}
       >
         Import
       </Button>
@@ -65,10 +102,15 @@ export default function TableToolBarComponent({
         Export
       </Button>
       <FormImport
-        isOpen={true}
-        //  message={snackbarContent.message}
-        //  snackbarType={snackbarContent.snackbarType}
+        isOpen={isOpen}
+        OnCloseDialogForm={OnCloseDialogForm}
+        OnAcceptDialogForm={OnAcceptDialogForm}
       />
+      <SnackbarStatutes
+        isOpen={isOpenSnackBar}
+        message={snackbarContent.message}
+        snackbarType={snackbarContent.snackbarType}
+      />  
     </>
   );
 }

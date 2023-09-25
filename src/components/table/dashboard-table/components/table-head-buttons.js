@@ -149,7 +149,7 @@ export default function TableHeadButtonsComponent({ numSelected,selectedItem,sen
           </Tooltip>
         )}
       </Toolbar>
-      <FormUserComponent
+      <FormUserComponent 
         title={"Update User"}
         isOpen={isOpenFormUser}
         updatedUserValue={defaultUserValue}
